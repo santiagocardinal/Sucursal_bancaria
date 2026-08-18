@@ -5,70 +5,136 @@ import java.util.function.Predicate;
 
 public class ListaDoblementeEnlazada<T> implements TDALista<T> {
 
-    private Nodo<T> cabeza;
+    private NodoDoble<T> cabeza; // |1|<->|2|
+    private NodoDoble<T>anterior;// referencia al de adelante y al de atras
+    private int tamano;
 
     public ListaDoblementeEnlazada() {
         cabeza = null;
+        anterior = null;
+        tamano = 0;
     }
 
     @Override
     public void agregar(T elem) {
-        Nodo<T> nuevo = new Nodo<T>(elem);
+        NodoDoble<T> nuevo = new NodoDoble<>(elem);
 
-        if (cabeza == null) {
+        if (cabeza == null) 
+        {
             cabeza = nuevo;
-        } else {
-            Nodo<T> temp = cabeza;
-            while (temp.getSiguiente() != null) {
-                temp = temp.getSiguiente();
-            }
-            temp.setSiguiente(nuevo);
+            anterior = nuevo;
+            tamano++;
+        } 
+        else 
+        {
+            anterior.setSiguiente(nuevo);
+            nuevo.setAnterior(anterior);
+            anterior = nuevo;
+            //|1|<->|2|<->|3|<->|4|
+            // |anterior|<->|nuevo|
+            //|dato|<->|anterior|
         }
     }
 
+
     @Override
-    public void agregar(int index, T elem) {
-        if (index < 0) throw new IndexOutOfBoundsException("Índice: " + index);
-        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+    public void agregar(int indice, T elemento) 
+    {
+        if (indice < 0 ) throw new IndexOutOfBoundsException("Índice: " + indice);//no se puede acceder al indice
+        if (elemento == null) throw new IllegalArgumentException("No se permiten null");//no se puede tener un elemento nulo
 
-        Nodo<T> nuevo = new Nodo<>(elem);
-        if (index == 0) {
-            nuevo.setSiguiente(cabeza);
-            cabeza = nuevo;
-            return;
+        NodoDoble<T> nuevo = new NodoDoble<>(elemento);
+
+        if (indice == 0) 
+        {
+            // insertar al inicio
+            nuevo.setSiguiente(cabeza); //|nuevo|<->|cabeza|
+
+            if (cabeza != null) 
+                cabeza.setAnterior(nuevo); //la cabeza es un elemento distinto de nulo, el anterior a la cabeza va a ser nuevo,  mueve uno para adelante y deja espacio para insertar
+                cabeza = nuevo;
+            
+                if (tamano == 0) 
+                anterior = nuevo; // si lista vacía, el nuevo también es el último
         }
-
-        Nodo<T> actual = cabeza;
-        int contador = 0;
-
-        while (actual != null) {
-            // cuando estamos en index - 1
-            if (contador == index - 1) {
-                nuevo.setSiguiente(actual.getSiguiente());
-                actual.setSiguiente(nuevo);
-                return;
+        
+        else if (indice == tamano) 
+        {
+            // insertar al final
+            nuevo.setAnterior(anterior);
+            if (anterior != null) anterior.setSiguiente(nuevo);
+            anterior = nuevo;
+        } 
+        else 
+        {
+            NodoDoble<T> actual = cabeza;
+            // recorrer hasta el nodo anterior a la posición deseada
+            for (int i = 0; i < indice - 1; i++) 
+            {
+                actual = (NodoDoble<T>) actual.getSiguiente();            
             }
-            actual = actual.getSiguiente();
-            contador++;
-        }
-        // Si salimos del while, el índice no existe
-        throw new IndexOutOfBoundsException("Índice: " + index);
+
+        NodoDoble<T> siguiente = (NodoDoble<T>) actual.getSiguiente();
+        nuevo.setSiguiente(siguiente);
+        nuevo.setAnterior(actual);
+        actual.setSiguiente(nuevo);
+        siguiente.setAnterior(nuevo);
     }
+    tamano++;
+    }
+    
 
     @Override
-    public T obtener(int index) {
-        Nodo<T> actual = cabeza;
-        int i = 0;
+    public T obtener(int indice) 
+    {
+        if (indice < 0) //0,1,2,3,4,5,,..... y=si yo le pido un elemento en la posicion -1 me salta error pero como no quiero que me salte error devuelvo null
+            return null; //si el indice ingresado es nulo retornar nulo
 
-        while (actual != null) {
-            if (i == index) {
-                return actual.getDato();
-            }
-            actual = actual.getSiguiente();
+        NodoDoble<T> nuevo = cabeza; //se crea un nuevo nodo el cual se le asigna ser la "cabeza"
+        int i = 0; //control de variable
+
+        while (nuevo != null)  //mientras que el nodo siguiente sea distinto e nulo
+        {
+            if (i == indice) 
+                return nuevo.getDato(); //y si i(variable de control) es igual al indice pasado por parametro, devolver el dato que se encuentra en ese indice
+            nuevo = (NodoDoble<T>) nuevo.getSiguiente();//va pasando al siguiente
             i++;
         }
+        return null; //si no se encuentra devuelve null
+    }
 
-        throw new IndexOutOfBoundsException("Índice: " + index);
+    // Método auxiliar privado: dado un nodo YA localizado dentro de la lista,
+    // lo desconecta actualizando los punteros de sus vecinos, la cabeza,
+    // la cola (campo 'anterior') y el contador 'tamano'. Devuelve su dato.
+    private T desconectar(NodoDoble<T> nodo) {
+        NodoDoble<T> nodoAnterior = (NodoDoble<T>) nodo.getAnterior();
+        NodoDoble<T> nodoSiguiente = (NodoDoble<T>) nodo.getSiguiente();
+
+        // Si 'nodo' tenía algo antes, ese algo pasa a apuntar a lo que
+        // seguía después de 'nodo'. Si no tenía nada antes, 'nodo' era
+        // la cabeza, así que la nueva cabeza pasa a ser el siguiente.
+        if (nodoAnterior != null) {
+            nodoAnterior.setSiguiente(nodoSiguiente);
+        } else {
+            cabeza = nodoSiguiente;
+        }
+
+        // Simétricamente para el lado de "siguiente": si había algo
+        // después, ese algo pasa a apuntar hacia atrás al anterior de
+        // 'nodo'. Si no había nada después, 'nodo' era el último, así
+        // que actualizamos el puntero de cola.
+        if (nodoSiguiente != null) {
+            nodoSiguiente.setAnterior(nodoAnterior);
+        } else {
+            anterior = nodoAnterior; // 'anterior' acá cumple el rol de cola/último
+        }
+
+        // Desvinculamos el nodo removido para no dejar referencias colgantes
+        nodo.setSiguiente(null);
+        nodo.setAnterior(null);
+
+        tamano--;
+        return nodo.getDato();
     }
 
     @Override
@@ -77,97 +143,73 @@ public class ListaDoblementeEnlazada<T> implements TDALista<T> {
             throw new IndexOutOfBoundsException("Índice: " + index);
         }
 
-        // Caso: cabeza
-        if (index == 0) {
-            if (cabeza == null) {
-                throw new IndexOutOfBoundsException("Índice: " + index);
-            }
-            T dato = cabeza.getDato();
-            Nodo<T> aux = cabeza;
-            cabeza = cabeza.getSiguiente();
-            aux.setSiguiente(null); // desvincular
-            return dato;
-        }
-
-        Nodo<T> anterior = cabeza;
+        // Recorremos con el mismo patrón que 'obtener', sin confiar en el
+        // campo 'tamano' para el chequeo de límites (ver nota abajo sobre
+        // por qué 'tamano' no siempre está sincronizado).
+        NodoDoble<T> actual = cabeza;
         int i = 0;
 
-        while (anterior != null && i < index - 1) {
-            anterior = anterior.getSiguiente();
+        while (actual != null && i < index) {
+            actual = (NodoDoble<T>) actual.getSiguiente();
             i++;
         }
 
-        if (anterior == null || anterior.getSiguiente() == null) {
+        if (actual == null) {
             throw new IndexOutOfBoundsException("Índice: " + index);
         }
 
-        Nodo<T> nodoAEliminar = anterior.getSiguiente();
-        anterior.setSiguiente(nodoAEliminar.getSiguiente());
-        nodoAEliminar.setSiguiente(null); // desvincular
-
-        return nodoAEliminar.getDato();
+        return desconectar(actual);
     }
 
     @Override
     public boolean remover(T elem) {
-        if (cabeza == null || elem == null) {
-            return false;
-        }
+        if (cabeza == null || elem == null) return false;
 
-        Nodo<T> actual = cabeza;
-        Nodo<T> anterior = null;
-
+        NodoDoble<T> actual = cabeza;
         while (actual != null) {
             if (actual.getDato().equals(elem)) {
-                if (anterior == null) {
-                    cabeza = actual.getSiguiente();
-                } else {
-                    anterior.setSiguiente(actual.getSiguiente());
-                }
-
-                actual.setSiguiente(null); // desvincular
-                return true;
+                desconectar(actual);
+                return true; // se encontró y se removió
             }
-
-            anterior = actual;
-            actual = actual.getSiguiente();
+            actual = (NodoDoble<T>) actual.getSiguiente();
         }
-
-        return false;
+        return false; // se recorrió toda la lista y no estaba
     }
 
     @Override
-    public boolean contiene(T elem) {
+    public boolean contiene(T elem) 
+    {
         return indiceDe(elem) != -1;
     }
 
     @Override
-    public int indiceDe(T elem) {
-        if (elem == null) {
-            return -1;
-        }
-        Nodo<T> actual = cabeza;
+    public int indiceDe(T elem) //PERFECTISIMO
+    {
+        if (elem == null) return -1;
+
+        NodoDoble<T> nuevo = cabeza;
         int indice = 0;
-        while (actual != null) {
-            if (actual.getDato().equals(elem)) {
-                return indice;
-            }
-            actual = actual.getSiguiente();
+
+        while (nuevo != null) 
+        {
+            if (nuevo.getDato().equals(elem)) return indice;
+            nuevo = (NodoDoble<T>) nuevo.getSiguiente();
             indice++;
         }
         return -1;
     }
 
     @Override
-    public T buscar(Predicate<T> criterio) {
+    public T buscar(Predicate<T> criterio) 
+    {
         if (criterio == null) return null;
-        Nodo<T> temp = cabeza;
 
-        while (temp != null) {
-            if (criterio.test(temp.getDato())) {
-                return temp.getDato();
-            }
-            temp = temp.getSiguiente();
+        NodoDoble<T> temp = cabeza;
+
+        while (temp != null) 
+        {
+            if (criterio.test(temp.getDato())) return temp.getDato(); //DAME INFORMACION O ALGO SOBRE ESTO
+            temp = (NodoDoble<T>) temp.getSiguiente();
         }
         return null;
     }
@@ -175,49 +217,44 @@ public class ListaDoblementeEnlazada<T> implements TDALista<T> {
     // La interfaz pide que devuelva una lista NUEVA y ordenada, sin
     // modificar esta. Por eso primero se copian los datos y despues se
     // ordena la copia (Selection Sort).
-    @Override
-    public TDALista<T> ordenar(Comparator<T> comparator) {
-        ListaEnlazada<T> resultado = new ListaEnlazada<>();
+    public TDALista<T> ordenar(Comparator<T> comp) //EDITA LISTA ORIGINAL
+    {
+        if (cabeza == null) return this;
 
-        Nodo<T> actual = cabeza;
-        while (actual != null) {
-            resultado.agregar(actual.getDato());
-            actual = actual.getSiguiente();
-        }
+        NodoDoble<T> nuevo = cabeza;
 
-        if (resultado.cabeza == null) return resultado;
+        while (nuevo != null) 
+        {
+            NodoDoble<T> menor = nuevo;
+            NodoDoble<T> temp = (NodoDoble<T>) nuevo.getSiguiente();
 
-        Nodo<T> i = resultado.cabeza;
-        while (i != null) {
-            Nodo<T> menor = i;
-            Nodo<T> j = i.getSiguiente();
-
-            while (j != null) {
-                if (comparator.compare(j.getDato(), menor.getDato()) < 0) {
-                    menor = j;
-                }
-                j = j.getSiguiente();
+            while (temp != null) 
+            {
+                if (comp.compare(temp.getDato(), menor.getDato()) < 0) menor = temp;
+                temp = (NodoDoble<T>) temp.getSiguiente();
             }
 
-            // swap
-            T aux = i.getDato();
-            i.setDato(menor.getDato());
+            T aux = nuevo.getDato();
+            nuevo.setDato(menor.getDato());
             menor.setDato(aux);
 
-            i = i.getSiguiente();
+            nuevo = (NodoDoble<T>) nuevo.getSiguiente();
         }
 
-        return resultado;
+        return this;
     }
+    
 
     @Override
-    public int tamaño() {
+    public int tamano() //DIVINOOOOO :)
+    {
         int contador = 0;
-        Nodo<T> actual = cabeza;
+        NodoDoble<T> nuevo = cabeza;
 
-        while (actual != null) {
+        while (nuevo != null) 
+        {
             contador++;
-            actual = actual.getSiguiente();
+            nuevo = (NodoDoble<T>) nuevo.getSiguiente();
         }
 
         return contador;
@@ -231,5 +268,6 @@ public class ListaDoblementeEnlazada<T> implements TDALista<T> {
     @Override
     public void vaciar() {
         cabeza = null;
+        anterior = null;
     }
 }

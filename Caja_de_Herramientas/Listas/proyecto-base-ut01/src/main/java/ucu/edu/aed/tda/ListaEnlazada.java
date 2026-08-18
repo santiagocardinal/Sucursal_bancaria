@@ -211,7 +211,7 @@ public class ListaEnlazada<T> implements TDALista<T> {
     }
 
     @Override
-    public int tamaño() {
+    public int tamano() {
         int contador = 0;
         Nodo<T> actual = cabeza;
 

@@ -17,3 +17,6 @@ public class NodoDoble <T> extends Nodo<T>{
         this.anterior = anterior;
     }
 }
+    
+  
+
