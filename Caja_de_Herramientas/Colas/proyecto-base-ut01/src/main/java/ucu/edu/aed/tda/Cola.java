@@ -7,7 +7,16 @@ import ucu.edu.aed.tda.TDALista;
 
 public class Cola<T> extends ListaEnlazada<T> implements TDACola<T> 
 {
-    //los 3 metodos siguientes son metodos propias de las colas
+    private NodoPrioridad<T> frente;
+    private int tamano;
+
+    public Cola() 
+    {
+        this.frente = null;
+        this.tamano = 0;
+    }
+
+    //los 4 metodos siguientes son metodos propias de las colas
     @Override
     public T frente()
     {
@@ -34,6 +43,13 @@ public class Cola<T> extends ListaEnlazada<T> implements TDACola<T>
         }
         return remover(0);
 
+    }
+
+    @Override
+    public void anula() 
+    {
+        frente = null;
+        tamano = 0;
     }
 
     //estos metodos son los metodos que se heredaron de TDALista

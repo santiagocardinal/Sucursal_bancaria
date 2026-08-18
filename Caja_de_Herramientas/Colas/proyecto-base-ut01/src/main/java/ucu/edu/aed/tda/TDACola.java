@@ -16,6 +16,9 @@ package ucu.edu.aed.tda;
  */
 public interface TDACola<T> extends TDALista<T> {
 
+    NodoPrioridad<T> frente;
+    int tamano;
+
     /**
      * Retorna el elemento ubicado al frente de la cola, sin removerlo.
      *
@@ -43,4 +46,7 @@ public interface TDACola<T> extends TDALista<T> {
      * @throws java.util.NoSuchElementException si la cola está vacía
      */
     T quitaDeCola();
+
+
+    void anula();
 }
