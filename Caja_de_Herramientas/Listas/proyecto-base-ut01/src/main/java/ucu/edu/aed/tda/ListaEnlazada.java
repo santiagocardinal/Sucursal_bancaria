@@ -232,4 +232,45 @@ public class ListaEnlazada<T> implements TDALista<T> {
     public void vaciar() {
         cabeza = null;
     }
+
+    // Inserta 'elem' manteniendo el orden de la lista según el criterio
+    // que define 'comparator'. Asume que la lista YA está ordenada según <-
+    // ese mismo comparator antes de llamar a este método.
+    public void insertarOrdenado(T elem, Comparator<T> comparator) {
+
+        // Validamos que no nos pasen un elemento null, porque no podríamos
+        // compararlo contra los demás nodos.
+        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+
+        // Creamos el nuevo nodo que vamos a insertar en algún lugar de la lista.
+        Nodo<T> nuevo = new Nodo<>(elem);
+
+        // Caso 1: la lista está vacía, o el nuevo elemento debe ir ANTES
+        // que la cabeza actual (es decir, es "menor" según el comparator).
+        // En ambos casos el nuevo nodo pasa a ser la nueva cabeza.
+        if (cabeza == null || comparator.compare(elem, cabeza.getDato()) < 0) { // < / > /<= / >= DEPENDE DEL CRITERIO
+            nuevo.setSiguiente(cabeza); // el nuevo apunta a lo que era la cabeza
+            cabeza = nuevo;             // el nuevo pasa a ser la cabeza
+            return;                     // terminamos, ya insertamos
+        }
+
+        // Caso 2: recorremos la lista buscando el lugar donde insertar.
+        // 'actual' es el nodo desde el cual vamos mirando hacia adelante.
+        Nodo<T> actual = cabeza; // |1|->|2|->|3|->|4|->|5|->|6|
+
+        // Avanzamos mientras haya un siguiente nodo Y ese siguiente nodo
+        // sea "menor o igual" que el elemento a insertar (es decir, mientras
+        // el elemento todavía no deba insertarse antes de 'actual.getSiguiente()').
+        while (actual.getSiguiente() != null
+                && comparator.compare(actual.getSiguiente().getDato(), elem) <= 0) {
+            actual = actual.getSiguiente(); // seguimos avanzando
+        }
+
+        // Al salir del while, 'actual' es el nodo justo ANTES de donde
+        // debe quedar el nuevo elemento (porque actual.getSiguiente() es
+        // null, o es mayor que elem).
+        nuevo.setSiguiente(actual.getSiguiente()); // el nuevo apunta a lo que seguía
+        actual.setSiguiente(nuevo);                // 'actual' ahora apunta al nuevo
+    }
 }
+
