@@ -1,4 +1,4 @@
-# Sucursal_bancaria
+# Sucursal bancaria
 # Proyecto Integrador 1 (Primer Hito) — Diseño e Implementación de Estructuras Lineales
 
 ## Aspectos evaluados
