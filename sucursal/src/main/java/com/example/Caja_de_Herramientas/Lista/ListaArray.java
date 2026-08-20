@@ -3,6 +3,7 @@ package com.example.Caja_de_Herramientas.Lista;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
+@SuppressWarnings("unchecked")
 public class ListaArray<T> implements TDALista<T> {
 
     private static final int CAPACIDAD_INICIAL = 10;
@@ -17,6 +18,11 @@ public class ListaArray<T> implements TDALista<T> {
 
     @Override
     public void agregar(T elem) {
+
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
+
         if (cantidad == datos.length) {
             int capacidadAnterior = datos.length;
 
@@ -36,8 +42,14 @@ public class ListaArray<T> implements TDALista<T> {
 
     @Override
     public void agregar(int index, T elem) {
-        if (index < 0 || index > cantidad) throw new IndexOutOfBoundsException("Índice: " + index);
-        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+
+        if (index < 0 || index > cantidad) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
 
         if (cantidad == datos.length) {
             int capacidadAnterior = datos.length;
@@ -63,7 +75,10 @@ public class ListaArray<T> implements TDALista<T> {
 
     @Override
     public T obtener(int index) {
-        if (index < 0 || index >= cantidad) return null; // mismo criterio que en las otras listas
+
+        if (index < 0 || index >= cantidad) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
 
         return (T) datos[index];
     }
@@ -105,19 +120,22 @@ public class ListaArray<T> implements TDALista<T> {
     }
 
     @Override
-    //@SuppressWarnings("unchecked")
     public int indiceDe(T elem) {
         if (elem == null) return -1;
 
         for (int i = 0; i < cantidad; i++) {
-            if (((T) datos[i]).equals(elem)) return i;
+
+            if (((T) datos[i]).equals(elem)) {
+                return i;
+            }
         }
         return -1;
     }
 
     @Override
     public T buscar(Predicate<T> criterio) {
-        if (criterio == null) return null;
+
+        if (criterio == null) throw new IllegalArgumentException("El criterio no puede ser null");
 
         for (int i = 0; i < cantidad; i++) {
             T dato = (T) datos[i];
@@ -128,6 +146,9 @@ public class ListaArray<T> implements TDALista<T> {
 
     @Override
     public TDALista<T> ordenar(Comparator<T> comparator) {
+
+        if (comparator == null) throw new IllegalArgumentException("El comparator no puede ser null");
+
         ListaArray<T> resultado = new ListaArray<>();
 
         for (int i = 0; i < cantidad; i++) {
@@ -144,10 +165,11 @@ public class ListaArray<T> implements TDALista<T> {
                     indiceMenor = j;
                 }
             }
-
-            Object aux = resultado.datos[i];
-            resultado.datos[i] = resultado.datos[indiceMenor];
-            resultado.datos[indiceMenor] = aux;
+            if (indiceMenor != i) {
+                Object aux = resultado.datos[i];
+                resultado.datos[i] = resultado.datos[indiceMenor];
+                resultado.datos[indiceMenor] = aux;
+            }
         }
 
         return resultado;

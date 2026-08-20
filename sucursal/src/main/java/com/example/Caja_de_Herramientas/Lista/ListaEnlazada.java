@@ -8,30 +8,44 @@ public class ListaEnlazada<T> implements TDALista<T> {
     private Nodo<T> cabeza;
 
     public ListaEnlazada() {
-        cabeza = null;
+        this.cabeza = null;
     }
 
     @Override
     public void agregar(T elem) {
-        Nodo<T> nuevo = new Nodo<T>(elem);
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
+
+        Nodo<T> nuevo = new Nodo<>(elem);
 
         if (cabeza == null) {
             cabeza = nuevo;
-        } else {
-            Nodo<T> temp = cabeza;
-            while (temp.getSiguiente() != null) {
-                temp = temp.getSiguiente();
-            }
-            temp.setSiguiente(nuevo);
+            return;
         }
+
+        Nodo<T> actual = cabeza;
+
+        while (actual.getSiguiente() != null) {
+            actual = actual.getSiguiente();
+        }
+
+        actual.setSiguiente(nuevo);
     }
 
     @Override
     public void agregar(int index, T elem) {
-        if (index < 0) throw new IndexOutOfBoundsException("Índice: " + index);
-        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
 
         Nodo<T> nuevo = new Nodo<>(elem);
+
+        // Insertar al comienzo
         if (index == 0) {
             nuevo.setSiguiente(cabeza);
             cabeza = nuevo;
@@ -39,24 +53,29 @@ public class ListaEnlazada<T> implements TDALista<T> {
         }
 
         Nodo<T> actual = cabeza;
-        int contador = 0;
+        int i = 0;
 
-        while (actual != null) {
-            // cuando estamos en index - 1
-            if (contador == index - 1) {
-                nuevo.setSiguiente(actual.getSiguiente());
-                actual.setSiguiente(nuevo);
-                return;
-            }
+        // Buscamos el nodo anterior a la posición de inserción
+        while (actual != null && i < index - 1) {
             actual = actual.getSiguiente();
-            contador++;
+            i++;
         }
-        // Si salimos del while, el índice no existe
-        throw new IndexOutOfBoundsException("Índice: " + index);
+
+        // Si no existe el nodo anterior, el índice está fuera de rango
+        if (actual == null) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        nuevo.setSiguiente(actual.getSiguiente());
+        actual.setSiguiente(nuevo);
     }
 
     @Override
     public T obtener(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
         Nodo<T> actual = cabeza;
         int i = 0;
 
@@ -64,6 +83,7 @@ public class ListaEnlazada<T> implements TDALista<T> {
             if (i == index) {
                 return actual.getDato();
             }
+
             actual = actual.getSiguiente();
             i++;
         }
@@ -77,21 +97,26 @@ public class ListaEnlazada<T> implements TDALista<T> {
             throw new IndexOutOfBoundsException("Índice: " + index);
         }
 
-        // Caso: cabeza
+        if (cabeza == null) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        // Eliminar cabeza
         if (index == 0) {
-            if (cabeza == null) {
-                throw new IndexOutOfBoundsException("Índice: " + index);
-            }
             T dato = cabeza.getDato();
-            Nodo<T> aux = cabeza;
+
+            Nodo<T> eliminado = cabeza;
             cabeza = cabeza.getSiguiente();
-            aux.setSiguiente(null); // desvincular
+
+            eliminado.setSiguiente(null);
+
             return dato;
         }
 
         Nodo<T> anterior = cabeza;
         int i = 0;
 
+        // Llegamos al nodo anterior al que queremos eliminar
         while (anterior != null && i < index - 1) {
             anterior = anterior.getSiguiente();
             i++;
@@ -101,16 +126,17 @@ public class ListaEnlazada<T> implements TDALista<T> {
             throw new IndexOutOfBoundsException("Índice: " + index);
         }
 
-        Nodo<T> nodoAEliminar = anterior.getSiguiente();
-        anterior.setSiguiente(nodoAEliminar.getSiguiente());
-        nodoAEliminar.setSiguiente(null); // desvincular
+        Nodo<T> eliminado = anterior.getSiguiente();
 
-        return nodoAEliminar.getDato();
+        anterior.setSiguiente(eliminado.getSiguiente());
+        eliminado.setSiguiente(null);
+
+        return eliminado.getDato();
     }
 
     @Override
     public boolean remover(T elem) {
-        if (cabeza == null || elem == null) {
+        if (elem == null || cabeza == null) {
             return false;
         }
 
@@ -118,14 +144,18 @@ public class ListaEnlazada<T> implements TDALista<T> {
         Nodo<T> anterior = null;
 
         while (actual != null) {
+
             if (actual.getDato().equals(elem)) {
+
+                // Estamos eliminando la cabeza
                 if (anterior == null) {
                     cabeza = actual.getSiguiente();
                 } else {
                     anterior.setSiguiente(actual.getSiguiente());
                 }
 
-                actual.setSiguiente(null); // desvincular
+                actual.setSiguiente(null);
+
                 return true;
             }
 
@@ -146,63 +176,82 @@ public class ListaEnlazada<T> implements TDALista<T> {
         if (elem == null) {
             return -1;
         }
+
         Nodo<T> actual = cabeza;
         int indice = 0;
+
         while (actual != null) {
+
             if (actual.getDato().equals(elem)) {
                 return indice;
             }
+
             actual = actual.getSiguiente();
             indice++;
         }
+
         return -1;
     }
 
     @Override
     public T buscar(Predicate<T> criterio) {
-        if (criterio == null) return null;
-        Nodo<T> temp = cabeza;
-
-        while (temp != null) {
-            if (criterio.test(temp.getDato())) {
-                return temp.getDato();
-            }
-            temp = temp.getSiguiente();
+        if (criterio == null) {
+            throw new IllegalArgumentException("El criterio no puede ser null");
         }
+
+        Nodo<T> actual = cabeza;
+
+        while (actual != null) {
+
+            if (criterio.test(actual.getDato())) {
+                return actual.getDato();
+            }
+
+            actual = actual.getSiguiente();
+        }
+
         return null;
     }
 
-    // La interfaz pide que devuelva una lista NUEVA y ordenada, sin
-    // modificar esta. Por eso primero se copian los datos y despues se
-    // ordena la copia (Selection Sort).
     @Override
     public TDALista<T> ordenar(Comparator<T> comparator) {
+        if (comparator == null) {
+            throw new IllegalArgumentException("El comparator no puede ser null");
+        }
+
+        // Creamos una copia para no modificar la lista original
         ListaEnlazada<T> resultado = new ListaEnlazada<>();
 
         Nodo<T> actual = cabeza;
+
         while (actual != null) {
             resultado.agregar(actual.getDato());
             actual = actual.getSiguiente();
         }
 
-        if (resultado.cabeza == null) return resultado;
-
+        // Selection Sort
         Nodo<T> i = resultado.cabeza;
+
         while (i != null) {
+
             Nodo<T> menor = i;
             Nodo<T> j = i.getSiguiente();
 
             while (j != null) {
+
                 if (comparator.compare(j.getDato(), menor.getDato()) < 0) {
                     menor = j;
                 }
+
                 j = j.getSiguiente();
             }
 
-            // swap
-            T aux = i.getDato();
-            i.setDato(menor.getDato());
-            menor.setDato(aux);
+            // Solo intercambiamos si encontramos otro nodo menor
+            if (menor != i) {
+                T aux = i.getDato();
+                i.setDato(menor.getDato());
+                menor.setDato(aux);
+            }
 
             i = i.getSiguiente();
         }
@@ -213,6 +262,7 @@ public class ListaEnlazada<T> implements TDALista<T> {
     @Override
     public int tamano() {
         int contador = 0;
+
         Nodo<T> actual = cabeza;
 
         while (actual != null) {
@@ -233,44 +283,35 @@ public class ListaEnlazada<T> implements TDALista<T> {
         cabeza = null;
     }
 
-    // Inserta 'elem' manteniendo el orden de la lista según el criterio
-    // que define 'comparator'. Asume que la lista YA está ordenada según <-
-    // ese mismo comparator antes de llamar a este método.
     public void insertarOrdenado(T elem, Comparator<T> comparator) {
 
-        // Validamos que no nos pasen un elemento null, porque no podríamos
-        // compararlo contra los demás nodos.
-        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
 
-        // Creamos el nuevo nodo que vamos a insertar en algún lugar de la lista.
+        if (comparator == null) {
+            throw new IllegalArgumentException("El comparator no puede ser null");
+        }
+
         Nodo<T> nuevo = new Nodo<>(elem);
 
-        // Caso 1: la lista está vacía, o el nuevo elemento debe ir ANTES
-        // que la cabeza actual (es decir, es "menor" según el comparator).
-        // En ambos casos el nuevo nodo pasa a ser la nueva cabeza.
-        if (cabeza == null || comparator.compare(elem, cabeza.getDato()) < 0) { // < / > /<= / >= DEPENDE DEL CRITERIO
-            nuevo.setSiguiente(cabeza); // el nuevo apunta a lo que era la cabeza
-            cabeza = nuevo;             // el nuevo pasa a ser la cabeza
-            return;                     // terminamos, ya insertamos
+        // Lista vacía o elemento menor que la cabeza
+        if (cabeza == null || comparator.compare(elem, cabeza.getDato()) < 0) {
+
+            nuevo.setSiguiente(cabeza);
+            cabeza = nuevo;
+
+            return;
         }
 
-        // Caso 2: recorremos la lista buscando el lugar donde insertar.
-        // 'actual' es el nodo desde el cual vamos mirando hacia adelante.
-        Nodo<T> actual = cabeza; // |1|->|2|->|3|->|4|->|5|->|6|
+        Nodo<T> actual = cabeza;
 
-        // Avanzamos mientras haya un siguiente nodo Y ese siguiente nodo
-        // sea "menor o igual" que el elemento a insertar (es decir, mientras
-        // el elemento todavía no deba insertarse antes de 'actual.getSiguiente()').
-        while (actual.getSiguiente() != null
-                && comparator.compare(actual.getSiguiente().getDato(), elem) <= 0) {
-            actual = actual.getSiguiente(); // seguimos avanzando
+        // Avanzamos hasta encontrar dónde insertar
+        while (actual.getSiguiente() != null && comparator.compare(actual.getSiguiente().getDato(), elem) <= 0) {
+            actual = actual.getSiguiente();
         }
 
-        // Al salir del while, 'actual' es el nodo justo ANTES de donde
-        // debe quedar el nuevo elemento (porque actual.getSiguiente() es
-        // null, o es mayor que elem).
-        nuevo.setSiguiente(actual.getSiguiente()); // el nuevo apunta a lo que seguía
-        actual.setSiguiente(nuevo);                // 'actual' ahora apunta al nuevo
+        nuevo.setSiguiente(actual.getSiguiente());
+        actual.setSiguiente(nuevo);
     }
 }
-

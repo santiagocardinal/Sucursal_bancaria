@@ -1,12 +1,8 @@
 package com.example.Caja_de_Herramientas.Pila;
 
 import java.util.NoSuchElementException;
-import java.util.Comparator;
-import java.util.function.Predicate;
-import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
-import com.example.Caja_de_Herramientas.Lista.Nodo;
-import com.example.Caja_de_Herramientas.Lista.TDALista;
 
+import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 
 public class Pila<T> extends ListaEnlazada<T> implements TDAPila<T> 
 {
@@ -24,6 +20,7 @@ public class Pila<T> extends ListaEnlazada<T> implements TDAPila<T>
         {
             throw new NoSuchElementException("la pila esta vacia");
         }
+
         return remover(0);
     }
 
@@ -34,49 +31,7 @@ public class Pila<T> extends ListaEnlazada<T> implements TDAPila<T>
         {
             throw new NoSuchElementException("la pila esta vacia");
         }
+
         return obtener(0);
-    }
-
-    //estos metodos son los metodos que se heredaron de TDALista
-    @Override
-    public boolean contiene(T elem) 
-    { 
-        return contiene(elem); 
-    }
-
-    @Override
-    public int indiceDe(T elem) 
-    { 
-        return indiceDe(elem); 
-    }
-
-    @Override
-    public T buscar(Predicate<T> criterio) 
-    { 
-        return buscar(criterio); 
-    }
-
-    @Override
-    public TDALista<T> ordenar(Comparator<T> comparator) 
-    { 
-        return ordenar(comparator); 
-    }
-
-    @Override
-    public int tamano() 
-    { 
-        return super.tamano(); 
-    }
-
-    @Override
-    public boolean esVacio() 
-    { 
-        return super.esVacio(); 
-    }
-
-    @Override
-    public void vaciar() 
-    { 
-        super.vaciar(); 
     }
 }

@@ -18,7 +18,6 @@ public class ColaPrioridad<T> implements TDACola<T>
         this.tamano = 0;
     }
 
-
     public boolean poneEnCola(T dato, int prioridad) 
     {
         if (dato == null) return false;
@@ -42,7 +41,9 @@ public class ColaPrioridad<T> implements TDACola<T>
 
         nuevo.setSiguiente(actual.getSiguiente());
         actual.setSiguiente(nuevo);
+
         tamano++;
+
         return true;
     }
 
@@ -50,6 +51,7 @@ public class ColaPrioridad<T> implements TDACola<T>
     public T frente() 
     {
         if (vacia()) throw new NoSuchElementException("Cola vacía");
+
         return frente.getDato();
     }
 
@@ -57,9 +59,17 @@ public class ColaPrioridad<T> implements TDACola<T>
     public T quitaDeCola() 
     {
         if (vacia()) throw new NoSuchElementException("Cola vacía");
+
         T dato = frente.getDato();
+
+        NodoPrioridad<T> eliminado = frente;
+
         frente = (NodoPrioridad<T>) frente.getSiguiente();
+
+        eliminado.setSiguiente(null);
+
         tamano--;
+
         return dato;
     }
 
@@ -104,12 +114,16 @@ public class ColaPrioridad<T> implements TDACola<T>
     public boolean contiene(T elem) 
     {
         if (elem == null) return false;
+
         Nodo<T> actual = frente;
+
         while (actual != null) 
         {
             if (actual.getDato().equals(elem)) return true;
+
             actual = actual.getSiguiente();
         }
+
         return false;
     }
 
@@ -117,37 +131,50 @@ public class ColaPrioridad<T> implements TDACola<T>
     public int indiceDe(T elem) 
     {
         if (elem == null) return -1;
+
         Nodo<T> actual = frente;
         int indice = 0;
+
         while (actual != null) 
         {
             if (actual.getDato().equals(elem)) return indice;
+
             actual = actual.getSiguiente();
             indice++;
         }
+
         return -1;
     }
 
     @Override
     public T obtener(int index) 
     {
-        if (index < 0) return null;
+        if (index < 0 || index >= tamano)
+        {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
         Nodo<T> actual = frente;
         int i = 0;
+
         while (actual != null) 
         {
             if (i == index) return actual.getDato();
+
             actual = actual.getSiguiente();
             i++;
         }
-        return null;
+
+        throw new IndexOutOfBoundsException("Índice: " + index);
     }
 
-    /*@Override
+    /*
+    @Override
     public void agregar(T elem) 
     {
         return poneEnCola(elem, 0);
-    }*/
+    }
+    */
 
     @Override
     public void agregar(int index, T elem) 
@@ -159,12 +186,16 @@ public class ColaPrioridad<T> implements TDACola<T>
     public T buscar(Predicate<T> criterio) 
     {
         if (criterio == null) return null;
+
         Nodo<T> actual = frente;
+
         while (actual != null) 
         {
             if (criterio.test(actual.getDato())) return actual.getDato();
+
             actual = actual.getSiguiente();
         }
+
         return null;
     }
 
@@ -172,21 +203,34 @@ public class ColaPrioridad<T> implements TDACola<T>
     public T quitar(T elemento) 
     {
         if (frente == null || elemento == null) return null;
+
         Nodo<T> actual = frente;
         Nodo<T> anterior = null;
+
         while (actual != null) 
         {
             if (actual.getDato().equals(elemento)) 
             {
-                if (anterior == null) frente = (NodoPrioridad<T>) actual.getSiguiente();
-                else anterior.setSiguiente(actual.getSiguiente());
+                if (anterior == null)
+                {
+                    frente = (NodoPrioridad<T>) actual.getSiguiente();
+                }
+                else
+                {
+                    anterior.setSiguiente(actual.getSiguiente());
+                }
+
                 actual.setSiguiente(null);
+
                 tamano--;
+
                 return actual.getDato();
             }
+
             anterior = actual;
             actual = actual.getSiguiente();
         }
+
         return null;
     }
 
@@ -199,19 +243,47 @@ public class ColaPrioridad<T> implements TDACola<T>
     //@Override
     public T quitar(int indice) 
     {
-        T elem = obtener(indice);
-        if (elem == null) return null;
-        return quitar(elem);
+        if (indice < 0 || indice >= tamano)
+        {
+            throw new IndexOutOfBoundsException("Índice: " + indice);
+        }
+
+        if (indice == 0)
+        {
+            return quitaDeCola();
+        }
+
+        Nodo<T> anterior = frente;
+        int i = 0;
+
+        while (i < indice - 1)
+        {
+            anterior = anterior.getSiguiente();
+            i++;
+        }
+
+        Nodo<T> eliminado = anterior.getSiguiente();
+
+        anterior.setSiguiente(eliminado.getSiguiente());
+
+        eliminado.setSiguiente(null);
+
+        tamano--;
+
+        return eliminado.getDato();
     }
 
     //@Override
     public boolean eliminar(int indice) 
     {
-        return quitar(indice) != null;
+        quitar(indice);
 
+        return true;
     }
-//==========================AUNQUE SEA UNA LISTA CON PRIORIDAD NO SE PUEDEN HACER LAS SIGUIENTES COSAS======================
-//ESTA EL METODO COMO PARA CUMPLIR CON LA IMPLEMNTACION PERO EN REALIDAD INSERVIBLE=========================================
+
+    //==========================AUNQUE SEA UNA LISTA CON PRIORIDAD NO SE PUEDEN HACER LAS SIGUIENTES COSAS======================
+    //ESTA EL METODO COMO PARA CUMPLIR CON LA IMPLEMNTACION PERO EN REALIDAD INSERVIBLE=========================================
+
     //@Override
     public TDALista<T> invertir() 
     {
@@ -236,31 +308,31 @@ public class ColaPrioridad<T> implements TDACola<T>
         throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
 
-
     @Override
-    public T remover(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remover'");
+    public T remover(int index) 
+    {
+        return quitar(index);
     }
 
-
     @Override
-    public boolean remover(T elem) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remover'");
+    public boolean remover(T elem) 
+    {
+        return eliminar(elem);
     }
 
-
     @Override
-    public TDALista<T> ordenar(Comparator<T> comparator) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ordenar'");
+    public TDALista<T> ordenar(Comparator<T> comparator) 
+    {
+        throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
 
-
+    // Agrega con prioridad 0
     @Override
-    public void agregar(T elem) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'agregar'");
+    public void agregar(T elem) 
+    {
+        if (!poneEnCola(elem, 0))
+        {
+            throw new IllegalArgumentException("No se permiten null");
+        }
     }
 }
