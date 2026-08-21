@@ -2,8 +2,6 @@ package com.Entidades;
 //src\main\java\com\example\Enums\EstadoProducto.java
 import com.example.Enums.EstadoProducto;
 
-import com.example.Enums.EstadoProducto;
-
 /**
  * Contrato común de todo producto bancario. Es interfaz (no clase
  * abstracta) porque así lo tenían dibujado: Cliente guarda una
