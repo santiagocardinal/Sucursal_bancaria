@@ -1,7 +1,7 @@
 package com.example.Caja_de_Herramientas.Cola;
 
 import com.example.Caja_de_Herramientas.Lista.TDALista;
-
+import com.example.Enums.NivelPrioridad;
 /**
  * Define un Tipo de Dato Abstracto (TDA) Cola genérica.
  *
@@ -16,16 +16,9 @@ import com.example.Caja_de_Herramientas.Lista.TDALista;
  *
  * @param <T> el tipo de los elementos almacenados en la cola
  */
-public interface TDACola<T> extends TDALista<T> {
+public interface TDAColaPrioridad<T> extends TDACola<T> {
 
-    /**
-     * Retorna el elemento ubicado al frente de la cola, sin removerlo.
-     *
-     * @return el elemento ubicado al frente de la cola
-     * @throws java.util.NoSuchElementException si la cola está vacía
-     */
-    T frente();
-
+    
     /**
      * Inserta un elemento al final de la cola.
      *
@@ -35,18 +28,8 @@ public interface TDACola<T> extends TDALista<T> {
      */
     boolean poneEnCola(T dato);
 
+    boolean poneEnCola(T dato, NivelPrioridad prioridad);
 
-    /**
-     * Remueve y retorna el elemento ubicado al frente de la cola.
-     *
-     * <p>Luego de la operación, el siguiente elemento, si existe,
-     * pasa a ocupar el nuevo frente.</p>
-     *
-     * @return el elemento removido del frente de la cola
-     * @throws java.util.NoSuchElementException si la cola está vacía
-     */
-    T quitaDeCola();
-
-
-    void anula();
 }
+    
+

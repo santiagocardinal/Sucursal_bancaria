@@ -25,6 +25,7 @@ public class Cola<T> extends ListaEnlazada<T> implements TDACola<T> {
         return true;
     }
 
+
     @Override
     public T quitaDeCola() {
         if (esVacio()) {

@@ -5,9 +5,10 @@ import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import com.example.Caja_de_Herramientas.Lista.TDALista;
+import com.example.Enums.NivelPrioridad;
 import com.example.Caja_de_Herramientas.Lista.Nodo;
 
-public class ColaPrioridad<T> implements TDACola<T> 
+public class ColaPrioridad<T> implements TDAColaPrioridad<T> 
 {
     private NodoPrioridad<T> frente;
     private int tamano;
@@ -18,30 +19,33 @@ public class ColaPrioridad<T> implements TDACola<T>
         this.tamano = 0;
     }
 
-    public boolean poneEnCola(T dato, int prioridad) 
+    @Override
+    public boolean poneEnCola(T dato, NivelPrioridad prioridad)
     {
         if (dato == null) return false;
 
-        NodoPrioridad<T> nuevo = new NodoPrioridad<>(dato, prioridad);
+        NodoPrioridad<T> nuevo = new NodoPrioridad<>(dato, prioridad.getValor());
 
-        if (frente == null || frente.getPrioridad() < prioridad) 
+        // Caso 1: cola vacía, o el nuevo tiene MÁS prioridad que el frente
+        // (menor getValor() = más urgente, según cómo armaste el enum)
+        if (frente == null || nuevo.getPrioridad() < frente.getPrioridad()) 
         {
-            nuevo.setSiguiente(frente); //el nuevo apunta al antiguo frente
-            frente = nuevo;             //el nuevo pasa a ser el prente
-            tamano++;                   
+            nuevo.setSiguiente(frente);
+            frente = nuevo;
+            tamano++;
             return true;
         }
 
-        Nodo<T> actual = frente; 
-
-        while (actual.getSiguiente() != null && ((NodoPrioridad<T>) actual.getSiguiente()).getPrioridad() >= prioridad) 
+        // Caso 2: recorrer buscando el lugar correcto.
+        NodoPrioridad<T> actual = frente;
+        while (actual.getSiguiente() != null &&
+               ((NodoPrioridad<T>) actual.getSiguiente()).getPrioridad() <= nuevo.getPrioridad()) 
         {
-            actual = actual.getSiguiente();
+            actual = (NodoPrioridad<T>) actual.getSiguiente();
         }
 
         nuevo.setSiguiente(actual.getSiguiente());
         actual.setSiguiente(nuevo);
-
         tamano++;
 
         return true;
@@ -51,7 +55,6 @@ public class ColaPrioridad<T> implements TDACola<T>
     public T frente() 
     {
         if (vacia()) throw new NoSuchElementException("Cola vacía");
-
         return frente.getDato();
     }
 
@@ -61,13 +64,9 @@ public class ColaPrioridad<T> implements TDACola<T>
         if (vacia()) throw new NoSuchElementException("Cola vacía");
 
         T dato = frente.getDato();
-
         NodoPrioridad<T> eliminado = frente;
-
         frente = (NodoPrioridad<T>) frente.getSiguiente();
-
         eliminado.setSiguiente(null);
-
         tamano--;
 
         return dato;
@@ -76,10 +75,9 @@ public class ColaPrioridad<T> implements TDACola<T>
     @Override
     public boolean poneEnCola(T dato) 
     {
-        return poneEnCola(dato, 0); //prioridad default 0
+        return poneEnCola(dato, NivelPrioridad.NORMAL);
     }
 
-    //@Override
     public boolean vacia() 
     {
         return frente == null;
@@ -116,14 +114,11 @@ public class ColaPrioridad<T> implements TDACola<T>
         if (elem == null) return false;
 
         Nodo<T> actual = frente;
-
         while (actual != null) 
         {
             if (actual.getDato().equals(elem)) return true;
-
             actual = actual.getSiguiente();
         }
-
         return false;
     }
 
@@ -134,15 +129,12 @@ public class ColaPrioridad<T> implements TDACola<T>
 
         Nodo<T> actual = frente;
         int indice = 0;
-
         while (actual != null) 
         {
             if (actual.getDato().equals(elem)) return indice;
-
             actual = actual.getSiguiente();
             indice++;
         }
-
         return -1;
     }
 
@@ -156,30 +148,14 @@ public class ColaPrioridad<T> implements TDACola<T>
 
         Nodo<T> actual = frente;
         int i = 0;
-
         while (actual != null) 
         {
             if (i == index) return actual.getDato();
-
             actual = actual.getSiguiente();
             i++;
         }
 
         throw new IndexOutOfBoundsException("Índice: " + index);
-    }
-
-    /*
-    @Override
-    public void agregar(T elem) 
-    {
-        return poneEnCola(elem, 0);
-    }
-    */
-
-    @Override
-    public void agregar(int index, T elem) 
-    {
-        throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
 
     @Override
@@ -188,18 +164,14 @@ public class ColaPrioridad<T> implements TDACola<T>
         if (criterio == null) return null;
 
         Nodo<T> actual = frente;
-
         while (actual != null) 
         {
             if (criterio.test(actual.getDato())) return actual.getDato();
-
             actual = actual.getSiguiente();
         }
-
         return null;
     }
 
-    //@Override
     public T quitar(T elemento) 
     {
         if (frente == null || elemento == null) return null;
@@ -221,9 +193,7 @@ public class ColaPrioridad<T> implements TDACola<T>
                 }
 
                 actual.setSiguiente(null);
-
                 tamano--;
-
                 return actual.getDato();
             }
 
@@ -234,13 +204,11 @@ public class ColaPrioridad<T> implements TDACola<T>
         return null;
     }
 
-    //@Override
     public boolean eliminar(T elemento) 
     {
         return quitar(elemento) != null;
     }
 
-    //@Override
     public T quitar(int indice) 
     {
         if (indice < 0 || indice >= tamano)
@@ -255,7 +223,6 @@ public class ColaPrioridad<T> implements TDACola<T>
 
         Nodo<T> anterior = frente;
         int i = 0;
-
         while (i < indice - 1)
         {
             anterior = anterior.getSiguiente();
@@ -263,49 +230,11 @@ public class ColaPrioridad<T> implements TDACola<T>
         }
 
         Nodo<T> eliminado = anterior.getSiguiente();
-
         anterior.setSiguiente(eliminado.getSiguiente());
-
         eliminado.setSiguiente(null);
-
         tamano--;
 
         return eliminado.getDato();
-    }
-
-    //@Override
-    public boolean eliminar(int indice) 
-    {
-        quitar(indice);
-
-        return true;
-    }
-
-    //==========================AUNQUE SEA UNA LISTA CON PRIORIDAD NO SE PUEDEN HACER LAS SIGUIENTES COSAS======================
-    //ESTA EL METODO COMO PARA CUMPLIR CON LA IMPLEMNTACION PERO EN REALIDAD INSERVIBLE=========================================
-
-    //@Override
-    public TDALista<T> invertir() 
-    {
-        throw new UnsupportedOperationException("No aplica en cola con prioridad");
-    }
-
-    //@Override
-    public TDALista<T> ordenarTotal(Comparator<T> comparator) 
-    {
-        throw new UnsupportedOperationException("No aplica en cola con prioridad");
-    }
-
-    //@Override
-    public TDALista<T> concatenar(TDALista<T> otra) 
-    {
-        throw new UnsupportedOperationException("No aplica en cola con prioridad");
-    }
-
-    //@Override
-    public TDALista<T> intercalar(TDALista<T> otra) 
-    {
-        throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
 
     @Override
@@ -320,19 +249,25 @@ public class ColaPrioridad<T> implements TDACola<T>
         return eliminar(elem);
     }
 
+    // Agrega con prioridad NORMAL por defecto
     @Override
-    public TDALista<T> ordenar(Comparator<T> comparator) 
+    public void agregar(T elem) 
+    {
+        if (!poneEnCola(elem, NivelPrioridad.NORMAL))
+        {
+            throw new IllegalArgumentException("No se permiten null");
+        }
+    }
+
+    @Override
+    public void agregar(int index, T elem) 
     {
         throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
 
-    // Agrega con prioridad 0
     @Override
-    public void agregar(T elem) 
+    public TDALista<T> ordenar(Comparator<T> comparator) 
     {
-        if (!poneEnCola(elem, 0))
-        {
-            throw new IllegalArgumentException("No se permiten null");
-        }
+        throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
 }
