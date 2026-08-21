@@ -16,7 +16,8 @@ import com.example.Enums.EstadoProducto;
  * traduzco a getId()/getEstado(), y cada clase concreta guarda sus propios
  * campos privados para responderlos.
  */
-public interface IProducto {
+public interface IProducto 
+{
 
     String getId();
 
