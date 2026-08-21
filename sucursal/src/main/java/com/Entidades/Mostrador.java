@@ -42,11 +42,6 @@ public class Mostrador
         return id;
     }
 
-    public boolean getLibre()
-    {
-        return libre;
-    }
-
     public Sector getSector()
     {
         return sector;
