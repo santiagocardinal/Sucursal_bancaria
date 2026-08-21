@@ -17,6 +17,9 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public void agregar(T elem) {
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
         NodoDoble<T> nuevo = new NodoDoble<>(elem);
 
         if (cabeza == null) {
@@ -38,8 +41,14 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public void agregar(int index, T elem) {
-        if (index < 0 || index > tamano) throw new IndexOutOfBoundsException("Índice: " + index);
-        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+
+        if (index < 0 || index > tamano) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
 
         if (index == tamano) {
             agregar(elem); // caso "insertar al final", ya resuelto arriba
@@ -49,18 +58,15 @@ public class ListaCircularDoble<T> implements TDALista<T> {
         NodoDoble<T> nuevo = new NodoDoble<>(elem);
 
         if (index == 0) {
-            if (cabeza == null) {
-                cabeza = nuevo;
-                cola = nuevo;
-                nuevo.setSiguiente(nuevo);
-                nuevo.setAnterior(nuevo);
-            } else {
-                nuevo.setSiguiente(cabeza);
-                nuevo.setAnterior(cola);
-                cabeza.setAnterior(nuevo);
-                cola.setSiguiente(nuevo);
-                cabeza = nuevo;
-            }
+
+            nuevo.setSiguiente(cabeza);
+            nuevo.setAnterior(cola);
+
+            cabeza.setAnterior(nuevo);
+            cola.setSiguiente(nuevo);
+
+            cabeza = nuevo;
+
         } else {
             // ubicamos el nodo que hoy ocupa 'index': el nuevo se inserta justo antes
             NodoDoble<T> actual = cabeza;
@@ -68,7 +74,8 @@ public class ListaCircularDoble<T> implements TDALista<T> {
                 actual = (NodoDoble<T>) actual.getSiguiente();
             }
 
-            NodoDoble<T> anteriorNodo = (NodoDoble<T>) actual.getAnterior();
+            NodoDoble<T> anteriorNodo =
+                    (NodoDoble<T>) actual.getAnterior();
 
             nuevo.setSiguiente(actual);
             nuevo.setAnterior(anteriorNodo);
@@ -81,7 +88,11 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public T obtener(int index) {
-        if (index < 0 || index >= tamano) return null;
+
+        if (index < 0 || index >= tamano) {
+
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
 
         NodoDoble<T> actual = cabeza;
         for (int i = 0; i < index; i++) {
@@ -102,15 +113,26 @@ public class ListaCircularDoble<T> implements TDALista<T> {
             cabeza = null;
             cola = null;
         } else {
-            NodoDoble<T> anteriorNodo = (NodoDoble<T>) nodo.getAnterior();
-            NodoDoble<T> siguienteNodo = (NodoDoble<T>) nodo.getSiguiente();
+
+            NodoDoble<T> anteriorNodo =
+                    (NodoDoble<T>) nodo.getAnterior();
+
+            NodoDoble<T> siguienteNodo =
+                    (NodoDoble<T>) nodo.getSiguiente();
 
             anteriorNodo.setSiguiente(siguienteNodo);
             siguienteNodo.setAnterior(anteriorNodo);
 
-            if (nodo == cabeza) cabeza = siguienteNodo;
-            if (nodo == cola) cola = anteriorNodo;
+            if (nodo == cabeza) {
+                cabeza = siguienteNodo;
+            }
+
+            if (nodo == cola) {
+                cola = anteriorNodo;
+            }
         }
+        nodo.setSiguiente(null);
+        nodo.setAnterior(null);
 
         tamano--;
         return dato;
@@ -132,7 +154,10 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public boolean remover(T elem) {
-        if (cabeza == null || elem == null) return false;
+
+        if (cabeza == null || elem == null) {
+            return false;
+        }
 
         NodoDoble<T> actual = cabeza;
         for (int i = 0; i < tamano; i++) {
@@ -152,11 +177,18 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public int indiceDe(T elem) {
-        if (elem == null || cabeza == null) return -1;
+
+        if (elem == null || cabeza == null) {
+            return -1;
+        }
 
         NodoDoble<T> actual = cabeza;
         for (int i = 0; i < tamano; i++) {
-            if (actual.getDato().equals(elem)) return i;
+
+            if (actual.getDato().equals(elem)) {
+                return i;
+            }
+
             actual = (NodoDoble<T>) actual.getSiguiente();
         }
         return -1;
@@ -164,11 +196,26 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public T buscar(Predicate<T> criterio) {
-        if (criterio == null || cabeza == null) return null;
+
+        if (criterio == null) {
+
+            throw new IllegalArgumentException(
+                "El criterio no puede ser null"
+            );
+        }
+
+        if (cabeza == null) {
+            return null;
+        }
 
         NodoDoble<T> actual = cabeza;
         for (int i = 0; i < tamano; i++) {
-            if (criterio.test(actual.getDato())) return actual.getDato();
+
+            if (criterio.test(actual.getDato())) {
+
+                return actual.getDato();
+            }
+
             actual = (NodoDoble<T>) actual.getSiguiente();
         }
         return null;
@@ -176,7 +223,16 @@ public class ListaCircularDoble<T> implements TDALista<T> {
 
     @Override
     public TDALista<T> ordenar(Comparator<T> comparator) {
-        ListaCircularDoble<T> resultado = new ListaCircularDoble<>();
+
+        if (comparator == null) {
+
+            throw new IllegalArgumentException(
+                "El comparator no puede ser null"
+            );
+        }
+
+        ListaCircularDoble<T> resultado =
+                new ListaCircularDoble<>();
 
         NodoDoble<T> actual = cabeza;
         for (int i = 0; i < tamano; i++) {
@@ -184,23 +240,35 @@ public class ListaCircularDoble<T> implements TDALista<T> {
             actual = (NodoDoble<T>) actual.getSiguiente();
         }
 
-        if (resultado.cabeza == null) return resultado;
+        if (resultado.cabeza == null) {
+            return resultado;
+        }
 
         NodoDoble<T> i = resultado.cabeza;
         for (int pos = 0; pos < resultado.tamano; pos++) {
             NodoDoble<T> menor = i;
-            NodoDoble<T> j = (NodoDoble<T>) i.getSiguiente();
+
+            NodoDoble<T> j =
+                    (NodoDoble<T>) i.getSiguiente();
 
             for (int k = pos + 1; k < resultado.tamano; k++) {
-                if (comparator.compare(j.getDato(), menor.getDato()) < 0) {
+
+                if (comparator.compare(
+                        j.getDato(),
+                        menor.getDato()) < 0) {
+
                     menor = j;
                 }
                 j = (NodoDoble<T>) j.getSiguiente();
             }
 
-            T aux = i.getDato();
-            i.setDato(menor.getDato());
-            menor.setDato(aux);
+            if (menor != i) {
+
+                T aux = i.getDato();
+
+                i.setDato(menor.getDato());
+                menor.setDato(aux);
+            }
 
             i = (NodoDoble<T>) i.getSiguiente();
         }

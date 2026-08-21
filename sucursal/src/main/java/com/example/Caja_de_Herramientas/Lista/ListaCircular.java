@@ -17,6 +17,10 @@ public class ListaCircular<T> implements TDALista<T> {
 
     @Override
     public void agregar(T elem) {
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
+
         Nodo<T> nuevo = new Nodo<>(elem);
 
         if (cabeza == null) {
@@ -28,16 +32,20 @@ public class ListaCircular<T> implements TDALista<T> {
         } else {
             cola.setSiguiente(nuevo);   // el último actual pasa a apuntar al nuevo
             nuevo.setSiguiente(cabeza); // el nuevo cierra el círculo apuntando a la cabeza
-            cola = nuevo;                // el nuevo pasa a ser la cola
+            cola = nuevo;               // el nuevo pasa a ser la cola
         }
-
         tamano++;
     }
 
     @Override
     public void agregar(int index, T elem) {
-        if (index < 0 || index > tamano) throw new IndexOutOfBoundsException("Índice: " + index);
-        if (elem == null) throw new IllegalArgumentException("No se permiten null");
+        if (index < 0 || index > tamano) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
 
         if (index == tamano) {
             agregar(elem); // caso "insertar al final", ya resuelto arriba
@@ -70,7 +78,12 @@ public class ListaCircular<T> implements TDALista<T> {
 
     @Override
     public T obtener(int index) {
-        if (index < 0 || index >= tamano) return null; // mismo criterio que en las otras listas
+
+        if (index < 0 || index >= tamano) {
+
+            throw new IndexOutOfBoundsException("Índice: " + index);
+
+        }
 
         Nodo<T> actual = cabeza;
         for (int i = 0; i < index; i++) {
@@ -88,7 +101,9 @@ public class ListaCircular<T> implements TDALista<T> {
         T dato;
 
         if (index == 0) {
-            dato = cabeza.getDato();
+
+            Nodo<T> nodoAEliminar = cabeza;
+            dato = nodoAEliminar.getDato();
 
             if (tamano == 1) {
                 // único elemento: la lista queda vacía
@@ -98,6 +113,9 @@ public class ListaCircular<T> implements TDALista<T> {
                 cabeza = cabeza.getSiguiente();
                 cola.setSiguiente(cabeza); // la cola tiene que apuntar a la nueva cabeza
             }
+            // desvinculamos el nodo eliminado
+            nodoAEliminar.setSiguiente(null);
+
         } else {
             Nodo<T> anterior = cabeza;
             for (int i = 0; i < index - 1; i++) {
@@ -112,6 +130,9 @@ public class ListaCircular<T> implements TDALista<T> {
             if (nodoAEliminar == cola) {
                 cola = anterior; // si removimos la cola, el anterior pasa a serlo
             }
+            // desvinculamos el nodo eliminado
+            nodoAEliminar.setSiguiente(null);
+
         }
 
         tamano--;
@@ -148,7 +169,12 @@ public class ListaCircular<T> implements TDALista<T> {
 
     @Override
     public T buscar(Predicate<T> criterio) {
-        if (criterio == null || cabeza == null) return null;
+
+        if (criterio == null) {
+            throw new IllegalArgumentException("El criterio no puede ser null");
+        }
+
+        if (cabeza == null) return null;
 
         Nodo<T> actual = cabeza;
         for (int i = 0; i < tamano; i++) {
@@ -160,6 +186,9 @@ public class ListaCircular<T> implements TDALista<T> {
 
     @Override
     public TDALista<T> ordenar(Comparator<T> comparator) {
+        if (comparator == null) {
+            throw new IllegalArgumentException("El comparator no puede ser null");
+        }
         ListaCircular<T> resultado = new ListaCircular<>();
 
         Nodo<T> actual = cabeza;
@@ -181,11 +210,13 @@ public class ListaCircular<T> implements TDALista<T> {
                 }
                 j = j.getSiguiente();
             }
+            if (menor != i) {
 
-            T aux = i.getDato();
-            i.setDato(menor.getDato());
-            menor.setDato(aux);
+                T aux = i.getDato();
+                i.setDato(menor.getDato());
+                menor.setDato(aux);
 
+            }
             i = i.getSiguiente();
         }
 
