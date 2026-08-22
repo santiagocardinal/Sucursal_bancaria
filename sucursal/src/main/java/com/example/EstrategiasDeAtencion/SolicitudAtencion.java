@@ -19,6 +19,10 @@ public class SolicitudAtencion {
     }
 
     public TipoInteraccion getTipoInteraccion() {
+        if(tipoInteraccion == null)
+        {
+            throw new IllegalArgumentException("El tipo de interacción no puede ser null");
+        }
         return tipoInteraccion;
     }
 

@@ -2,6 +2,8 @@ package com.example.EstrategiasDeAtencion;
 
 import com.Entidades.Cliente;
 import com.Entidades.IProducto;
+import com.Entidades.Sucursal;
+import com.Entidades.Interaccion;
 import com.example.Enums.EstadoProducto;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
@@ -44,7 +46,7 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
             return;
         }
 
-        Interaccion interaccion = new Interaccion(generarId(), TipoInteraccion.CONSULTA);
+        Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
     }
 
@@ -58,7 +60,7 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
 
         producto.modificarEstado(EstadoProducto.CANCELADO);
         
-        Interaccion interaccion = new Interaccion(generarId(), TipoInteraccion.BAJA_PRODUCTO);
+        Interaccion interaccion = new Interaccion(TipoInteraccion.BAJA_PRODUCTO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
 
         Documento documento = new Documento(generarId(), TipoDocumento.COMPROBANTE);
@@ -72,8 +74,8 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
         if (producto == null) {
             return;
         }
-
-        Interaccion interaccion = new Interaccion(generarId(), TipoInteraccion.MODIFICACION);
+        producto.modificarEstado(EstadoProducto.ACTIVO);
+        Interaccion interaccion = new Interaccion(TipoInteraccion.MODIFICACION, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
     }
 
@@ -89,7 +91,6 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
                 return producto;
             }
         }
-
         return null;
     }
 

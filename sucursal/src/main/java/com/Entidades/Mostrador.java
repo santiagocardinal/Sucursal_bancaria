@@ -1,5 +1,7 @@
 package com.Entidades;
 
+import com.example.EstrategiasDeAtencion.IEstrategiaAtencion;
+
 public class Mostrador 
 {
     private String id;
@@ -32,7 +34,7 @@ public class Mostrador
             this.libre = false;                 //el mostrador pasa a estar ocupado ahora
             if (estrategiaAtencion != null) 
             {
-                estrategiaAtencion.atender(cliente);    //se elige una estrategia para saber como atender al cliente
+                estrategiaAtencion.atender(cliente, cliente.getSolicitudActual());    //se elige una estrategia para saber como atender al cliente
             }
         }
     } 
