@@ -1,8 +1,11 @@
 package com.Entidades;
 
+import java.util.Objects;
+
 import com.example.Caja_de_Herramientas.Lista.ListaArray;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Pila.Pila;
+import com.example.Enums.NivelPrioridad;
 
 public class Sucursal {
     private String id; 
@@ -11,7 +14,18 @@ public class Sucursal {
     private CopiaDocumentos copiaDocumentos;
     private ListaEnlazada<Cliente> clientesTotales;
 
+    public Sucursal(String id) {
+    this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    this.sectores = new ListaArray<>();
+    this.clientesTotales = new ListaEnlazada<>();
+    this.copiaDocumentos = new CopiaDocumentos();
+    this.historialInteracciones = new HistorialInteracciones();
+}
+
     public void agregarSector(Sector sector){
+        if (sector == null) {
+            throw new IllegalArgumentException("El sector no puede ser null");
+        }
         sectores.agregar(sector);
     }
     
@@ -31,7 +45,7 @@ public class Sucursal {
             throw new IllegalArgumentException("El cliente no existe");
         }
 
-        historialInteracciones.obtenerPorCliente(cliente);
+        return historialInteracciones.obtenerPorCliente(cliente.getCi());
     } 
 
     public Pila<Interaccion> ObtenerDocumentosCliente(String ci){
@@ -41,11 +55,10 @@ public class Sucursal {
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no existe");
         }
-
-        historialInteracciones.obtenerPorCliente(cliente);
+        return copiaDocumentos.obtenerPorCliente(cliente.getCi());
     }  
 
-    public void registrarClienteEnSector(Cliente cliente, Sector sector){
+    public void registrarClienteEnSector(Cliente cliente, Sector sector, NivelPrioridad prioridad){
 
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no puede ser null");
@@ -55,12 +68,16 @@ public class Sucursal {
             throw new IllegalArgumentException("El sector no puede ser null");
         }
 
+        if (prioridad == null) {
+            throw new IllegalArgumentException("La prioridad no puede ser null");
+        }
+
         if (!sectores.contiene(sector)) {
             throw new IllegalArgumentException("El sector no esta registrado en la sucursal");
         }
 
         clientesTotales.agregar(cliente);
-        sector.agregarCliente(cliente);
+        sector.recibirCliente(cliente, prioridad);
     }
 
 }

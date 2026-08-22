@@ -89,11 +89,7 @@ public class Sector
             return false;
         }
         Cliente cliente = colaEspera.quitaDeCola(); 
-        return mostradorLibre.atender(cliente);
+        mostradorLibre.atender(cliente);
+        return true; //si llegamos hasta aca, asumimos que se atendió
     }  
-
-    public void agregarCliente(Cliente cliente){
-        colaEspera.agregar(cliente);
-    }
-
 }
