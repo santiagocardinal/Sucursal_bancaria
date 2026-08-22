@@ -7,5 +7,6 @@ public enum TipoDocumento {
     CONTRATO,
     PAGARE,
     GARANTIA,
-    OTRO
+    OTRO, 
+    COMPROBANTE_BAJA
 }
