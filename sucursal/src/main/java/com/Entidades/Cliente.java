@@ -53,6 +53,11 @@ public class Cliente
 
     public boolean quitarProducto(String id){
         IProducto producto = obtenerProducto(id);
+        
+        if (producto == null) {
+            return false;
+        }
+        
         return productos.remover(producto);
     }
 }
