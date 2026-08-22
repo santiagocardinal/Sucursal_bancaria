@@ -1,8 +1,9 @@
 package com.example.EstrategiasDeAtencion;
 
 import com.Entidades.Cliente;
-import com.Entidades.Cuenta;
 import com.Entidades.IProducto;
+import com.Entidades.Sucursal;
+import com.Entidades.Interaccion;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
 
@@ -47,7 +48,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
 
         prestamo.proximaCuota();
 
-        Interaccion interaccion = new Interaccion(generarId(), TipoInteraccion.CONSULTA);
+        Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
     }
 
@@ -61,7 +62,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         
         prestamo.pagarCuota(monto);
 
-        Interaccion interaccion = new Interaccion(generarId(),TipoInteraccion.PAGO);
+        Interaccion interaccion = new Interaccion(TipoInteraccion.PAGO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
 
         Documento comprobante = new Documento(generarId(),TipoDocumento.COMPROBANTE);
@@ -73,7 +74,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         Prestamo prestamo = new Prestamo(monto,10,12,0);
         cliente.agregarProducto(prestamo);
 
-        Interaccion interaccion = new Interaccion(generarId(), TipoInteraccion.ALTA_PRODUCTO);
+        Interaccion interaccion = new Interaccion(TipoInteraccion.ALTA_PRODUCTO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
     }
      

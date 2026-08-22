@@ -1,5 +1,7 @@
 package com.Entidades;
 
+import com.example.EstrategiasDeAtencion.IEstrategiaAtencion;
+
 public class Mostrador 
 {
     private String id;
