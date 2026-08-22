@@ -56,7 +56,7 @@ public class Sector
         }
     }
 
-    public Mostrador buscarMostradorLibre()
+    private Mostrador buscarMostradorLibre()
     {
         return mostradores.buscar(m -> m.estaLibre());
     }
@@ -91,4 +91,9 @@ public class Sector
         Cliente cliente = colaEspera.quitaDeCola(); 
         return mostradorLibre.atender(cliente);
     }  
+
+    public void agregarCliente(Cliente cliente){
+        colaEspera.agregar(cliente);
+    }
+
 }
