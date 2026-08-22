@@ -4,14 +4,29 @@ import java.util.Objects;
 
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 
-public class Cliente implements Comparable<Cliente> {
-    
+public class Cliente 
+{
     private final String ci;
     private ListaEnlazada<IProducto> productos;
     private int numeroTurno;
 
-    public Cliente(String ci){
-        this.ci = Objects.requireNonNull(ci, "Ci:");
+    public Cliente(String ci)
+    {
+        this.ci = Objects.requireNonNull(ci, "El ci no puede ser nulo");
+        this.productos = new ListaEnlazada<>();
+    }
+
+    public String getCi()
+    {
+        return ci;
+    }
+
+    public int getNumeroTurno() {
+        return numeroTurno;
+    }
+
+    public void setNumeroTurno(int numeroTurno){
+        this.numeroTurno = numeroTurno;
     }
 
     public void agregarProducto(IProducto producto){
@@ -30,19 +45,4 @@ public class Cliente implements Comparable<Cliente> {
         IProducto producto = obtenerProducto(id);
         return productos.remover(producto);
     }
-
-    public void setNumeroTurno(int numeroTurno){
-        this.numeroTurno = numeroTurno;
-    }
-
-    public int getNumeroTurno() {
-        return numeroTurno;
-    }
-
-    @Override
-    public int compareTo(Cliente otroCliente) {
-        return Integer.compare(numeroTurno, otroCliente.getNumeroTurno());
-    }
-
-
 }

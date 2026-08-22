@@ -35,7 +35,7 @@ public class Sector
         {
             throw new IllegalArgumentException("el cliente no puede ser nulo");
         }
-        cliente.setContadorTurnos(contadorTurnos);
+        cliente.setNumeroTurno(contadorTurnos);
         contadorTurnos++;
     }
 
