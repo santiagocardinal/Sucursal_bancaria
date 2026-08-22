@@ -1,29 +1,24 @@
 package com.Entidades;
 
+import java.util.Objects;
+
 import com.example.Enums.TipoInteraccion;
 
 public class Interaccion {
-    private String id;
-    private TipoInteraccion tipo;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+    private final TipoInteraccion tipo;
+    private final String clienteId;
 
     public TipoInteraccion getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoInteraccion tipo) {
-        this.tipo = tipo;
+    public String getClienteId()
+    {
+        return clienteId;
     }
 
-    public Interaccion(String id, TipoInteraccion tipo) {
-        this.id = id;
-        this.tipo = tipo;
+    public Interaccion(TipoInteraccion tipo, String clienteId) {
+        this.tipo = Objects.requireNonNull(tipo, "El tipo no puede ser nulo");
+        this.clienteId = Objects.requireNonNull(clienteId, "El clienteId no puede ser nulo");
     }
 }
