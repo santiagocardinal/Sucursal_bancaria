@@ -6,6 +6,7 @@ import com.example.Caja_de_Herramientas.Lista.ListaArray;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Pila.Pila;
 import com.example.Enums.NivelPrioridad;
+import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 
 public class Sucursal {
     private String id; 
@@ -58,7 +59,7 @@ public class Sucursal {
         return copiaDocumentos.obtenerPorCliente(cliente.getCi());
     }  
 
-    public void registrarClienteEnSector(Cliente cliente, Sector sector, NivelPrioridad prioridad){
+    public void registrarClienteEnSector(Cliente cliente, Sector sector, NivelPrioridad prioridad, SolicitudAtencion solicitud){
 
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no puede ser null");
@@ -71,13 +72,16 @@ public class Sucursal {
         if (prioridad == null) {
             throw new IllegalArgumentException("La prioridad no puede ser null");
         }
+        if (solicitud == null) {
+        throw new IllegalArgumentException("La solicitud no puede ser null");
+        }
 
         if (!sectores.contiene(sector)) {
             throw new IllegalArgumentException("El sector no esta registrado en la sucursal");
         }
 
         clientesTotales.agregar(cliente);
-        sector.recibirCliente(cliente, prioridad);
+        sector.recibirCliente(cliente, prioridad, solicitud);
     }
 
 }

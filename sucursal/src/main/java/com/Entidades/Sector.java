@@ -3,6 +3,7 @@ package com.Entidades;
 import com.example.Caja_de_Herramientas.Cola.ColaPrioridad;
 import com.example.Caja_de_Herramientas.Lista.ListaArray;
 import com.example.Enums.NivelPrioridad;
+import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 
 public class Sector 
 {
@@ -61,7 +62,7 @@ public class Sector
         return mostradores.buscar(m -> m.estaLibre());
     }
 
-    public void recibirCliente(Cliente cliente, NivelPrioridad prioridad)
+    public void recibirCliente(Cliente cliente, NivelPrioridad prioridad, SolicitudAtencion solicitud)
     {
         if (cliente == null)
         {
@@ -71,7 +72,11 @@ public class Sector
         {
             throw new IllegalArgumentException("la prioridad no puede ser nula");
         }
-
+        if (solicitud == null)
+    {
+        throw new IllegalArgumentException("la solicitud no puede ser nula");
+    }
+        cliente.setSolicitudActual(solicitud);
         asignarTurno(cliente);
         colaEspera.poneEnCola(cliente, prioridad);
     }
