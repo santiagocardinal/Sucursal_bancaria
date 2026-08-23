@@ -1,4 +1,4 @@
-package com.example.Caja_De_Herramientas.Pila;
+package com.example.Caja_de_Herramientas.Pila;
 
 import static org.junit.Assert.*;
 
@@ -152,5 +152,18 @@ public class PilaTest {
         Pila<Integer> pila = new Pila<>();
 
         pila.mete(null);
+    }
+
+    @Test
+    public void testAgregarHeredadoRompeLaInvarianteDePila() {
+        Pila<String> pila = new Pila<>();
+        pila.mete("A");
+        pila.mete("B");
+
+        pila.agregar("C"); // método heredado, inserta al FINAL, no es un mete()
+
+        // esto documenta el comportamiento actual (posiblemente indeseado):
+        // "C" queda en el fondo, no en el tope
+        assertEquals("B", pila.tope()); // el tope sigue siendo "B", no "C"
     }
 }

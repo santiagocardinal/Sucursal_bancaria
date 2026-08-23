@@ -1,7 +1,6 @@
 package com.example;
 
 import java.time.LocalDate;
-
 import com.Entidades.Cliente;
 import com.Entidades.ConteoInteraccion;
 import com.Entidades.Cuenta;
