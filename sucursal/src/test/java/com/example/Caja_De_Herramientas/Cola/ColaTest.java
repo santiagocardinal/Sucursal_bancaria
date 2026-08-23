@@ -1,10 +1,12 @@
-package com.example.Caja_de_Herramientas.Cola;
+package com.example.Caja_De_Herramientas.Cola;
 
 import static org.junit.Assert.*;
 
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
+
+import com.example.Caja_de_Herramientas.Cola.Cola;
 
 public class ColaTest {
 

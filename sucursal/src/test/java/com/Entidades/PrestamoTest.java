@@ -51,7 +51,9 @@ public class PrestamoTest {
             10
         );
 
-        prestamo.pagarCuota();
+        double cuota = prestamo.proximaCuota();
+
+        prestamo.pagarCuota(cuota);
 
         assertEquals(1, prestamo.getCuotasActual());
     }
@@ -66,9 +68,11 @@ public class PrestamoTest {
             10
         );
 
-        prestamo.pagarCuota();
-        prestamo.pagarCuota();
-        prestamo.pagarCuota();
+        double cuota = prestamo.proximaCuota();
+
+        prestamo.pagarCuota(cuota);
+        prestamo.pagarCuota(cuota);
+        prestamo.pagarCuota(cuota);
 
         assertEquals(3, prestamo.getCuotasActual());
     }
@@ -83,9 +87,11 @@ public class PrestamoTest {
             3
         );
 
-        prestamo.pagarCuota();
-        prestamo.pagarCuota();
-        prestamo.pagarCuota();
+        double cuota = prestamo.proximaCuota();
+
+        prestamo.pagarCuota(cuota);
+        prestamo.pagarCuota(cuota);
+        prestamo.pagarCuota(cuota);
 
         assertEquals(3, prestamo.getCuotasActual());
         assertEquals(
@@ -104,8 +110,10 @@ public class PrestamoTest {
             2
         );
 
-        prestamo.pagarCuota();
-        prestamo.pagarCuota();
+        double cuota = prestamo.proximaCuota();
+
+        prestamo.pagarCuota(cuota);
+        prestamo.pagarCuota(cuota);
 
         assertEquals(0, prestamo.proximaCuota(), 0.001);
     }
@@ -120,9 +128,9 @@ public class PrestamoTest {
             1
         );
 
-        prestamo.pagarCuota();
+        prestamo.pagarCuota(prestamo.proximaCuota());
 
-        prestamo.pagarCuota();
+        prestamo.pagarCuota(0);
     }
 
     @Test

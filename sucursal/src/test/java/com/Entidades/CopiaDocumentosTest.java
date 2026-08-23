@@ -2,6 +2,8 @@ package com.Entidades;
 
 import static org.junit.Assert.*;
 
+import java.time.LocalDate;
+
 import org.junit.Test;
 
 import com.example.Caja_de_Herramientas.Pila.Pila;
@@ -19,7 +21,9 @@ public class CopiaDocumentosTest {
         Documento documento = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         copiaDocumentos.registrarDocumento(documento);
@@ -50,19 +54,25 @@ public class CopiaDocumentosTest {
         Documento doc1 = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente1
+            cliente1,
+            LocalDate.now(),
+            null
         );
 
         Documento doc2 = new Documento(
             "DOC002",
             TipoDocumento.PAGARE,
-            cliente2
+            cliente2,
+            LocalDate.now(),
+            null
         );
 
         Documento doc3 = new Documento(
             "DOC003",
             TipoDocumento.CEDULA_IDENTIDAD,
-            cliente1
+            cliente1,
+            LocalDate.now(),
+            null
         );
 
         copiaDocumentos.registrarDocumento(doc1);
@@ -96,7 +106,9 @@ public class CopiaDocumentosTest {
         Documento documento = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente1
+            cliente1,
+            LocalDate.now(),
+            null
         );
 
         copiaDocumentos.registrarDocumento(documento);
@@ -125,19 +137,25 @@ public class CopiaDocumentosTest {
         Documento doc1 = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         Documento doc2 = new Documento(
             "DOC002",
             TipoDocumento.PAGARE,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         Documento doc3 = new Documento(
             "DOC003",
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         copiaDocumentos.registrarDocumento(doc1);
@@ -172,7 +190,9 @@ public class CopiaDocumentosTest {
         Documento documento = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         copiaDocumentos.registrarDocumento(documento);
@@ -203,13 +223,17 @@ public class CopiaDocumentosTest {
         Documento doc1 = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         Documento doc2 = new Documento(
             "DOC002",
             TipoDocumento.PAGARE,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         copiaDocumentos.registrarDocumento(doc1);

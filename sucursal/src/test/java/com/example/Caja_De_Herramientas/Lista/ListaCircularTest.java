@@ -1,8 +1,11 @@
-package com.example.Caja_de_Herramientas.Lista;
+package com.example.Caja_De_Herramientas.Lista;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import com.example.Caja_de_Herramientas.Lista.ListaCircular;
+import com.example.Caja_de_Herramientas.Lista.TDALista;
 
 public class ListaCircularTest {
 

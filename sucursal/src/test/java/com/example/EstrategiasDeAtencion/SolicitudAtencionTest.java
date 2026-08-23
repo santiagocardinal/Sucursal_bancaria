@@ -4,13 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Enums.TipoInteraccion;
 
 public class SolicitudAtencionTest {
 
     @Test
     public void testConstructorGuardaTipoIdYMontoParaPago() {
-        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.PAGO, "C123", 1500.75);
+        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.PAGO, "C123", 1500.75, new ListaEnlazada<>());
 
         assertEquals(TipoInteraccion.PAGO, solicitud.getTipoInteraccion());
         assertEquals("C123", solicitud.getIdProducto());
@@ -19,29 +20,29 @@ public class SolicitudAtencionTest {
 
     @Test
     public void testConstructorGuardaMontoParaAltaProducto() {
-        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.ALTA_PRODUCTO, "TC123", 2500.50);
+        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.ALTA_PRODUCTO, "TC123", 2500.50, new ListaEnlazada<>());
 
         assertEquals(2500.50, solicitud.getMonto(), 0.0);
     }
 
     @Test
     public void testConstructorPoneMontoEnCeroParaBajaProducto() {
-        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.BAJA_PRODUCTO, "TC123", 2500.50);
+        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.BAJA_PRODUCTO, "TC123", 2500.50, new ListaEnlazada<>());
 
         assertEquals(0.0, solicitud.getMonto(), 0.0);
     }
 
     @Test
     public void testConstructorPoneMontoEnCeroParaModificacion() {
-        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.MODIFICACION, "TC123", 2500.50);
+        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.MODIFICACION, "TC123", 2500.50, new ListaEnlazada<>());
 
         assertEquals(0.0, solicitud.getMonto(), 0.0);
     }
 
     @Test
     public void testConstructorPoneMontoEnCeroParaConsultaYOtros() {
-        SolicitudAtencion consulta = new SolicitudAtencion(TipoInteraccion.CONSULTA, "TC123", 2500.50);
-        SolicitudAtencion otros = new SolicitudAtencion(TipoInteraccion.OTROS, "TC123", 2500.50);
+        SolicitudAtencion consulta = new SolicitudAtencion(TipoInteraccion.CONSULTA, "TC123", 2500.50, new ListaEnlazada<>());
+        SolicitudAtencion otros = new SolicitudAtencion(TipoInteraccion.OTROS, "TC123", 2500.50, new ListaEnlazada<>());
 
         assertEquals(0.0, consulta.getMonto(), 0.0);
         assertEquals(0.0, otros.getMonto(), 0.0);
@@ -49,7 +50,7 @@ public class SolicitudAtencionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetTipoInteraccionLanzaExcepcionCuandoEsNull() {
-        SolicitudAtencion solicitud = new SolicitudAtencion(null, "TC123", 2500.50);
+        SolicitudAtencion solicitud = new SolicitudAtencion(null, "TC123", 2500.50, new ListaEnlazada<>());
 
         solicitud.getTipoInteraccion();
     }

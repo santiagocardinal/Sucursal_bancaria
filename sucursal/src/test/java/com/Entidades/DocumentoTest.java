@@ -2,6 +2,8 @@ package com.Entidades;
 
 import static org.junit.Assert.*;
 
+import java.time.LocalDate;
+
 import org.junit.Test;
 
 import com.example.Enums.TipoDocumento;
@@ -16,7 +18,9 @@ public class DocumentoTest {
         Documento documento = new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
 
         assertEquals("DOC001", documento.getId());
@@ -32,7 +36,9 @@ public class DocumentoTest {
         new Documento(
             null,
             TipoDocumento.CONTRATO,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
     }
 
@@ -44,7 +50,9 @@ public class DocumentoTest {
         new Documento(
             "DOC001",
             null,
-            cliente
+            cliente,
+            LocalDate.now(),
+            null
         );
     }
 
@@ -54,6 +62,8 @@ public class DocumentoTest {
         new Documento(
             "DOC001",
             TipoDocumento.CONTRATO,
+            null,
+            LocalDate.now(),
             null
         );
     }

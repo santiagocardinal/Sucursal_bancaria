@@ -49,8 +49,7 @@ public class ClienteTest {
     @Test
     public void testSetSolicitudActual() {
         Cliente cliente = new Cliente("12345678");
-        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.CONSULTA, "T1", 0);
-
+        SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.CONSULTA, "T1", 0, new ListaEnlazada<>());
         cliente.setSolicitudActual(solicitud);
 
         assertSame(solicitud, cliente.getSolicitudActual());
