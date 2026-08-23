@@ -62,7 +62,7 @@ public class Cliente
         return productos.remover(producto);
     }
 
-    //consulta
+    //consulta pedida en letra
 
     public ListaEnlazada<IProducto> obtenerProductosVencidosOCancelados() {
 

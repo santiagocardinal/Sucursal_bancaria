@@ -24,15 +24,15 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
         switch (solicitud.getTipoInteraccion()) {
 
             case CONSULTA:
-                consultar(cliente, solicitud.getIdProducto());
+                consultar(cliente, solicitud.getIdProducto(), mostradorId);
                 break;
 
             case PAGO:
-                pagar(cliente, solicitud.getIdProducto(), solicitud.getMonto());
+                pagar(cliente, solicitud.getIdProducto(), solicitud.getMonto(), mostradorId);
                 break;
 
             case ALTA_PRODUCTO:
-                altaCuenta(cliente, solicitud);
+                altaCuenta(cliente, solicitud, mostradorId);
                 break;
 
             default:
@@ -47,7 +47,7 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
         if (cuenta == null) {
             return;
         }
-        double saldo = cuenta.getSaldo();
+        //double saldo = cuenta.getSaldo(); posible extensión futura, por si se quiere mostrar el saldo que tiene esa cuenta bancaria
         Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
     }

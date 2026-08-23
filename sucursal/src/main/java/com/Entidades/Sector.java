@@ -98,7 +98,7 @@ public class Sector
         return true; //si llegamos hasta aca, asumimos que se atendió
     }  
 
-    //consulta
+    //consulta pedida en letra
 
     public int estimarPosicionEnCola(Cliente cliente) 
     {

@@ -38,7 +38,8 @@ public class Sucursal {
         copiaDocumentos.registrarDocumento(documento);
     }
 
-    public Pila<Interaccion> ObtenerHistorialCliente(String ci){
+    //consulta pedida en la letra
+    public Pila<Interaccion> obtenerHistorialCliente(String ci){
         
         Cliente cliente = clientesTotales.buscar(clienteActual -> clienteActual.getCi().equals(ci));
 
@@ -49,14 +50,15 @@ public class Sucursal {
         return historialInteracciones.obtenerPorCliente(cliente.getCi());
     } 
 
-    public Pila<Interaccion> ObtenerDocumentosCliente(String ci){
+    //consulta pedida en la letra
+    public Pila<Documento> obtenerDocumentosCliente(String ci){
 
         Cliente cliente = clientesTotales.buscar(clienteActual -> clienteActual.getCi().equals(ci));
         
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no existe");
         }
-        return copiaDocumentos.obtenerPorCliente(cliente.getCi());
+        return copiaDocumentos.obtenerPorCliente(cliente);
     }  
 
     public void registrarClienteEnSector(Cliente cliente, Sector sector, NivelPrioridad prioridad, SolicitudAtencion solicitud){

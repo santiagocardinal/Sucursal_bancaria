@@ -79,7 +79,7 @@ public class CopiaDocumentos {
         return documentos.tope();
     }
 
-    //consulta
+    //consulta pedida en la letra
     
     public Pila<Documento> obtenerVencidosPorCliente(Cliente cliente) 
     {

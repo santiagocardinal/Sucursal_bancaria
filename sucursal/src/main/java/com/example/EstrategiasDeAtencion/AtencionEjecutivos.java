@@ -23,15 +23,15 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
         switch (solicitud.getTipoInteraccion()) {
 
             case CONSULTA:
-                consultar(cliente, solicitud.getIdProducto());
+                consultar(cliente, solicitud.getIdProducto(), mostradorId);
                 break;
 
             case BAJA_PRODUCTO:
-                bajaProducto(cliente, solicitud.getIdProducto());
+                bajaProducto(cliente, solicitud.getIdProducto(), mostradorId);
                 break;
 
             case MODIFICACION:
-                modificarProducto(cliente, solicitud);
+                modificarProducto(cliente, solicitud, mostradorId);
                 break;
 
             default:

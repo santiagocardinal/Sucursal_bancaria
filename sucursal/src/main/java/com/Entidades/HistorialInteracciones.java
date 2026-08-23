@@ -47,7 +47,7 @@ public class HistorialInteracciones {
         return pilaResultado;
     }
 
-    //conteo
+    //consulta pedida en la letra
 
     public ListaEnlazada<ConteoInteraccion> contarPorTipo() 
     {

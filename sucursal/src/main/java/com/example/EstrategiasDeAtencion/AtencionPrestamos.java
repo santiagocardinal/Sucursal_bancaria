@@ -25,15 +25,15 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         switch (solicitud.getTipoInteraccion()) {
 
             case CONSULTA:
-                consultar(cliente, solicitud.getIdProducto());
+                consultar(cliente, solicitud.getIdProducto(), mostradorId);
                 break;
 
             case PAGO:
-                pagar(cliente, solicitud.getIdProducto(), solicitud.getMonto());
+                pagar(cliente, solicitud.getIdProducto(), solicitud.getMonto(), mostradorId);
                 break;
 
             case ALTA_PRODUCTO:
-                altaPrestamo(cliente, solicitud.getMonto());
+                altaPrestamo(cliente, solicitud, mostradorId);
                 break;
 
             default:
@@ -49,7 +49,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
             return;
         }
 
-        prestamo.proximaCuota();
+        //double proximoMonto = prestamo.proximaCuota(); posible extensión futura, por si se quiere mostrar el monto de la próxima cuota al cliente
 
         Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
@@ -63,8 +63,11 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
             return;
         }
         
-        prestamo.pagarCuota(monto);
-
+        try {
+            prestamo.pagarCuota(monto);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return;
+        }
         Interaccion interaccion = new Interaccion(TipoInteraccion.PAGO, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
 
@@ -86,7 +89,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
 
     private void altaPrestamo(Cliente cliente, SolicitudAtencion solicitud, String mostradorId) {
 
-        Prestamo prestamo = new Prestamo(solicitud.getMonto(), 10, 12, 0);
+        Prestamo prestamo = new Prestamo(generarId(), solicitud.getMonto(), 10, 12);
         cliente.agregarProducto(prestamo);
         registrarDocumentosPresentados(solicitud);
         Interaccion interaccion = new Interaccion(TipoInteraccion.ALTA_PRODUCTO, cliente.getCi(), mostradorId);

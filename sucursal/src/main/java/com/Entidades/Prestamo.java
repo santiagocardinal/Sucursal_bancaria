@@ -100,11 +100,18 @@ public class Prestamo implements IProducto {
         return montoConInteres / cuotasTotales;
     }
 
-    public void pagarCuota() {
+    public void pagarCuota(double montoPagado) 
+    {
 
         if (cuotasActual >= cuotasTotales) {
-            throw new IllegalStateException(
-                "El prestamo ya fue pagado completamente"
+            throw new IllegalStateException("El prestamo ya fue pagado completamente");
+        }
+
+        double cuotaEsperada = proximaCuota();
+
+        if (Math.abs(montoPagado - cuotaEsperada) > 0.01) {
+            throw new IllegalArgumentException(
+                "El monto pagado (" + montoPagado + ") no coincide con la cuota esperada (" + cuotaEsperada + ")"
             );
         }
 
