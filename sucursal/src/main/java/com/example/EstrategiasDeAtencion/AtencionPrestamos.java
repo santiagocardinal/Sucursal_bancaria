@@ -4,6 +4,9 @@ import com.Entidades.Cliente;
 import com.Entidades.IProducto;
 import com.Entidades.Sucursal;
 import com.Entidades.Interaccion;
+import com.Entidades.Documento;
+import com.Entidades.Prestamo;
+import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
 
@@ -65,15 +68,27 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         Interaccion interaccion = new Interaccion(TipoInteraccion.PAGO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
 
-        Documento comprobante = new Documento(generarId(),TipoDocumento.COMPROBANTE);
+        Documento comprobante = new Documento(generarId(),TipoDocumento.COMPROBANTE_PAGO, cliente, java.time.LocalDate.now(), null);
         sucursal.registrarDocumento(comprobante);
     }
 
-    private void altaPrestamo(Cliente cliente, double monto) {
+    private void registrarDocumentosPresentados(SolicitudAtencion solicitud) {
+        ListaEnlazada<Documento> documentos = solicitud.getDocumentosPresentados();
+        if (documentos == null) {
+            return;
+        }
+        int indice = 0;
+        while (indice < documentos.tamano()) {
+            sucursal.registrarDocumento(documentos.obtener(indice));
+            indice++;
+        }
+    }
 
-        Prestamo prestamo = new Prestamo(monto,10,12,0);
+    private void altaPrestamo(Cliente cliente, SolicitudAtencion solicitud) {
+
+        Prestamo prestamo = new Prestamo(solicitud.getMonto(), 10, 12, 0);
         cliente.agregarProducto(prestamo);
-
+        registrarDocumentosPresentados(solicitud);
         Interaccion interaccion = new Interaccion(TipoInteraccion.ALTA_PRODUCTO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
     }
@@ -89,7 +104,6 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
                 return prestamo;
             }
         }
-
         return null;
     }
     
