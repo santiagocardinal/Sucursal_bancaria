@@ -446,4 +446,25 @@ public class ListaEnlazadaTest {
 
         lista.insertarOrdenado(10, null);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAgregarNullLanzaExcepcion() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(null);
+    }
+
+    @Test
+    public void testAgregarDespuesDeRemoverUltimoElemento() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        lista.agregar(10);
+        lista.agregar(20);
+
+        lista.remover(1); // elimina el último, "20"
+        lista.agregar(30); // debería agregarse correctamente al nuevo final
+
+        assertEquals(2, lista.tamano());
+        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals(Integer.valueOf(30), lista.obtener(1));
+    }
 }
