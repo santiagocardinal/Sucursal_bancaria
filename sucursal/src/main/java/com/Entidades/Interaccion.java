@@ -7,7 +7,7 @@ import com.example.Enums.TipoInteraccion;
 public class Interaccion {
     private final TipoInteraccion tipo;
     private final String clienteId;
-    private final String mostradorId; //es la representación del empleado
+    private final String mostradorId; //es la representación del empleado 
 
     public TipoInteraccion getTipo() {
         return tipo;

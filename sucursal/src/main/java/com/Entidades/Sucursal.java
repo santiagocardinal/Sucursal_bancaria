@@ -21,11 +21,11 @@ public class Sucursal {
     this.clientesTotales = new ListaEnlazada<>();
     this.copiaDocumentos = new CopiaDocumentos();
     this.historialInteracciones = new HistorialInteracciones();
-}
+    }
 
     public void agregarSector(Sector sector){
         if (sector == null) {
-            throw new IllegalArgumentException("El sector no puede ser null");
+        throw new IllegalArgumentException("El sector no puede ser null");
         }
         sectores.agregar(sector);
     }

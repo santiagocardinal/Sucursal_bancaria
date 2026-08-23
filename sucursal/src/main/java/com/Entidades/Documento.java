@@ -42,10 +42,16 @@ public class Documento {
         return vigencia;
     }
 
-    public boolean estaVigente() {
+    public boolean estaVigente() { //O(1): solo compara fechas no recorre nada
+    
         if (vigencia == null) {
-            return true; 
+            return true;
         }
+        // LocalDate.now() obtiene la fecha actual.
+        // isAfter(vigencia) verifica si ya pasó la fecha de vencimiento.
+        // El "!" invierte el resultado, por lo que el documento sigue vigente
+        // hasta el mismo día de vencimiento inclusive.
         return !LocalDate.now().isAfter(vigencia);
     }
+    
 }

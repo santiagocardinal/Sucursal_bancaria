@@ -15,10 +15,12 @@ public class SolicitudAtencion {
         this.tipoInteraccion = tipoInteraccion;
         this.idProducto = idProducto;
         this.documentosPresentados = documentosPresentados;
-        
+      // El monto se usa en PAGO para abonar una cuota y en ALTA_PRODUCTO para indicar el monto inicial del nuevo producto.
         if (tipoInteraccion == TipoInteraccion.PAGO || tipoInteraccion == TipoInteraccion.ALTA_PRODUCTO) {
+           // Es uno de los dos tipos donde el monto es relevante. se guarda el valor que llegó por parámetro tal cual.
             this.monto = monto;        
         }else{
+            // Cualquier otro tipo de interacción, se ignora lo que hayan pasado en "monto" y se fuerza a 0.
             this.monto = 0;
         }
     }

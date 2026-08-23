@@ -11,11 +11,11 @@ public class Cliente
     private final String ci;
     private ListaEnlazada<IProducto> productos;
     private int numeroTurno;
-    private SolicitudAtencion solicitudActual;
+    private SolicitudAtencion solicitudActual; //<-
 
     public Cliente(String ci)
     {
-        this.ci = Objects.requireNonNull(ci, "El ci no puede ser nulo");
+        this.ci = Objects.requireNonNull(ci, "El ci no puede ser nulo"); //pide que siempre exista una cedula/identificador
         this.productos = new ListaEnlazada<>();
     }
 
