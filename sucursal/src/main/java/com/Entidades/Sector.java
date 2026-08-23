@@ -5,7 +5,7 @@ import com.example.Caja_de_Herramientas.Lista.ListaArray;
 import com.example.Enums.NivelPrioridad;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 
-public class Sector 
+public class Sector
 {
     private ListaArray<Mostrador> mostradores;
     private ColaPrioridad<Cliente> colaEspera;
@@ -30,9 +30,9 @@ public class Sector
         return contadorTurnos;
     }
 
-    private void asignarTurno(Cliente cliente) 
+    private void asignarTurno(Cliente cliente)
     {
-        if (cliente == null) 
+        if (cliente == null)
         {
             throw new IllegalArgumentException("el cliente no puede ser nulo");
         }
@@ -42,7 +42,7 @@ public class Sector
 
     public void agregarMostrador(Mostrador mostrador)
     {
-        if (mostrador == null) 
+        if (mostrador == null)
         {
             throw new IllegalArgumentException("el mostrador no puede ser nulo");
         }
@@ -93,19 +93,29 @@ public class Sector
         {
             return false;
         }
-        Cliente cliente = colaEspera.quitaDeCola(); 
+        Cliente cliente = colaEspera.quitaDeCola();
         mostradorLibre.atender(cliente);
         return true; //si llegamos hasta aca, asumimos que se atendió
-    }  
+    }
 
     //consulta pedida en letra
 
-    public int estimarPosicionEnCola(Cliente cliente) 
+    public int estimarPosicionEnCola(Cliente cliente)
     {
-        if (cliente == null) 
+        if (cliente == null)
         {
             throw new IllegalArgumentException("el cliente no puede ser nulo");
         }
         return colaEspera.posicionDe(cliente);
+    }
+
+    //consulta definida por el equipo (mínimo 5 pedidas en la letra)
+    //Justificación: permite dimensionar la demanda de cada sector (por ejemplo,
+    //para decidir si conviene abrir un mostrador adicional) sin exponer la
+    //implementación interna de la cola de prioridad. Es O(1) porque ColaPrioridad
+    //mantiene su propio contador de tamaño (no recorre la cola para calcularlo).
+    public int cantidadEnEspera()
+    {
+        return colaEspera.tamano();
     }
 }

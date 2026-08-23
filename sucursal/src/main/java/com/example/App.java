@@ -101,43 +101,54 @@ public class App {
         atenderSiguiente(sectorEjecutivos, mostradorEjecutivos, 1); // Carlos, por URGENTE
         atenderSiguiente(sectorEjecutivos, mostradorEjecutivos, 2); // Pedro
 
-        // Auditoría: historial y documentación
-        titulo("AUDITORÍA");
-        Cliente[] clientes = { maria, carlos, lucia, pedro };
-        String[] nombres = { "María", "Carlos", "Lucía", "Pedro" };
-        for (int i = 0; i < clientes.length; i++) {
-            mostrarHistorial(sucursal, clientes[i], nombres[i]);
-        }
-        mostrarDocumentos(sucursal, maria, "María");
-        mostrarDocumentos(sucursal, pedro, "Pedro");
-
-        System.out.println("Tarjeta de Pedro (" + tarjetaPedro.getId() + ") -> estado: " + tarjetaPedro.getEstado());
-        System.out.println("Préstamo de Carlos (" + prestamoCarlos.getId() + ") -> estado: " + prestamoCarlos.getEstado());
-
-        // Consultas 
+        // Las 5 operaciones/consultas que el grupo definió como relevantes para la
+        // sucursal (letra, sección "Consultar información"): cada una filtra, busca
+        // o agrega datos usando las estructuras propias, no se limita a mostrar
+        // algo ya guardado tal cual.
         titulo("CONSULTAS SOBRE LA INFORMACIÓN ALMACENADA");
 
-        System.out.println("[1] Productos de María:");
-        imprimirProductos(maria.obtenerProductos());
+        // [1] Documentos registrados de un cliente.
+        // Justificación: centraliza la trazabilidad documental de un cliente (cédula,
+        // comprobantes, garantías) para no depender de papeles sueltos. Recorre la
+        // Pila<Documento> de la sucursal filtrando por cliente: O(n) sobre el total
+        // de documentos registrados.
+        System.out.println("[1] Documentos registrados de María:");
+        imprimirDocumentos(sucursal.obtenerDocumentosCliente(maria.getCi()));
 
-        System.out.println("[2] Ana sigue pendiente en Cuentas Personales, posición " + sectorCuentas.estimarPosicionEnCola(ana));
-
-        System.out.println("[3] Historial completo de Carlos (alta + modificación):");
+        // [2] Historial completo de interacciones de un cliente.
+        // Justificación: sostiene la auditoría exigida por la letra, permitiendo
+        // reconstruir todo lo que un cliente hizo en la sucursal y con qué
+        // mostrador. Recorre la Pila<Interaccion> de la sucursal filtrando por
+        // cliente: O(n) sobre el total de interacciones registradas.
+        System.out.println("[2] Historial completo de Carlos (alta + modificación):");
         imprimirInteracciones(sucursal.obtenerHistorialCliente(carlos.getCi()));
 
-        System.out.println("[4] Documentación vencida de María:");
-        imprimirDocumentos(sucursal.obtenerDocumentosVencidosCliente(maria.getCi()));
+        // [3] Posición de un cliente en la cola de espera de un sector.
+        // Justificación: informa el tiempo de espera real respetando la prioridad
+        // asignada (URGENTE, TURNO_PREVIO, NORMAL), no solo el orden de llegada.
+        // Recorre la ColaPrioridad hasta encontrar al cliente: O(n) en el peor caso.
+        System.out.println("[3] Ana sigue pendiente en Cuentas Personales, posición " + sectorCuentas.estimarPosicionEnCola(ana));
 
-        System.out.println("[5] Productos vencidos o cancelados de Pedro:");
-        imprimirProductos(pedro.obtenerProductosVencidosOCancelados());
-
-        System.out.println("[6] Conteo de interacciones por tipo en la sucursal:");
+        // [4] Conteo de interacciones por tipo en toda la sucursal.
+        // Justificación: da una visión agregada de qué tipo de trámite consume más
+        // recursos, útil para planificar personal por sector. Recorre el historial
+        // una única vez y acumula los conteos en una ListaEnlazada<ConteoInteraccion>:
+        // O(n * k), con k = cantidad de tipos distintos ya vistos (en la práctica,
+        // acotado y chico).
+        System.out.println("[4] Conteo de interacciones por tipo en la sucursal:");
         imprimirConteoInteracciones(sucursal.obtenerConteoInteraccionesPorTipo());
+
+        // [5] Cantidad de clientes esperando en un sector.
+        // Justificación: permite dimensionar la demanda de cada sector (por ejemplo,
+        // para decidir si conviene abrir un mostrador adicional) sin exponer la
+        // implementación interna de la cola de prioridad. O(1), porque ColaPrioridad
+        // mantiene su propio contador de tamaño.
+        System.out.println("[5] Clientes esperando en Cuentas Personales: " + sectorCuentas.cantidadEnEspera());
 
         titulo("FIN DE LA DEMOSTRACIÓN");
     }
 
-    // Para mostrar en pantalla
+    // ---------------------- helpers de presentación ----------------------
 
     private static void titulo(String texto) {
         System.out.println();
@@ -161,12 +172,6 @@ public class App {
         mostrador.liberar();
     }
 
-    private static void mostrarHistorial(Sucursal sucursal, Cliente cliente, String etiqueta) {
-        Pila<Interaccion> historial = sucursal.obtenerHistorialCliente(cliente.getCi());
-        System.out.println(etiqueta + " registra " + historial.tamano() + " interaccion(es):");
-        imprimirInteracciones(historial);
-    }
-
     private static void imprimirInteracciones(Pila<Interaccion> pila) {
         for (int i = 0; i < pila.tamano(); i++) {
             Interaccion interaccion = pila.obtener(i);
@@ -174,28 +179,11 @@ public class App {
         }
     }
 
-    private static void mostrarDocumentos(Sucursal sucursal, Cliente cliente, String etiqueta) {
-        Pila<Documento> documentos = sucursal.obtenerDocumentosCliente(cliente.getCi());
-        System.out.println(etiqueta + " tiene " + documentos.tamano() + " documento(s):");
-        imprimirDocumentos(documentos);
-    }
-
     private static void imprimirDocumentos(Pila<Documento> pila) {
         for (int i = 0; i < pila.tamano(); i++) {
             Documento doc = pila.obtener(i);
             String vigencia = doc.getVigencia() == null ? "sin vencimiento" : doc.getVigencia().toString();
             System.out.println("   - " + doc.getId() + " | " + doc.getTipo() + " | vigencia " + vigencia + " | vigente=" + doc.estaVigente());
-        }
-    }
-
-    private static void imprimirProductos(ListaEnlazada<IProducto> productos) {
-        if (productos.esVacio()) {
-            System.out.println("   (sin productos)");
-            return;
-        }
-        for (int i = 0; i < productos.tamano(); i++) {
-            IProducto producto = productos.obtener(i);
-            System.out.println("   - " + producto.getId() + " | " + producto.getClass().getSimpleName() + " | estado " + producto.getEstado());
         }
     }
 
