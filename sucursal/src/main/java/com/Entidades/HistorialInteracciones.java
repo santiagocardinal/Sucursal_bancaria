@@ -1,5 +1,6 @@
 package com.Entidades;
 
+import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Pila.Pila;
 import com.example.Enums.TipoInteraccion;
 
@@ -44,5 +45,33 @@ public class HistorialInteracciones {
         }
 
         return pilaResultado;
+    }
+
+    //conteo
+
+    public ListaEnlazada<ConteoInteraccion> contarPorTipo() 
+    {
+
+        ListaEnlazada<ConteoInteraccion> conteos = new ListaEnlazada<>();
+        Pila<Interaccion> pilaAuxiliar = new Pila<>();
+
+        while (!this.interacciones.esVacio()) {
+            Interaccion actual = this.interacciones.saca();
+            pilaAuxiliar.mete(actual);
+        }
+
+        while (!pilaAuxiliar.esVacio()) {
+            Interaccion actual = pilaAuxiliar.saca();
+            this.interacciones.mete(actual);
+
+            ConteoInteraccion existente = conteos.buscar(c -> c.getTipo() == actual.getTipo());
+            if (existente != null) {
+                existente.incrementar();
+            } else {
+                conteos.agregar(new ConteoInteraccion(actual.getTipo()));
+            }
+        }
+
+        return conteos;
     }
 }

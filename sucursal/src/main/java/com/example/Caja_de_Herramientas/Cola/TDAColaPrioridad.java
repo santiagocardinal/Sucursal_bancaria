@@ -29,6 +29,7 @@ public interface TDAColaPrioridad<T> extends TDACola<T> {
     boolean poneEnCola(T dato);
 
     boolean poneEnCola(T dato, NivelPrioridad prioridad);
+    int posicionDe(T elemento);
 
 }
     

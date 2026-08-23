@@ -19,7 +19,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
     }
 
     @Override
-    public void atender(Cliente cliente, SolicitudAtencion solicitud) {
+    public void atender(Cliente cliente, SolicitudAtencion solicitud, String mostradorId) {
 
         
         switch (solicitud.getTipoInteraccion()) {
@@ -41,7 +41,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         }
     }
 
-    private void consultar(Cliente cliente, String idProducto) {
+    private void consultar(Cliente cliente, String idProducto, String mostradorId) {
         
         Prestamo prestamo = buscarPrestamo(cliente, idProducto);
 
@@ -51,11 +51,11 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
 
         prestamo.proximaCuota();
 
-        Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi());
+        Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
     }
 
-    private void pagar(Cliente cliente, String idProducto, double monto) {
+    private void pagar(Cliente cliente, String idProducto, double monto, String mostradorId) {
         
         Prestamo prestamo = buscarPrestamo(cliente, idProducto);
 
@@ -65,7 +65,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         
         prestamo.pagarCuota(monto);
 
-        Interaccion interaccion = new Interaccion(TipoInteraccion.PAGO, cliente.getCi());
+        Interaccion interaccion = new Interaccion(TipoInteraccion.PAGO, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
 
         Documento comprobante = new Documento(generarId(),TipoDocumento.COMPROBANTE_PAGO, cliente, java.time.LocalDate.now(), null);
@@ -84,12 +84,12 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
         }
     }
 
-    private void altaPrestamo(Cliente cliente, SolicitudAtencion solicitud) {
+    private void altaPrestamo(Cliente cliente, SolicitudAtencion solicitud, String mostradorId) {
 
         Prestamo prestamo = new Prestamo(solicitud.getMonto(), 10, 12, 0);
         cliente.agregarProducto(prestamo);
         registrarDocumentosPresentados(solicitud);
-        Interaccion interaccion = new Interaccion(TipoInteraccion.ALTA_PRODUCTO, cliente.getCi());
+        Interaccion interaccion = new Interaccion(TipoInteraccion.ALTA_PRODUCTO, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
     }
      

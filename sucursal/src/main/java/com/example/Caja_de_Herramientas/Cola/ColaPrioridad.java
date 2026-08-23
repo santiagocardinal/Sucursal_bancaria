@@ -270,4 +270,28 @@ public class ColaPrioridad<T> implements TDAColaPrioridad<T>
     {
         throw new UnsupportedOperationException("No aplica en cola con prioridad");
     }
+
+    @Override
+    public int posicionDe(T elemento) 
+    {
+        if (elemento == null || frente == null) 
+        {
+            return -1;
+        }
+
+        int posicion = 0;
+        NodoPrioridad<T> actual = frente;
+
+        while (actual != null) 
+        {
+            if (actual.getDato().equals(elemento)) 
+            {
+                return posicion;
+            }
+            actual = (NodoPrioridad<T>) actual.getSiguiente();
+            posicion++;
+        }
+
+        return -1; // no está en la cola
+    }
 }

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
+import com.example.Enums.EstadoProducto;
 
 public class Cliente 
 {
@@ -60,4 +61,22 @@ public class Cliente
         
         return productos.remover(producto);
     }
+
+    //consulta
+
+    public ListaEnlazada<IProducto> obtenerProductosVencidosOCancelados() {
+
+    ListaEnlazada<IProducto> resultado = new ListaEnlazada<>();
+
+    int indice = 0;
+    while (indice < productos.tamano()) {
+        IProducto producto = productos.obtener(indice);
+        if (producto.estaVencido() || producto.getEstado() == EstadoProducto.CANCELADO) {
+            resultado.agregar(producto);
+        }
+        indice++;
+    }
+
+    return resultado;
+}
 }

@@ -18,7 +18,7 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
     }
 
     @Override
-    public void atender(Cliente cliente, SolicitudAtencion solicitud) {
+    public void atender(Cliente cliente, SolicitudAtencion solicitud, String mostradorId) {
 
         switch (solicitud.getTipoInteraccion()) {
 
@@ -39,7 +39,7 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
         }
     }
 
-    private void consultar(Cliente cliente, String idProducto) {
+    private void consultar(Cliente cliente, String idProducto, String mostradorId) {
 
         IProducto producto = buscarProducto(cliente, idProducto);
 
@@ -47,11 +47,11 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
             return;
         }
 
-        Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi());
+        Interaccion interaccion = new Interaccion(TipoInteraccion.CONSULTA, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
     }
 
-    private void bajaProducto(Cliente cliente, String idProducto) {
+    private void bajaProducto(Cliente cliente, String idProducto, String mostradorId) {
 
         IProducto producto = buscarProducto(cliente, idProducto);
 
@@ -61,14 +61,14 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
 
         producto.modificarEstado(EstadoProducto.CANCELADO);
         
-        Interaccion interaccion = new Interaccion(TipoInteraccion.BAJA_PRODUCTO, cliente.getCi());
+        Interaccion interaccion = new Interaccion(TipoInteraccion.BAJA_PRODUCTO, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
 
         Documento documento = new Documento(generarId(), TipoDocumento.COMPROBANTE_BAJA, cliente, java.time.LocalDate.now(), null);
         sucursal.registrarDocumento(documento);
     }
 
-    private void modificarProducto(Cliente cliente, SolicitudAtencion solicitud) {
+    private void modificarProducto(Cliente cliente, SolicitudAtencion solicitud, String mostradorId) {
 
         IProducto producto = buscarProducto(cliente, solicitud.getIdProducto());
 
@@ -76,7 +76,7 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
             return;
         }
         producto.modificarEstado(EstadoProducto.ACTIVO);
-        Interaccion interaccion = new Interaccion(TipoInteraccion.MODIFICACION, cliente.getCi());
+        Interaccion interaccion = new Interaccion(TipoInteraccion.MODIFICACION, cliente.getCi(), mostradorId);
         sucursal.registrarInteraccion(interaccion);
     }
 

@@ -69,4 +69,24 @@ public class CopiaDocumentos {
 
         return pilaResultado;
     }
+
+    public Documento obtenerUltimoRegistrado() 
+    {
+        if (documentos.esVacio()) 
+        {
+            return null;
+        }
+        return documentos.tope();
+    }
+
+    //consulta
+    
+    public Pila<Documento> obtenerVencidosPorCliente(Cliente cliente) 
+    {
+        if (cliente == null) 
+        {
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
+        return filtrar(documentoActual -> documentoActual.getCliente().getCi().equals(cliente.getCi()) && !documentoActual.estaVigente());
+    }
 }

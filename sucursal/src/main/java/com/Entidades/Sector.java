@@ -97,4 +97,15 @@ public class Sector
         mostradorLibre.atender(cliente);
         return true; //si llegamos hasta aca, asumimos que se atendió
     }  
+
+    //consulta
+
+    public int estimarPosicionEnCola(Cliente cliente) 
+    {
+        if (cliente == null) 
+        {
+            throw new IllegalArgumentException("el cliente no puede ser nulo");
+        }
+        return colaEspera.posicionDe(cliente);
+    }
 }
