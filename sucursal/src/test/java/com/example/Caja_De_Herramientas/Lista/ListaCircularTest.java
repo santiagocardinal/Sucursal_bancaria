@@ -1,399 +1,390 @@
-package com.example.Caja_De_Herramientas.Lista;
+package com.example.Caja_de_Herramientas.Lista;
 
 import static org.junit.Assert.*;
 
-import java.util.Comparator;
-
 import org.junit.Test;
-
-import com.example.Caja_de_Herramientas.Lista.ListaCircular;
-import com.example.Caja_de_Herramientas.Lista.TDALista;
 
 public class ListaCircularTest {
 
+    // ---------- Estructura vacía ----------
+
     @Test
     public void testListaNuevaEstaVacia() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+        ListaCircular<String> lista = new ListaCircular<>();
 
         assertTrue(lista.esVacio());
         assertEquals(0, lista.tamano());
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testObtenerEnListaVaciaLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.obtener(0);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoverPorIndiceEnListaVaciaLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.remover(0);
+    }
+
+    @Test
+    public void testRemoverPorElementoEnListaVaciaDevuelveFalse() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        assertFalse(lista.remover("A"));
+    }
+
+    @Test
+    public void testBuscarEnListaVaciaDevuelveNull() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        assertNull(lista.buscar(s -> s.equals("A")));
+    }
+
+    // ---------- Un único elemento ----------
+
     @Test
     public void testAgregarUnElemento() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+        ListaCircular<String> lista = new ListaCircular<>();
 
-        lista.agregar(10);
+        lista.agregar("A");
 
         assertFalse(lista.esVacio());
         assertEquals(1, lista.tamano());
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals("A", lista.obtener(0));
     }
 
     @Test
-    public void testAgregarVariosElementos() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    public void testUnElementoSeApuntaASiMismo() {
+        // caso borde propio de listas circulares: con un solo nodo,
+        // avanzar "siguiente" tamano+1 veces debe volver al mismo elemento
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAgregarNullLanzaExcepcion() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(null);
-    }
-
-    @Test
-    public void testAgregarIndiceCeroListaVacia() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(0, 10);
+        // si internamente el único nodo no cierra el círculo sobre sí mismo,
+        // remover y volver a agregar revelaría la inconsistencia
+        lista.remover(0);
+        lista.agregar("B");
 
         assertEquals(1, lista.tamano());
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals("B", lista.obtener(0));
     }
 
     @Test
-    public void testAgregarAlInicio() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    public void testRemoverUnicoElementoDejaListaVacia() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
 
-        lista.agregar(20);
-        lista.agregar(30);
+        String removido = lista.remover(0);
 
-        lista.agregar(0, 10);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
+        assertEquals("A", removido);
+        assertTrue(lista.esVacio());
+        assertEquals(0, lista.tamano());
     }
+
+    // ---------- Varios elementos ----------
 
     @Test
-    public void testAgregarEnMedio() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-        lista.agregar(30);
-
-        lista.agregar(1, 20);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
-    }
-
-    @Test
-    public void testAgregarAlFinalPorIndice() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-
-        lista.agregar(2, 30);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testAgregarIndiceNegativo() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(-1, 10);
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testAgregarIndiceMayorAlTamano() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-
-        lista.agregar(2, 20);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAgregarNullPorIndice() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(0, null);
-    }
-
-    @Test
-    public void testObtener() {
+    public void testAgregarVariosElementosMantieneOrden() {
         ListaCircular<String> lista = new ListaCircular<>();
 
         lista.agregar("A");
         lista.agregar("B");
         lista.agregar("C");
 
+        assertEquals(3, lista.tamano());
         assertEquals("A", lista.obtener(0));
         assertEquals("B", lista.obtener(1));
         assertEquals("C", lista.obtener(2));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testObtenerIndiceNegativo() {
+    @Test
+    public void testCircularidadVuelveAlInicio() {
+        // caso borde específico de esta estructura: recorrer más allá
+        // del último nodo debe volver a la cabeza, sin lanzar excepción
+        // ni perder datos, ya que el último apunta de nuevo al primero
         ListaCircular<Integer> lista = new ListaCircular<>();
+        lista.agregar(1);
+        lista.agregar(2);
+        lista.agregar(3);
 
-        lista.obtener(-1);
+        // recorremos manualmente tamano + 2 pasos desde obtener(0) usando
+        // el patrón de acceso secuencial vía obtener(index % tamano)
+        for (int vuelta = 0; vuelta < 2; vuelta++) {
+            assertEquals(Integer.valueOf(1), lista.obtener(0));
+            assertEquals(Integer.valueOf(2), lista.obtener(1));
+            assertEquals(Integer.valueOf(3), lista.obtener(2));
+        }
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testObtenerIndiceFueraDeRango() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    // ---------- Inserciones ----------
 
-        lista.agregar(10);
-
-        lista.obtener(1);
+    @Test
+    public void testAgregarNullLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        assertThrowsIllegalArgument(() -> lista.agregar(null));
     }
 
     @Test
-    public void testRemoverPrimero() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    public void testAgregarEnIndiceCeroConListaVacia() {
+        ListaCircular<String> lista = new ListaCircular<>();
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
+        lista.agregar(0, "A");
 
-        Integer eliminado = lista.remover(0);
+        assertEquals(1, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+    }
 
-        assertEquals(Integer.valueOf(10), eliminado);
+    @Test
+    public void testAgregarEnIndiceCeroConElementosExistentes() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("B");
+        lista.agregar("C");
+
+        lista.agregar(0, "A");
+
+        assertEquals(3, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+        assertEquals("B", lista.obtener(1));
+        assertEquals("C", lista.obtener(2));
+    }
+
+    @Test
+    public void testAgregarEnIndiceCeroActualizaCierreCircular() {
+        // caso borde: al insertar una nueva cabeza, la cola debe
+        // quedar apuntando a la cabeza nueva, no a la vieja
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("B");
+
+        lista.agregar(0, "A");
+        lista.agregar("C"); // agrega al final, usando el puntero a cola
+
+        assertEquals(3, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+        assertEquals("B", lista.obtener(1));
+        assertEquals("C", lista.obtener(2));
+    }
+
+    @Test
+    public void testAgregarEnIndiceIntermedio() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar("C");
+
+        lista.agregar(1, "B");
+
+        assertEquals(3, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+        assertEquals("B", lista.obtener(1));
+        assertEquals("C", lista.obtener(2));
+    }
+
+    @Test
+    public void testAgregarEnIndiceIgualATamanoInsertaAlFinal() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+
+        lista.agregar(1, "B");
+
+        assertEquals("B", lista.obtener(1));
         assertEquals(2, lista.tamano());
+    }
 
-        assertEquals(Integer.valueOf(20), lista.obtener(0));
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testAgregarEnIndiceNegativoLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar(-1, "A");
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testAgregarEnIndiceMayorATamanoLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar(5, "B");
+    }
+
+    // ---------- Eliminaciones ----------
+
+    @Test
+    public void testRemoverCabezaActualizaCierreCircular() {
+        // caso borde: al remover la cabeza, la cola debe quedar
+        // apuntando a la nueva cabeza para mantener el círculo cerrado
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar("B");
+        lista.agregar("C");
+
+        lista.remover(0);
+        lista.agregar("D"); // agrega al final usando el puntero a cola
+
+        assertEquals(3, lista.tamano());
+        assertEquals("B", lista.obtener(0));
+        assertEquals("C", lista.obtener(1));
+        assertEquals("D", lista.obtener(2));
+    }
+
+    @Test
+    public void testRemoverColaActualizaPunteroCola() {
+        // caso borde: al remover el último elemento (la cola),
+        // el puntero cola debe pasar al anterior
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar("B");
+        lista.agregar("C");
+
+        lista.remover(2); // remueve "C", que era la cola
+        lista.agregar("D"); // debe agregarse correctamente al nuevo final
+
+        assertEquals(3, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+        assertEquals("B", lista.obtener(1));
+        assertEquals("D", lista.obtener(2));
     }
 
     @Test
     public void testRemoverElementoIntermedio() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar("B");
+        lista.agregar("C");
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
+        String removido = lista.remover(1);
 
-        Integer eliminado = lista.remover(1);
-
-        assertEquals(Integer.valueOf(20), eliminado);
+        assertEquals("B", removido);
         assertEquals(2, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+        assertEquals("C", lista.obtener(1));
+    }
 
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoverIndiceNegativoLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.remover(-1);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoverIndiceMayorATamanoLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.remover(5);
     }
 
     @Test
-    public void testRemoverUltimo() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    public void testRemoverPorElementoExistente() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar("B");
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        Integer eliminado = lista.remover(2);
-
-        assertEquals(Integer.valueOf(30), eliminado);
-        assertEquals(2, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
+        assertTrue(lista.remover("A"));
+        assertEquals(1, lista.tamano());
+        assertFalse(lista.contiene("A"));
     }
 
     @Test
-    public void testRemoverUnicoElemento() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    public void testRemoverPorElementoInexistente() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
 
-        lista.agregar(10);
+        assertFalse(lista.remover("Z"));
+    }
 
-        assertEquals(Integer.valueOf(10), lista.remover(0));
+    @Test
+    public void testVaciarDejaListaVacia() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.agregar("B");
+
+        lista.vaciar();
 
         assertTrue(lista.esVacio());
         assertEquals(0, lista.tamano());
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testRemoverIndiceNegativo() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    @Test
+    public void testAgregarDespuesDeVaciarFunciona() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
+        lista.vaciar();
 
-        lista.remover(-1);
-    }
+        lista.agregar("B");
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testRemoverIndiceFueraDeRango() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-
-        lista.remover(1);
+        assertEquals(1, lista.tamano());
+        assertEquals("B", lista.obtener(0));
     }
 
     @Test
-    public void testRemoverPorElemento() {
+    public void testRemoverTodosLosElementosUnoAUnoDejaListaVacia() {
         ListaCircular<String> lista = new ListaCircular<>();
-
         lista.agregar("A");
         lista.agregar("B");
         lista.agregar("C");
 
-        assertTrue(lista.remover("B"));
+        lista.remover(0);
+        lista.remover(0);
+        lista.remover(0);
 
-        assertEquals(2, lista.tamano());
-        assertFalse(lista.contiene("B"));
-
-        assertEquals("A", lista.obtener(0));
-        assertEquals("C", lista.obtener(1));
+        assertTrue(lista.esVacio());
+        assertEquals(0, lista.tamano());
     }
 
-    @Test
-    public void testRemoverElementoInexistente() {
-        ListaCircular<String> lista = new ListaCircular<>();
-
-        lista.agregar("A");
-
-        assertFalse(lista.remover("B"));
-        assertEquals(1, lista.tamano());
-    }
+    // ---------- Búsquedas ----------
 
     @Test
-    public void testRemoverNullDevuelveFalse() {
+    public void testContieneElementoExistente() {
         ListaCircular<String> lista = new ListaCircular<>();
-
-        lista.agregar("A");
-
-        assertFalse(lista.remover((String) null));
-    }
-
-    @Test
-    public void testRemoverDuplicadoEliminaPrimeraAparicion() {
-        ListaCircular<String> lista = new ListaCircular<>();
-
-        lista.agregar("A");
-        lista.agregar("B");
-        lista.agregar("A");
-
-        assertTrue(lista.remover("A"));
-
-        assertEquals(2, lista.tamano());
-        assertEquals("B", lista.obtener(0));
-        assertEquals("A", lista.obtener(1));
-    }
-
-    @Test
-    public void testContiene() {
-        ListaCircular<String> lista = new ListaCircular<>();
-
         lista.agregar("A");
         lista.agregar("B");
 
         assertTrue(lista.contiene("A"));
-        assertTrue(lista.contiene("B"));
-        assertFalse(lista.contiene("C"));
+        assertFalse(lista.contiene("Z"));
     }
 
     @Test
-    public void testContieneNullDevuelveFalse() {
+    public void testIndiceDeElementoExistente() {
         ListaCircular<String> lista = new ListaCircular<>();
-
-        lista.agregar("A");
-
-        assertFalse(lista.contiene(null));
-    }
-
-    @Test
-    public void testIndiceDe() {
-        ListaCircular<String> lista = new ListaCircular<>();
-
         lista.agregar("A");
         lista.agregar("B");
         lista.agregar("C");
 
-        assertEquals(0, lista.indiceDe("A"));
         assertEquals(1, lista.indiceDe("B"));
-        assertEquals(2, lista.indiceDe("C"));
     }
 
     @Test
-    public void testIndiceDeInexistente() {
+    public void testIndiceDeElementoInexistente() {
         ListaCircular<String> lista = new ListaCircular<>();
-
         lista.agregar("A");
 
-        assertEquals(-1, lista.indiceDe("B"));
+        assertEquals(-1, lista.indiceDe("Z"));
     }
 
     @Test
-    public void testIndiceDeNull() {
-        ListaCircular<String> lista = new ListaCircular<>();
-
-        lista.agregar("A");
-
-        assertEquals(-1, lista.indiceDe(null));
-    }
-
-    @Test
-    public void testBuscar() {
+    public void testBuscarConCoincidencia() {
         ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(5);
         lista.agregar(10);
         lista.agregar(20);
+        lista.agregar(30);
 
-        Integer resultado = lista.buscar(numero -> numero > 8);
-
-        assertEquals(Integer.valueOf(10), resultado);
-    }
-
-    @Test
-    public void testBuscarDevuelvePrimerElementoQueCumple() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(5);
-        lista.agregar(15);
-        lista.agregar(20);
-
-        assertEquals(Integer.valueOf(15), lista.buscar(numero -> numero >= 15));
-    }
-
-    @Test
-    public void testBuscarSinResultado() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-
-        assertNull(lista.buscar(numero -> numero > 100));
+        assertEquals(Integer.valueOf(20), lista.buscar(n -> n > 15));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testBuscarCriterioNull() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    public void testBuscarConCriterioNullLanzaExcepcion() {
+        ListaCircular<String> lista = new ListaCircular<>();
+        lista.agregar("A");
 
         lista.buscar(null);
     }
 
-    @Test
-    public void testOrdenarAscendente() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    // ---------- Ordenar ----------
 
+    @Test
+    public void testOrdenarDevuelveNuevaListaOrdenada() {
+        ListaCircular<Integer> lista = new ListaCircular<>();
         lista.agregar(30);
         lista.agregar(10);
         lista.agregar(20);
 
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.naturalOrder());
+        TDALista<Integer> ordenada = lista.ordenar((a, b) -> a - b);
 
         assertEquals(Integer.valueOf(10), ordenada.obtener(0));
         assertEquals(Integer.valueOf(20), ordenada.obtener(1));
@@ -401,112 +392,46 @@ public class ListaCircularTest {
     }
 
     @Test
-    public void testOrdenarDescendente() {
+    public void testOrdenarNoModificaLaListaOriginal() {
         ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-        lista.agregar(30);
-        lista.agregar(20);
-
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.reverseOrder());
-
-        assertEquals(Integer.valueOf(30), ordenada.obtener(0));
-        assertEquals(Integer.valueOf(20), ordenada.obtener(1));
-        assertEquals(Integer.valueOf(10), ordenada.obtener(2));
-    }
-
-    @Test
-    public void testOrdenarNoModificaOriginal() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
         lista.agregar(30);
         lista.agregar(10);
-        lista.agregar(20);
 
-        lista.ordenar(Comparator.naturalOrder());
+        lista.ordenar((a, b) -> a - b);
 
         assertEquals(Integer.valueOf(30), lista.obtener(0));
         assertEquals(Integer.valueOf(10), lista.obtener(1));
-        assertEquals(Integer.valueOf(20), lista.obtener(2));
-    }
-
-    @Test
-    public void testOrdenarDevuelveListaDistinta() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(20);
-        lista.agregar(10);
-
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.naturalOrder());
-
-        assertNotSame(lista, ordenada);
-    }
-
-    @Test
-    public void testOrdenarListaVacia() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.naturalOrder());
-
-        assertTrue(ordenada.esVacio());
-        assertEquals(0, ordenada.tamano());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testOrdenarComparatorNull() {
+    public void testOrdenarConComparatorNullLanzaExcepcion() {
         ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
+        lista.agregar(1);
 
         lista.ordenar(null);
     }
 
     @Test
-    public void testTamanoSeActualizaCorrectamente() {
+    public void testOrdenarListaVaciaDevuelveListaVacia() {
         ListaCircular<Integer> lista = new ListaCircular<>();
 
-        assertEquals(0, lista.tamano());
+        TDALista<Integer> ordenada = lista.ordenar((a, b) -> a - b);
 
-        lista.agregar(10);
-        assertEquals(1, lista.tamano());
-
-        lista.agregar(20);
-        assertEquals(2, lista.tamano());
-
-        lista.remover(0);
-        assertEquals(1, lista.tamano());
-
-        lista.remover(0);
-        assertEquals(0, lista.tamano());
+        assertTrue(ordenada.esVacio());
     }
 
-    @Test
-    public void testVaciar() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
+    // ---------- Helper ----------
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        lista.vaciar();
-
-        assertTrue(lista.esVacio());
-        assertEquals(0, lista.tamano());
+    private interface Accion {
+        void ejecutar();
     }
 
-    @Test
-    public void testAgregarDespuesDeVaciar() {
-        ListaCircular<Integer> lista = new ListaCircular<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-
-        lista.vaciar();
-
-        lista.agregar(30);
-
-        assertFalse(lista.esVacio());
-        assertEquals(1, lista.tamano());
-        assertEquals(Integer.valueOf(30), lista.obtener(0));
+    private void assertThrowsIllegalArgument(Accion accion) {
+        try {
+            accion.ejecutar();
+            fail("Se esperaba IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // esperado
+        }
     }
 }

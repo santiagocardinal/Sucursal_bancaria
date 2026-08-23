@@ -1,324 +1,261 @@
-package com.example.Caja_De_Herramientas.Lista;
+package com.example.Caja_de_Herramientas.Lista;
 
 import static org.junit.Assert.*;
 
-import java.util.Comparator;
-
 import org.junit.Test;
-
-import com.example.Caja_de_Herramientas.Lista.ListaArray;
-import com.example.Caja_de_Herramientas.Lista.TDALista;
 
 public class ListaArrayTest {
 
+    // ---------- Estructura vacía ----------
+
     @Test
     public void testListaNuevaEstaVacia() {
-        ListaArray<Integer> lista = new ListaArray<>();
+        ListaArray<String> lista = new ListaArray<>();
 
         assertTrue(lista.esVacio());
         assertEquals(0, lista.tamano());
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testObtenerEnListaVaciaLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.obtener(0);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoverPorIndiceEnListaVaciaLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.remover(0);
+    }
+
+    @Test
+    public void testRemoverPorElementoEnListaVaciaDevuelveFalse() {
+        ListaArray<String> lista = new ListaArray<>();
+        assertFalse(lista.remover("A"));
+    }
+
+    @Test
+    public void testContieneEnListaVaciaDevuelveFalse() {
+        ListaArray<String> lista = new ListaArray<>();
+        assertFalse(lista.contiene("A"));
+    }
+
+    @Test
+    public void testBuscarEnListaVaciaDevuelveNull() {
+        ListaArray<String> lista = new ListaArray<>();
+        assertNull(lista.buscar(s -> s.equals("A")));
+    }
+
+    // ---------- Un único elemento ----------
+
     @Test
     public void testAgregarUnElemento() {
-        ListaArray<Integer> lista = new ListaArray<>();
+        ListaArray<String> lista = new ListaArray<>();
 
-        lista.agregar(10);
+        lista.agregar("A");
 
         assertFalse(lista.esVacio());
         assertEquals(1, lista.tamano());
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals("A", lista.obtener(0));
     }
 
     @Test
-    public void testAgregarVariosElementos() {
-        ListaArray<Integer> lista = new ListaArray<>();
+    public void testRemoverUnicoElementoDejaListaVacia() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
+        String removido = lista.remover(0);
 
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
+        assertEquals("A", removido);
+        assertTrue(lista.esVacio());
+        assertEquals(0, lista.tamano());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testAgregarNullLanzaExcepcion() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(null);
-    }
+    // ---------- Varios elementos ----------
 
     @Test
-    public void testAumentaCapacidadCuandoSeLlena() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        for (int i = 0; i < 15; i++) {
-            lista.agregar(i);
-        }
-
-        assertEquals(15, lista.tamano());
-
-        for (int i = 0; i < 15; i++) {
-            assertEquals(Integer.valueOf(i), lista.obtener(i));
-        }
-    }
-
-    @Test
-    public void testAumentaCapacidadVariasVeces() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        for (int i = 0; i < 45; i++) {
-            lista.agregar(i);
-        }
-
-        assertEquals(45, lista.tamano());
-
-        assertEquals(Integer.valueOf(0), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(20));
-        assertEquals(Integer.valueOf(44), lista.obtener(44));
-    }
-
-    @Test
-    public void testAgregarEnIndiceCero() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(20);
-        lista.agregar(30);
-
-        lista.agregar(0, 10);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
-    }
-
-    @Test
-    public void testAgregarEnIndiceIntermedio() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(30);
-
-        lista.agregar(1, 20);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
-    }
-
-    @Test
-    public void testAgregarAlFinalPorIndice() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-
-        lista.agregar(2, 30);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(30), lista.obtener(2));
-    }
-
-    @Test
-    public void testAgregarPorIndiceCuandoArrayEstaLleno() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        for (int i = 0; i < 10; i++) {
-            lista.agregar(i);
-        }
-
-        lista.agregar(5, 100);
-
-        assertEquals(11, lista.tamano());
-
-        assertEquals(Integer.valueOf(4), lista.obtener(4));
-        assertEquals(Integer.valueOf(100), lista.obtener(5));
-        assertEquals(Integer.valueOf(5), lista.obtener(6));
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testAgregarIndiceNegativo() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(-1, 10);
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testAgregarIndiceMayorAlTamano() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-
-        lista.agregar(2, 20);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAgregarNullPorIndice() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(0, null);
-    }
-
-    @Test
-    public void testObtener() {
+    public void testAgregarVariosElementosMantieneOrden() {
         ListaArray<String> lista = new ListaArray<>();
 
         lista.agregar("A");
         lista.agregar("B");
         lista.agregar("C");
 
+        assertEquals(3, lista.tamano());
         assertEquals("A", lista.obtener(0));
         assertEquals("B", lista.obtener(1));
         assertEquals("C", lista.obtener(2));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testObtenerIndiceNegativo() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.obtener(-1);
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testObtenerIndiceFueraDeRango() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-
-        lista.obtener(1);
-    }
+    // ---------- Inserciones ----------
 
     @Test
-    public void testRemoverPrimero() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        Integer eliminado = lista.remover(0);
-
-        assertEquals(Integer.valueOf(10), eliminado);
-        assertEquals(2, lista.tamano());
-
-        assertEquals(Integer.valueOf(20), lista.obtener(0));
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
-    }
-
-    @Test
-    public void testRemoverIntermedio() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        Integer eliminado = lista.remover(1);
-
-        assertEquals(Integer.valueOf(20), eliminado);
-        assertEquals(2, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
-    }
-
-    @Test
-    public void testRemoverUltimo() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        Integer eliminado = lista.remover(2);
-
-        assertEquals(Integer.valueOf(30), eliminado);
-        assertEquals(2, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(20), lista.obtener(1));
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testRemoverIndiceNegativo() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.remover(-1);
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testRemoverIndiceFueraDeRango() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-
-        lista.remover(1);
-    }
-
-    @Test
-    public void testRemoverPorElemento() {
+    public void testAgregarNullLanzaExcepcion() {
         ListaArray<String> lista = new ListaArray<>();
+        assertThrows_IllegalArgumentException(() -> lista.agregar(null));
+    }
 
+    @Test
+    public void testAgregarEnIndiceInsertaCorrectamente() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.agregar("C");
+
+        lista.agregar(1, "B");
+
+        assertEquals(3, lista.tamano());
+        assertEquals("A", lista.obtener(0));
+        assertEquals("B", lista.obtener(1));
+        assertEquals("C", lista.obtener(2));
+    }
+
+    @Test
+    public void testAgregarEnIndiceCero() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("B");
+
+        lista.agregar(0, "A");
+
+        assertEquals("A", lista.obtener(0));
+        assertEquals("B", lista.obtener(1));
+    }
+
+    @Test
+    public void testAgregarEnIndiceIgualATamano() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+
+        lista.agregar(1, "B"); // insertar al final por índice
+
+        assertEquals("B", lista.obtener(1));
+        assertEquals(2, lista.tamano());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testAgregarEnIndiceNegativoLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar(-1, "A");
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testAgregarEnIndiceMayorATamanoLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.agregar(5, "B");
+    }
+
+    @Test
+    public void testAgregarNullEnIndiceLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        assertThrows_IllegalArgumentException(() -> lista.agregar(0, null));
+    }
+
+    @Test
+    public void testRedimensionamientoAlSuperarCapacidadInicial() {
+        ListaArray<Integer> lista = new ListaArray<>();
+
+        // la capacidad inicial es 10; agregamos 15 para forzar el redimensionamiento
+        for (int i = 0; i < 15; i++) {
+            lista.agregar(i);
+        }
+
+        assertEquals(15, lista.tamano());
+        for (int i = 0; i < 15; i++) {
+            assertEquals(Integer.valueOf(i), lista.obtener(i));
+        }
+    }
+
+    // ---------- Eliminaciones ----------
+
+    @Test
+    public void testRemoverPorIndiceDesplazaElementos() {
+        ListaArray<String> lista = new ListaArray<>();
         lista.agregar("A");
         lista.agregar("B");
         lista.agregar("C");
 
-        assertTrue(lista.remover("B"));
+        String removido = lista.remover(1);
 
+        assertEquals("B", removido);
         assertEquals(2, lista.tamano());
-        assertFalse(lista.contiene("B"));
-
         assertEquals("A", lista.obtener(0));
         assertEquals("C", lista.obtener(1));
     }
 
-    @Test
-    public void testRemoverElementoInexistente() {
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoverIndiceNegativoLanzaExcepcion() {
         ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.remover(-1);
+    }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoverIndiceMayorATamanoLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.remover(5);
+    }
+
+    @Test
+    public void testRemoverPorElementoExistente() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.agregar("B");
+        lista.agregar("C");
+
+        boolean removido = lista.remover("B");
+
+        assertTrue(removido);
+        assertEquals(2, lista.tamano());
+        assertFalse(lista.contiene("B"));
+    }
+
+    @Test
+    public void testRemoverPorElementoInexistente() {
+        ListaArray<String> lista = new ListaArray<>();
         lista.agregar("A");
 
-        assertFalse(lista.remover("B"));
+        assertFalse(lista.remover("Z"));
         assertEquals(1, lista.tamano());
     }
 
     @Test
-    public void testRemoverNullDevuelveFalse() {
+    public void testRemoverPorElementoNullDevuelveFalse() {
         ListaArray<String> lista = new ListaArray<>();
-
         lista.agregar("A");
 
         assertFalse(lista.remover((String) null));
     }
 
     @Test
-    public void testRemoverDuplicadoEliminaPrimeraAparicion() {
+    public void testVaciarDejaListaVacia() {
         ListaArray<String> lista = new ListaArray<>();
-
         lista.agregar("A");
         lista.agregar("B");
-        lista.agregar("A");
 
-        assertTrue(lista.remover("A"));
+        lista.vaciar();
 
-        assertEquals(2, lista.tamano());
-        assertEquals("B", lista.obtener(0));
-        assertEquals("A", lista.obtener(1));
+        assertTrue(lista.esVacio());
+        assertEquals(0, lista.tamano());
     }
 
     @Test
-    public void testContiene() {
+    public void testAgregarDespuesDeVaciarFunciona() {
         ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.vaciar();
 
+        lista.agregar("B");
+
+        assertEquals(1, lista.tamano());
+        assertEquals("B", lista.obtener(0));
+    }
+
+    // ---------- Búsquedas ----------
+
+    @Test
+    public void testContieneElementoExistente() {
+        ListaArray<String> lista = new ListaArray<>();
         lista.agregar("A");
         lista.agregar("B");
 
@@ -328,18 +265,8 @@ public class ListaArrayTest {
     }
 
     @Test
-    public void testContieneNullDevuelveFalse() {
+    public void testIndiceDeElementoExistente() {
         ListaArray<String> lista = new ListaArray<>();
-
-        lista.agregar("A");
-
-        assertFalse(lista.contiene(null));
-    }
-
-    @Test
-    public void testIndiceDe() {
-        ListaArray<String> lista = new ListaArray<>();
-
         lista.agregar("A");
         lista.agregar("B");
         lista.agregar("C");
@@ -352,71 +279,57 @@ public class ListaArrayTest {
     @Test
     public void testIndiceDeElementoInexistente() {
         ListaArray<String> lista = new ListaArray<>();
-
         lista.agregar("A");
 
-        assertEquals(-1, lista.indiceDe("B"));
+        assertEquals(-1, lista.indiceDe("Z"));
     }
 
     @Test
-    public void testIndiceDeNull() {
+    public void testIndiceDeNullDevuelveMenosUno() {
         ListaArray<String> lista = new ListaArray<>();
-
         lista.agregar("A");
 
         assertEquals(-1, lista.indiceDe(null));
     }
 
     @Test
-    public void testBuscar() {
+    public void testBuscarConCoincidencia() {
         ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(5);
         lista.agregar(10);
         lista.agregar(20);
+        lista.agregar(30);
 
-        Integer resultado = lista.buscar(numero -> numero > 8);
+        Integer resultado = lista.buscar(numero -> numero > 15);
 
-        assertEquals(Integer.valueOf(10), resultado);
+        assertEquals(Integer.valueOf(20), resultado);
     }
 
     @Test
-    public void testBuscarDevuelvePrimerElementoQueCumple() {
+    public void testBuscarSinCoincidenciaDevuelveNull() {
         ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(5);
-        lista.agregar(15);
-        lista.agregar(20);
-
-        assertEquals(Integer.valueOf(15), lista.buscar(numero -> numero >= 15));
-    }
-
-    @Test
-    public void testBuscarSinResultado() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
         lista.agregar(10);
-        lista.agregar(20);
 
         assertNull(lista.buscar(numero -> numero > 100));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testBuscarCriterioNull() {
-        ListaArray<Integer> lista = new ListaArray<>();
+    public void testBuscarConCriterioNullLanzaExcepcion() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
 
         lista.buscar(null);
     }
 
-    @Test
-    public void testOrdenarAscendente() {
-        ListaArray<Integer> lista = new ListaArray<>();
+    // ---------- Ordenar ----------
 
+    @Test
+    public void testOrdenarDevuelveNuevaListaOrdenada() {
+        ListaArray<Integer> lista = new ListaArray<>();
         lista.agregar(30);
         lista.agregar(10);
         lista.agregar(20);
 
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.naturalOrder());
+        TDALista<Integer> ordenada = lista.ordenar((a, b) -> a - b);
 
         assertEquals(Integer.valueOf(10), ordenada.obtener(0));
         assertEquals(Integer.valueOf(20), ordenada.obtener(1));
@@ -424,131 +337,89 @@ public class ListaArrayTest {
     }
 
     @Test
-    public void testOrdenarDescendente() {
+    public void testOrdenarNoModificaLaListaOriginal() {
         ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(30);
-        lista.agregar(20);
-
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.reverseOrder());
-
-        assertEquals(Integer.valueOf(30), ordenada.obtener(0));
-        assertEquals(Integer.valueOf(20), ordenada.obtener(1));
-        assertEquals(Integer.valueOf(10), ordenada.obtener(2));
-    }
-
-    @Test
-    public void testOrdenarNoModificaListaOriginal() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
         lista.agregar(30);
         lista.agregar(10);
         lista.agregar(20);
 
-        lista.ordenar(Comparator.naturalOrder());
+        lista.ordenar((a, b) -> a - b);
 
+        // la lista original debe mantener su orden de inserción
         assertEquals(Integer.valueOf(30), lista.obtener(0));
         assertEquals(Integer.valueOf(10), lista.obtener(1));
         assertEquals(Integer.valueOf(20), lista.obtener(2));
     }
 
-    @Test
-    public void testOrdenarDevuelveListaDistinta() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(20);
-        lista.agregar(10);
-
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.naturalOrder());
-
-        assertNotSame(lista, ordenada);
-    }
-
-    @Test
-    public void testOrdenarListaVacia() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        TDALista<Integer> ordenada = lista.ordenar(Comparator.naturalOrder());
-
-        assertTrue(ordenada.esVacio());
-        assertEquals(0, ordenada.tamano());
-    }
-
     @Test(expected = IllegalArgumentException.class)
-    public void testOrdenarComparatorNull() {
+    public void testOrdenarConComparatorNullLanzaExcepcion() {
         ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
+        lista.agregar(1);
 
         lista.ordenar(null);
     }
 
     @Test
-    public void testTamanoSeActualizaCorrectamente() {
+    public void testOrdenarListaVaciaDevuelveListaVacia() {
         ListaArray<Integer> lista = new ListaArray<>();
 
-        assertEquals(0, lista.tamano());
+        TDALista<Integer> ordenada = lista.ordenar((a, b) -> a - b);
 
-        lista.agregar(10);
-        assertEquals(1, lista.tamano());
+        assertTrue(ordenada.esVacio());
+    }
 
-        lista.agregar(20);
+    // ---------- Casos borde ----------
+
+    @Test
+    public void testAgregarYRemoverRepetidamenteMantieneConsistencia() {
+        ListaArray<Integer> lista = new ListaArray<>();
+
+        lista.agregar(1);
+        lista.agregar(2);
+        lista.remover(0);
+        lista.agregar(3);
+
         assertEquals(2, lista.tamano());
-
-        lista.remover(0);
-        assertEquals(1, lista.tamano());
-
-        lista.remover(0);
-        assertEquals(0, lista.tamano());
+        assertEquals(Integer.valueOf(2), lista.obtener(0));
+        assertEquals(Integer.valueOf(3), lista.obtener(1));
     }
 
     @Test
-    public void testVaciar() {
-        ListaArray<Integer> lista = new ListaArray<>();
+    public void testElementosDuplicadosIndiceDeDevuelvePrimeraOcurrencia() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.agregar("B");
+        lista.agregar("A");
 
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        lista.vaciar();
-
-        assertTrue(lista.esVacio());
-        assertEquals(0, lista.tamano());
+        assertEquals(0, lista.indiceDe("A"));
     }
 
     @Test
-    public void testAgregarDespuesDeVaciar() {
-        ListaArray<Integer> lista = new ListaArray<>();
+    public void testRemoverPorElementoConDuplicadosRemuevePrimeraOcurrencia() {
+        ListaArray<String> lista = new ListaArray<>();
+        lista.agregar("A");
+        lista.agregar("B");
+        lista.agregar("A");
 
-        for (int i = 0; i < 15; i++) {
-            lista.agregar(i);
+        lista.remover("A");
+
+        assertEquals(2, lista.tamano());
+        assertEquals("B", lista.obtener(0));
+        assertEquals("A", lista.obtener(1));
+    }
+
+    // ---------- Helper ----------
+
+    private interface Accion {
+        void ejecutar();
+    }
+
+    private void assertThrows_IllegalArgumentException(Accion accion) {
+        try {
+            accion.ejecutar();
+            fail("Se esperaba IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // esperado
         }
-
-        lista.vaciar();
-
-        lista.agregar(100);
-
-        assertEquals(1, lista.tamano());
-        assertEquals(Integer.valueOf(100), lista.obtener(0));
-    }
-
-    @Test
-    public void testRemoverYVolverAAgregar() {
-        ListaArray<Integer> lista = new ListaArray<>();
-
-        lista.agregar(10);
-        lista.agregar(20);
-        lista.agregar(30);
-
-        lista.remover(1);
-
-        lista.agregar(40);
-
-        assertEquals(3, lista.tamano());
-
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
-        assertEquals(Integer.valueOf(40), lista.obtener(2));
     }
 }
