@@ -6,6 +6,7 @@ import com.Entidades.Documento;
 import com.Entidades.IProducto;
 import com.Entidades.Sucursal;
 import com.Entidades.Interaccion;
+import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
 
@@ -31,7 +32,7 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
                 break;
 
             case ALTA_PRODUCTO:
-                altaCuenta(cliente, solicitud.getMonto());
+                altaCuenta(cliente, solicitud);
                 break;
 
             default:
@@ -72,11 +73,23 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
         sucursal.registrarDocumento(comprobante);
     }
 
-    private void altaCuenta(Cliente cliente, double saldoInicial) {
+    private void registrarDocumentosPresentados(SolicitudAtencion solicitud) {
+        ListaEnlazada<Documento> documentos = solicitud.getDocumentosPresentados();
+        if (documentos == null) {
+            return;
+        }
+        int indice = 0;
+        while (indice < documentos.tamano()) {
+            sucursal.registrarDocumento(documentos.obtener(indice));
+            indice++;
+        }
+    }
 
-        Cuenta nuevaCuenta = new Cuenta(generarId(), saldoInicial);
+    private void altaCuenta(Cliente cliente, SolicitudAtencion solicitud) {
+
+        Cuenta nuevaCuenta = new Cuenta(generarId(), solicitud.getMonto());
         cliente.agregarProducto(nuevaCuenta);
-
+        registrarDocumentosPresentados(solicitud);
         Interaccion interaccion = new Interaccion(TipoInteraccion.ALTA_PRODUCTO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
     }
@@ -92,7 +105,6 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
                 return cuenta;
             }
         }
-
         return null;
     }
 

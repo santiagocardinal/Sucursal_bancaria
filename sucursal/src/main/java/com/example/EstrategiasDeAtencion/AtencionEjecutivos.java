@@ -4,6 +4,7 @@ import com.Entidades.Cliente;
 import com.Entidades.IProducto;
 import com.Entidades.Sucursal;
 import com.Entidades.Interaccion;
+import com.Entidades.Documento;
 import com.example.Enums.EstadoProducto;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
@@ -63,7 +64,7 @@ public class AtencionEjecutivos implements IEstrategiaAtencion {
         Interaccion interaccion = new Interaccion(TipoInteraccion.BAJA_PRODUCTO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
 
-        Documento documento = new Documento(generarId(), TipoDocumento.COMPROBANTE);
+        Documento documento = new Documento(generarId(), TipoDocumento.COMPROBANTE_BAJA, cliente, java.time.LocalDate.now(), null);
         sucursal.registrarDocumento(documento);
     }
 
