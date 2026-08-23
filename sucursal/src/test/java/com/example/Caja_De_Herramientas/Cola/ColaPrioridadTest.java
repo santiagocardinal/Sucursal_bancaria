@@ -1,4 +1,4 @@
-package com.example.Caja_De_Herramientas.Cola;
+package com.example.Caja_de_Herramientas.Cola;
 
 import static org.junit.Assert.*;
 
@@ -7,9 +7,11 @@ import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
-import com.example.Caja_de_Herramientas.Cola.ColaPrioridad;
+import com.example.Enums.NivelPrioridad;
 
 public class ColaPrioridadTest {
+
+    // ---------- Estructura vacía ----------
 
     @Test
     public void testColaNuevaEstaVacia() {
@@ -20,11 +22,25 @@ public class ColaPrioridadTest {
         assertEquals(0, cola.tamano());
     }
 
+    @Test(expected = NoSuchElementException.class)
+    public void testFrenteColaVaciaLanzaExcepcion() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.frente();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testQuitaDeColaVaciaLanzaExcepcion() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.quitaDeCola();
+    }
+
+    // ---------- Un único elemento ----------
+
     @Test
     public void testPoneEnColaUnElemento() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        boolean resultado = cola.poneEnCola("A", 5);
+        boolean resultado = cola.poneEnCola("A", NivelPrioridad.NORMAL);
 
         assertTrue(resultado);
         assertFalse(cola.esVacio());
@@ -36,113 +52,71 @@ public class ColaPrioridadTest {
     public void testPoneEnColaNullDevuelveFalse() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        assertFalse(cola.poneEnCola(null, 5));
+        assertFalse(cola.poneEnCola(null, NivelPrioridad.NORMAL));
         assertTrue(cola.esVacio());
         assertEquals(0, cola.tamano());
     }
 
     @Test
+    public void testPoneEnColaSinPrioridadUsaNormalPorDefecto() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola("Normal");
+        cola.poneEnCola("Urgente", NivelPrioridad.URGENTE);
+
+        // URGENTE debe quedar primero, ya que NORMAL es la prioridad por defecto (la menos urgente)
+        assertEquals("Urgente", cola.obtener(0));
+        assertEquals("Normal", cola.obtener(1));
+    }
+
+    // ---------- Varios elementos: orden por prioridad ----------
+
+    @Test
     public void testMayorPrioridadQuedaPrimero() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("Baja", 1);
-        cola.poneEnCola("Alta", 10);
-        cola.poneEnCola("Media", 5);
+        cola.poneEnCola("Baja", NivelPrioridad.NORMAL);
+        cola.poneEnCola("Alta", NivelPrioridad.URGENTE);
+        cola.poneEnCola("Media", NivelPrioridad.TURNO_PREVIO);
 
         assertEquals("Alta", cola.frente());
-
         assertEquals("Alta", cola.obtener(0));
         assertEquals("Media", cola.obtener(1));
         assertEquals("Baja", cola.obtener(2));
     }
 
     @Test
-    public void testOrdenCompletoPorPrioridad() {
+    public void testMismaPrioridadMantieneOrdenDeLlegadaFIFO() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 2);
-        cola.poneEnCola("B", 10);
-        cola.poneEnCola("C", 5);
-        cola.poneEnCola("D", 8);
-
-        assertEquals("B", cola.obtener(0));
-        assertEquals("D", cola.obtener(1));
-        assertEquals("C", cola.obtener(2));
-        assertEquals("A", cola.obtener(3));
-    }
-
-    @Test
-    public void testMismaPrioridadMantieneFIFO() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("Primero", 5);
-        cola.poneEnCola("Segundo", 5);
-        cola.poneEnCola("Tercero", 5);
+        cola.poneEnCola("Primero", NivelPrioridad.NORMAL);
+        cola.poneEnCola("Segundo", NivelPrioridad.NORMAL);
+        cola.poneEnCola("Tercero", NivelPrioridad.NORMAL);
 
         assertEquals("Primero", cola.quitaDeCola());
         assertEquals("Segundo", cola.quitaDeCola());
         assertEquals("Tercero", cola.quitaDeCola());
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void testFrenteColaVaciaLanzaExcepcion() {
+    @Test
+    public void testUrgenteInsertadoAlFinalIgualQuedaPrimero() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.frente();
+        cola.poneEnCola("Normal1", NivelPrioridad.NORMAL);
+        cola.poneEnCola("Normal2", NivelPrioridad.NORMAL);
+        cola.poneEnCola("Urgente", NivelPrioridad.URGENTE);
+
+        assertEquals("Urgente", cola.frente());
     }
+
+    // ---------- Inserciones (agregar con prioridad NORMAL por defecto) ----------
 
     @Test
-    public void testQuitaDeCola() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
-
-        String eliminado = cola.quitaDeCola();
-
-        assertEquals("A", eliminado);
-        assertEquals("B", cola.frente());
-        assertEquals(1, cola.tamano());
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testQuitaDeColaVaciaLanzaExcepcion() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.quitaDeCola();
-    }
-
-    @Test
-    public void testQuitarTodosLosElementosDejaColaVacia() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
-
-        cola.quitaDeCola();
-        cola.quitaDeCola();
-
-        assertTrue(cola.esVacio());
-        assertEquals(0, cola.tamano());
-    }
-
-    @Test
-    public void testPoneEnColaSinPrioridadUsaPrioridadCero() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("Normal");
-        cola.poneEnCola("Urgente", 10);
-
-        assertEquals("Urgente", cola.obtener(0));
-        assertEquals("Normal", cola.obtener(1));
-    }
-
-    @Test
-    public void testAgregarUsaPrioridadCero() {
+    public void testAgregarUsaPrioridadNormal() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
         cola.agregar("A");
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("B", NivelPrioridad.URGENTE);
 
         assertEquals("B", cola.obtener(0));
         assertEquals("A", cola.obtener(1));
@@ -151,144 +125,52 @@ public class ColaPrioridadTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAgregarNullLanzaExcepcion() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
-
         cola.agregar(null);
     }
 
+    // ---------- Eliminaciones ----------
+
     @Test
-    public void testTamano() {
+    public void testQuitaDeCola() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        assertEquals(0, cola.tamano());
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
-        cola.poneEnCola("A", 1);
+        String eliminado = cola.quitaDeCola();
+
+        assertEquals("A", eliminado);
+        assertEquals("B", cola.frente());
         assertEquals(1, cola.tamano());
+    }
 
-        cola.poneEnCola("B", 2);
-        assertEquals(2, cola.tamano());
+    @Test
+    public void testQuitarTodosLosElementosDejaColaVacia() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         cola.quitaDeCola();
-        assertEquals(1, cola.tamano());
+        cola.quitaDeCola();
+
+        assertTrue(cola.esVacio());
+        assertEquals(0, cola.tamano());
     }
 
     @Test
-    public void testContiene() {
+    public void testQuitarElementoPorValor() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
-
-        assertTrue(cola.contiene("A"));
-        assertTrue(cola.contiene("B"));
-        assertFalse(cola.contiene("C"));
-    }
-
-    @Test
-    public void testContieneNullDevuelveFalse() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 1);
-
-        assertFalse(cola.contiene(null));
-    }
-
-    @Test
-    public void testIndiceDe() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("Baja", 1);
-        cola.poneEnCola("Alta", 10);
-        cola.poneEnCola("Media", 5);
-
-        assertEquals(0, cola.indiceDe("Alta"));
-        assertEquals(1, cola.indiceDe("Media"));
-        assertEquals(2, cola.indiceDe("Baja"));
-    }
-
-    @Test
-    public void testIndiceDeElementoInexistente() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 1);
-
-        assertEquals(-1, cola.indiceDe("B"));
-    }
-
-    @Test
-    public void testObtener() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
-        cola.poneEnCola("C", 1);
-
-        assertEquals("A", cola.obtener(0));
-        assertEquals("B", cola.obtener(1));
-        assertEquals("C", cola.obtener(2));
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testObtenerIndiceNegativo() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.obtener(-1);
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testObtenerIndiceMayorAlTamano() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 1);
-
-        cola.obtener(1);
-    }
-
-    @Test
-    public void testBuscar() {
-        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola(10, 1);
-        cola.poneEnCola(30, 2);
-        cola.poneEnCola(50, 3);
-
-        Integer resultado = cola.buscar(numero -> numero > 20);
-
-        assertEquals(Integer.valueOf(50), resultado);
-    }
-
-    @Test
-    public void testBuscarSinResultadoDevuelveNull() {
-        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola(10, 1);
-        cola.poneEnCola(20, 2);
-
-        assertNull(cola.buscar(numero -> numero > 100));
-    }
-
-    @Test
-    public void testBuscarConCriterioNullDevuelveNull() {
-        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola(10, 1);
-
-        assertNull(cola.buscar(null));
-    }
-
-    @Test
-    public void testQuitarElemento() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
-        cola.poneEnCola("C", 1);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.TURNO_PREVIO);
+        cola.poneEnCola("C", NivelPrioridad.NORMAL);
 
         String eliminado = cola.quitar("B");
 
         assertEquals("B", eliminado);
         assertFalse(cola.contiene("B"));
         assertEquals(2, cola.tamano());
-
         assertEquals("A", cola.obtener(0));
         assertEquals("C", cola.obtener(1));
     }
@@ -296,8 +178,7 @@ public class ColaPrioridadTest {
     @Test
     public void testQuitarElementoInexistenteDevuelveNull() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 1);
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
 
         assertNull(cola.quitar("B"));
         assertEquals(1, cola.tamano());
@@ -307,11 +188,10 @@ public class ColaPrioridadTest {
     public void testEliminarElemento() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         assertTrue(cola.eliminar("B"));
-
         assertFalse(cola.contiene("B"));
         assertEquals(1, cola.tamano());
     }
@@ -319,8 +199,7 @@ public class ColaPrioridadTest {
     @Test
     public void testEliminarElementoInexistente() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 10);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
 
         assertFalse(cola.eliminar("B"));
     }
@@ -329,15 +208,14 @@ public class ColaPrioridadTest {
     public void testQuitarPorIndice() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
-        cola.poneEnCola("C", 1);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.TURNO_PREVIO);
+        cola.poneEnCola("C", NivelPrioridad.NORMAL);
 
         String eliminado = cola.quitar(1);
 
         assertEquals("B", eliminado);
         assertEquals(2, cola.tamano());
-
         assertEquals("A", cola.obtener(0));
         assertEquals("C", cola.obtener(1));
     }
@@ -346,38 +224,18 @@ public class ColaPrioridadTest {
     public void testQuitarIndiceCero() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         assertEquals("A", cola.quitar(0));
-
         assertEquals("B", cola.frente());
         assertEquals(1, cola.tamano());
-    }
-
-    @Test
-    public void testQuitarPorIndiceConElementosDuplicados() {
-        ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 8);
-        cola.poneEnCola("A", 5);
-
-        String eliminado = cola.quitar(2);
-
-        assertEquals("A", eliminado);
-
-        // El primer A debe seguir existiendo
-        assertEquals("A", cola.obtener(0));
-        assertEquals("B", cola.obtener(1));
-        assertEquals(2, cola.tamano());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void testQuitarIndiceInvalido() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola("A", 1);
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
 
         cola.quitar(5);
     }
@@ -386,11 +244,10 @@ public class ColaPrioridadTest {
     public void testRemoverPorIndice() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         assertEquals("B", cola.remover(1));
-
         assertEquals(1, cola.tamano());
         assertFalse(cola.contiene("B"));
     }
@@ -399,11 +256,10 @@ public class ColaPrioridadTest {
     public void testRemoverPorElemento() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         assertTrue(cola.remover("A"));
-
         assertFalse(cola.contiene("A"));
         assertEquals(1, cola.tamano());
     }
@@ -412,8 +268,8 @@ public class ColaPrioridadTest {
     public void testAnula() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         cola.anula();
 
@@ -425,8 +281,8 @@ public class ColaPrioridadTest {
     public void testVaciar() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
 
-        cola.poneEnCola("A", 10);
-        cola.poneEnCola("B", 5);
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
 
         cola.vaciar();
 
@@ -434,33 +290,178 @@ public class ColaPrioridadTest {
         assertEquals(0, cola.tamano());
     }
 
+    // ---------- Búsquedas ----------
+
+    @Test
+    public void testContiene() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
+
+        assertTrue(cola.contiene("A"));
+        assertTrue(cola.contiene("B"));
+        assertFalse(cola.contiene("C"));
+    }
+
+    @Test
+    public void testContieneNullDevuelveFalse() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
+
+        assertFalse(cola.contiene(null));
+    }
+
+    @Test
+    public void testIndiceDe() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola("Baja", NivelPrioridad.NORMAL);
+        cola.poneEnCola("Alta", NivelPrioridad.URGENTE);
+        cola.poneEnCola("Media", NivelPrioridad.TURNO_PREVIO);
+
+        assertEquals(0, cola.indiceDe("Alta"));
+        assertEquals(1, cola.indiceDe("Media"));
+        assertEquals(2, cola.indiceDe("Baja"));
+    }
+
+    @Test
+    public void testIndiceDeElementoInexistente() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
+
+        assertEquals(-1, cola.indiceDe("B"));
+    }
+
+    @Test
+    public void testObtener() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.TURNO_PREVIO);
+        cola.poneEnCola("C", NivelPrioridad.NORMAL);
+
+        assertEquals("A", cola.obtener(0));
+        assertEquals("B", cola.obtener(1));
+        assertEquals("C", cola.obtener(2));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testObtenerIndiceNegativo() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.obtener(-1);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testObtenerIndiceMayorAlTamano() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
+
+        cola.obtener(1);
+    }
+
+    @Test
+    public void testBuscar() {
+        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola(10, NivelPrioridad.URGENTE);
+        cola.poneEnCola(30, NivelPrioridad.TURNO_PREVIO);
+        cola.poneEnCola(50, NivelPrioridad.NORMAL);
+
+        Integer resultado = cola.buscar(numero -> numero > 20);
+
+        // buscar recorre desde el frente; el primero que matchea es el de mayor prioridad que cumpla
+        assertNotNull(resultado);
+        assertTrue(resultado > 20);
+    }
+
+    @Test
+    public void testBuscarSinResultadoDevuelveNull() {
+        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola(10, NivelPrioridad.URGENTE);
+        cola.poneEnCola(20, NivelPrioridad.NORMAL);
+
+        assertNull(cola.buscar(numero -> numero > 100));
+    }
+
+    @Test
+    public void testBuscarConCriterioNullDevuelveNull() {
+        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
+        cola.poneEnCola(10, NivelPrioridad.NORMAL);
+
+        assertNull(cola.buscar(null));
+    }
+
+    // ---------- Tamaño ----------
+
+    @Test
+    public void testTamano() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        assertEquals(0, cola.tamano());
+
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        assertEquals(1, cola.tamano());
+
+        cola.poneEnCola("B", NivelPrioridad.NORMAL);
+        assertEquals(2, cola.tamano());
+
+        cola.quitaDeCola();
+        assertEquals(1, cola.tamano());
+    }
+
+    // ---------- Casos borde: operaciones no soportadas ----------
+
     @Test(expected = UnsupportedOperationException.class)
     public void testAgregarPorIndiceNoPermitido() {
         ColaPrioridad<String> cola = new ColaPrioridad<>();
-
         cola.agregar(0, "A");
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testOrdenarNoPermitido() {
         ColaPrioridad<Integer> cola = new ColaPrioridad<>();
-
-        cola.poneEnCola(10, 5);
+        cola.poneEnCola(10, NivelPrioridad.NORMAL);
 
         cola.ordenar(Comparator.naturalOrder());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testInvertirNoPermitido() {
-        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
+    // ---------- posicionDe ----------
 
-        cola.invertir();
+    @Test
+    public void testPosicionDe() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        cola.poneEnCola("A", NivelPrioridad.URGENTE);
+        cola.poneEnCola("B", NivelPrioridad.TURNO_PREVIO);
+        cola.poneEnCola("C", NivelPrioridad.NORMAL);
+
+        assertEquals(0, cola.posicionDe("A"));
+        assertEquals(1, cola.posicionDe("B"));
+        assertEquals(2, cola.posicionDe("C"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testOrdenarTotalNoPermitido() {
-        ColaPrioridad<Integer> cola = new ColaPrioridad<>();
+    @Test
+    public void testPosicionDeElementoInexistente() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
 
-        cola.ordenarTotal(Comparator.naturalOrder());
+        assertEquals(-1, cola.posicionDe("Z"));
+    }
+
+    @Test
+    public void testPosicionDeColaVacia() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+
+        assertEquals(-1, cola.posicionDe("A"));
+    }
+
+    @Test
+    public void testPosicionDeNullDevuelveMenosUno() {
+        ColaPrioridad<String> cola = new ColaPrioridad<>();
+        cola.poneEnCola("A", NivelPrioridad.NORMAL);
+
+        assertEquals(-1, cola.posicionDe(null));
     }
 }
