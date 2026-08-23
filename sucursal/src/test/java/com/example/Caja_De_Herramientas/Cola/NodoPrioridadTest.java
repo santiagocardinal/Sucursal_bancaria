@@ -1,4 +1,4 @@
-package com.example.Caja_de_Herramientas.Cola;
+package com.example.Caja_De_Herramientas.Cola;
 import org.junit.Test;
 
 import com.example.Caja_de_Herramientas.Cola.NodoPrioridad;

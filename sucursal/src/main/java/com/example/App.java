@@ -39,7 +39,7 @@ public class App {
         // Cuenta de Lucía ya VENCIDA, para que la consulta de productos
         // vencidos/cancelados no devuelva una lista vacía.
         Cuenta cuentaLucia = new Cuenta("CTA-" + lucia.getCi(), 50000);
-        cuentaLucia.modificarEstado(EstadoProducto.CANCELADO);
+        cuentaLucia.modificarEstado(EstadoProducto.VENCIDO);
         lucia.agregarProducto(cuentaLucia);
 
         ListaEnlazada<Documento> docsMaria = new ListaEnlazada<>();
