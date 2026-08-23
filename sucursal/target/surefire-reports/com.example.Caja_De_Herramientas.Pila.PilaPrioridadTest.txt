@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.example.Caja_De_Herramientas.Pila.PilaPrioridadTest
+-------------------------------------------------------------------------------
+Tests run: 36, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 s - in com.example.Caja_De_Herramientas.Pila.PilaPrioridadTest

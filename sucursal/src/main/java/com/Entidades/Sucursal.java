@@ -61,6 +61,25 @@ public class Sucursal {
         return copiaDocumentos.obtenerPorCliente(cliente);
     }  
 
+    //consulta pedida en la letra (delega en CopiaDocumentos, que ya la tenía implementada
+    //pero no era alcanzable desde afuera porque copiaDocumentos es privado)
+    public Pila<Documento> obtenerDocumentosVencidosCliente(String ci){
+
+        Cliente cliente = clientesTotales.buscar(clienteActual -> clienteActual.getCi().equals(ci));
+
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no existe");
+        }
+
+        return copiaDocumentos.obtenerVencidosPorCliente(cliente);
+    }
+
+    //consulta pedida en la letra (delega en HistorialInteracciones, que ya la tenía implementada
+    //pero no era alcanzable desde afuera porque historialInteracciones es privado)
+    public ListaEnlazada<ConteoInteraccion> obtenerConteoInteraccionesPorTipo(){
+        return historialInteracciones.contarPorTipo();
+    }
+
     public void registrarClienteEnSector(Cliente cliente, Sector sector, NivelPrioridad prioridad, SolicitudAtencion solicitud){
 
         if (cliente == null) {

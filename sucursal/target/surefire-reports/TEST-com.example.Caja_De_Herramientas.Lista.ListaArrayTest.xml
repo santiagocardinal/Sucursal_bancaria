@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.017" tests="39" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\santi\Proyectos_Algoritmos\Sucursal_bancaria\sucursal\target\test-classes;C:\Users\santi\Proyectos_Algoritmos\Sucursal_bancaria\sucursal\target\classes;C:\Users\santi\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\santi\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="America/Montevideo"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="ES"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-25.0.2\bin"/>
+    <property name="sun.java.command" value="C:\Users\santi\AppData\Local\Temp\surefire5655436551528587102\surefirebooter12278926174618989088.jar C:\Users\santi\AppData\Local\Temp\surefire5655436551528587102 2026-08-23T11-47-07_086-jvmRun1 surefire6603997426595677849tmp surefire_06806520912314154081tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\santi\Proyectos_Algoritmos\Sucursal_bancaria\sucursal\target\test-classes;C:\Users\santi\Proyectos_Algoritmos\Sucursal_bancaria\sucursal\target\classes;C:\Users\santi\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\santi\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\santi"/>
+    <property name="user.language" value="es"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-01-20"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-25.0.2"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\santi\Proyectos_Algoritmos\Sucursal_bancaria\sucursal"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\santi\AppData\Local\Temp\surefire5655436551528587102\surefirebooter12278926174618989088.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="25.0.2+10-LTS-69"/>
+    <property name="user.name" value="santi"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\santi\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\santi\AppData\Local\Temp\"/>
+    <property name="java.version" value="25.0.2"/>
+    <property name="user.dir" value="C:\Users\santi\Proyectos_Algoritmos\Sucursal_bancaria\sucursal"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-25.0.2\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\santi\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\santi\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\doxygen\bin;C:\Program Files\Git\cmd;%MAVEN_HOME %\bin;C:\Users\santi\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;C:\Users\santi\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\copilotCli;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\doxygen\bin;C:\Program Files\Git\cmd;%MAVEN_HOME %\bin;C:\Users\santi\AppData\Local\Programs\Python\Python313\Scripts;C:\Users\santi\AppData\Local\Programs\Python\Python313;C:\Users\santi\AppData\Local\Microsoft\WindowsApps;C:\Users\santi\OneDrive\Escritorio\santi\descargas\PyCharm 2025.1.1\bin;C:\Users\santi\AppData\Local\JetBrains\Toolbox\scripts;C:\Users\santi\.dotnet\tools;C:\Users\santi\AppData\Local\Programs\Microsoft VS Code\bin;C:\Maven\apache-maven-3.9.13\bin;C:\Users\santi\.local\bin;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25.0.2+10-LTS-69"/>
+    <property name="stdin.encoding" value="Cp1252"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="testRemoverPorElementoExistente" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testObtenerEnListaVaciaLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testOrdenarConComparatorNullLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverPorElementoEnListaVaciaDevuelveFalse" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRedimensionamientoAlSuperarCapacidadInicial" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.005"/>
+  <testcase name="testRemoverPorElementoConDuplicadosRemuevePrimeraOcurrencia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverPorIndiceDesplazaElementos" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testAgregarNullEnIndiceLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testAgregarVariosElementosMantieneOrden" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testAgregarNullLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testAgregarEnIndiceInsertaCorrectamente" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverUnicoElementoDejaListaVacia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testBuscarConCriterioNullLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testListaNuevaEstaVacia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testAgregarEnIndiceNegativoLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testAgregarDespuesDeVaciarFunciona" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testAgregarEnIndiceCero" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testOrdenarDevuelveNuevaListaOrdenada" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testAgregarYRemoverRepetidamenteMantieneConsistencia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testAgregarUnElemento" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testContieneElementoExistente" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testBuscarConCoincidencia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.002"/>
+  <testcase name="testOrdenarListaVaciaDevuelveListaVacia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testAgregarEnIndiceIgualATamano" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverIndiceNegativoLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testBuscarEnListaVaciaDevuelveNull" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverPorElementoInexistente" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testAgregarEnIndiceMayorATamanoLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testBuscarSinCoincidenciaDevuelveNull" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testContieneEnListaVaciaDevuelveFalse" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverPorElementoNullDevuelveFalse" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testElementosDuplicadosIndiceDeDevuelvePrimeraOcurrencia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testVaciarDejaListaVacia" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverPorIndiceEnListaVaciaLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testIndiceDeElementoInexistente" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testOrdenarNoModificaLaListaOriginal" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0.001"/>
+  <testcase name="testIndiceDeElementoExistente" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testIndiceDeNullDevuelveMenosUno" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+  <testcase name="testRemoverIndiceMayorATamanoLanzaExcepcion" classname="com.example.Caja_De_Herramientas.Lista.ListaArrayTest" time="0"/>
+</testsuite>
