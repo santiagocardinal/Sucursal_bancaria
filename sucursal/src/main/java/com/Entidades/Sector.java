@@ -141,11 +141,5 @@ public class Sector
         return colaEspera.posicionDe(cliente);
     }
 
-    //permite dimensionar la demanda de cada sector sin exponer la
-    //implementación interna de la cola de prioridad. Es O(1) porque ColaPrioridad
-    //mantiene su propio contador de tamaño (no recorre la cola para calcularlo).
-    public int cantidadEnEspera()
-    {
-        return colaEspera.tamano();
-    }
+   
 }

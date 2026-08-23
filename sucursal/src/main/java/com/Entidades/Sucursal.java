@@ -72,7 +72,7 @@ public class Sucursal {
         }
 
         return copiaDocumentos.obtenerVencidosPorCliente(cliente);
-    }
+    }//PASARLO A MAIN
 
     //consulta pedida en la letra (delega en HistorialInteracciones, que ya la tenía implementada
     //pero no era alcanzable desde afuera porque historialInteracciones es privado)

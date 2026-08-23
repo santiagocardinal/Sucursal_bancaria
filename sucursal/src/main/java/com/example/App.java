@@ -11,15 +11,13 @@ import com.Entidades.Interaccion;
 import com.Entidades.Mostrador;
 import com.Entidades.Sector;
 import com.Entidades.Sucursal;
-import com.Entidades.TarjetaDeCredito;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Pila.Pila;
+import com.example.Enums.EstadoProducto;
 import com.example.Enums.NivelPrioridad;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
 import com.example.EstrategiasDeAtencion.AtencionCuentasPersonales;
-import com.example.EstrategiasDeAtencion.AtencionEjecutivos;
-import com.example.EstrategiasDeAtencion.AtencionPrestamos;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 
 public class App {
@@ -28,148 +26,66 @@ public class App {
 
     public static void main(String[] args) {
 
-        titulo("SUCURSAL BANCARIA - Demostración del sistema");
-
-        // Sucursal, sectores y mostradores
         Sucursal sucursal = new Sucursal("SUC-CENTRO");
         Sector sectorCuentas = new Sector(sucursal);
-        Sector sectorPrestamos = new Sector(sucursal);
-        Sector sectorEjecutivos = new Sector(sucursal);
         sucursal.agregarSector(sectorCuentas);
-        sucursal.agregarSector(sectorPrestamos);
-        sucursal.agregarSector(sectorEjecutivos);
 
         Mostrador mostradorCuentas = new Mostrador("MOST-CTA-01", sectorCuentas, new AtencionCuentasPersonales(sucursal), true);
-        Mostrador mostradorPrestamos = new Mostrador("MOST-PRE-01", sectorPrestamos, new AtencionPrestamos(sucursal), true);
-        Mostrador mostradorEjecutivos = new Mostrador("MOST-EJE-01", sectorEjecutivos, new AtencionEjecutivos(sucursal), true);
         sectorCuentas.agregarMostrador(mostradorCuentas);
-        sectorPrestamos.agregarMostrador(mostradorPrestamos);
-        sectorEjecutivos.agregarMostrador(mostradorEjecutivos);
-        System.out.println("Sucursal creada con 3 sectores: Cuentas Personales, Préstamos y Ejecutivos.");
 
-        // Clientes
         Cliente maria = new Cliente("20123456");
-        Cliente carlos = new Cliente("30234567");
         Cliente lucia = new Cliente("40345678");
-        Cliente pedro = new Cliente("50456789");
         Cliente ana = new Cliente("60567890");
 
-        // Productos preexistentes
+        // Cuenta de Lucía ya VENCIDA, para que la consulta de productos
+        // vencidos/cancelados no devuelva una lista vacía.
         Cuenta cuentaLucia = new Cuenta("CTA-" + lucia.getCi(), 50000);
+        cuentaLucia.modificarEstado(EstadoProducto.CANCELADO);
         lucia.agregarProducto(cuentaLucia);
-        TarjetaDeCredito tarjetaPedro = new TarjetaDeCredito("TC-" + pedro.getCi());
-        pedro.agregarProducto(tarjetaPedro);
-        System.out.println("Productos preexistentes: cuenta de Lucía y tarjeta de Pedro.");
 
-        titulo("INGRESO A SALA DE ESPERA");
-
-        // Documentación para trámites de alta
         ListaEnlazada<Documento> docsMaria = new ListaEnlazada<>();
         docsMaria.agregar(crearDocumento(TipoDocumento.CEDULA_IDENTIDAD, maria, LocalDate.now(), null));
-        docsMaria.agregar(crearDocumento(TipoDocumento.COMPROBANTE_DOMICILIO, maria, LocalDate.now().minusDays(90), LocalDate.now().minusDays(10))); // vencido a propósito
-
-        ListaEnlazada<Documento> docsCarlos = new ListaEnlazada<>();
-        docsCarlos.agregar(crearDocumento(TipoDocumento.COMPROBANTE_INGRESOS, carlos, LocalDate.now(), LocalDate.now().plusMonths(6)));
-        docsCarlos.agregar(crearDocumento(TipoDocumento.GARANTIA, carlos, LocalDate.now(), null));
+        // Segundo documento de María, ya vencido (presentado hace 2 años,
+        // con vigencia hace 1 año), para que la consulta de documentos
+        // vencidos no devuelva una lista vacía.
+        docsMaria.agregar(crearDocumento(TipoDocumento.COMPROBANTE_INGRESOS, maria, LocalDate.now().minusYears(2), LocalDate.now().minusYears(1)));
 
         SolicitudAtencion solMaria = new SolicitudAtencion(TipoInteraccion.ALTA_PRODUCTO, null, 15000, docsMaria);
         SolicitudAtencion solLucia = new SolicitudAtencion(TipoInteraccion.CONSULTA, cuentaLucia.getId(), 0, new ListaEnlazada<>());
         SolicitudAtencion solAna = new SolicitudAtencion(TipoInteraccion.CONSULTA, "N/A", 0, new ListaEnlazada<>());
-        SolicitudAtencion solCarlosAlta = new SolicitudAtencion(TipoInteraccion.ALTA_PRODUCTO, null, 100000, docsCarlos);
 
-        ingresarASala(sucursal, sectorCuentas, maria, NivelPrioridad.NORMAL, solMaria, "María (alta de cuenta)");
-        ingresarASala(sucursal, sectorCuentas, lucia, NivelPrioridad.URGENTE, solLucia, "Lucía (consulta urgente)");
-        ingresarASala(sucursal, sectorCuentas, ana, NivelPrioridad.NORMAL, solAna, "Ana (consulta, queda pendiente)");
-        ingresarASala(sucursal, sectorPrestamos, carlos, NivelPrioridad.TURNO_PREVIO, solCarlosAlta, "Carlos (alta de préstamo)");
+        sucursal.registrarClienteEnSector(maria, sectorCuentas, NivelPrioridad.NORMAL, solMaria);
+        sucursal.registrarClienteEnSector(lucia, sectorCuentas, NivelPrioridad.NORMAL, solLucia);
+        sucursal.registrarClienteEnSector(ana, sectorCuentas, NivelPrioridad.NORMAL, solAna);
 
-        System.out.println("Lucía ingresó última pero con URGENTE: posición " + sectorCuentas.estimarPosicionEnCola(lucia) + " (adelante de María).");
+        sectorCuentas.llamarClienteAMostrador();
+        mostradorCuentas.liberar();
+        sectorCuentas.llamarClienteAMostrador();
+        mostradorCuentas.liberar();
 
-        // Atención en mostrador (Ana queda pendiente a propósito, para la consulta [2])
-        titulo("ATENCIÓN EN MOSTRADOR");
-        atenderSiguiente(sectorCuentas, mostradorCuentas, 1); // Lucía, por URGENTE
-        atenderSiguiente(sectorCuentas, mostradorCuentas, 2); // María
-        atenderSiguiente(sectorPrestamos, mostradorPrestamos, 1); // Carlos
 
-        // Segunda ronda: Carlos vuelve por una modificación, Pedro da de baja su tarjeta
-        IProducto prestamoCarlos = carlos.obtenerProductos().obtener(0);
-        SolicitudAtencion solCarlosModificacion = new SolicitudAtencion(TipoInteraccion.MODIFICACION, prestamoCarlos.getId(), 0, new ListaEnlazada<>());
-        SolicitudAtencion solPedroBaja = new SolicitudAtencion(TipoInteraccion.BAJA_PRODUCTO, tarjetaPedro.getId(), 0, new ListaEnlazada<>());
+        System.out.println("--- CONSULTAS SOBRE LA INFORMACIÓN ALMACENADA ---");
 
-        titulo("SEGUNDA RONDA - SECTOR EJECUTIVOS");
-        ingresarASala(sucursal, sectorEjecutivos, pedro, NivelPrioridad.NORMAL, solPedroBaja, "Pedro (baja de tarjeta)");
-        ingresarASala(sucursal, sectorEjecutivos, carlos, NivelPrioridad.URGENTE, solCarlosModificacion, "Carlos (modificación urgente)");
-        atenderSiguiente(sectorEjecutivos, mostradorEjecutivos, 1); // Carlos, por URGENTE
-        atenderSiguiente(sectorEjecutivos, mostradorEjecutivos, 2); // Pedro
-
-        // Las 5 operaciones/consultas que el grupo definió como relevantes para la
-        // sucursal (letra, sección "Consultar información"): cada una filtra, busca
-        // o agrega datos usando las estructuras propias, no se limita a mostrar
-        // algo ya guardado tal cual.
-        titulo("CONSULTAS SOBRE LA INFORMACIÓN ALMACENADA");
-
-        // [1] Documentos registrados de un cliente.
-        // Justificación: centraliza la trazabilidad documental de un cliente (cédula,
-        // comprobantes, garantías) para no depender de papeles sueltos. Recorre la
-        // Pila<Documento> de la sucursal filtrando por cliente: O(n) sobre el total
-        // de documentos registrados.
-        System.out.println("[1] Documentos registrados de María:");
+        System.out.println("Documentos registrados de María:");
         imprimirDocumentos(sucursal.obtenerDocumentosCliente(maria.getCi()));
 
-        // [2] Historial completo de interacciones de un cliente.
-        // Justificación: sostiene la auditoría exigida por la letra, permitiendo
-        // reconstruir todo lo que un cliente hizo en la sucursal y con qué
-        // mostrador. Recorre la Pila<Interaccion> de la sucursal filtrando por
-        // cliente: O(n) sobre el total de interacciones registradas.
-        System.out.println("[2] Historial completo de Carlos (alta + modificación):");
-        imprimirInteracciones(sucursal.obtenerHistorialCliente(carlos.getCi()));
+        System.out.println("Historial completo de María:");
+        imprimirInteracciones(sucursal.obtenerHistorialCliente(maria.getCi()));
 
-        // [3] Posición de un cliente en la cola de espera de un sector.
-        // Justificación: informa el tiempo de espera real respetando la prioridad
-        // asignada (URGENTE, TURNO_PREVIO, NORMAL), no solo el orden de llegada.
-        // Recorre la ColaPrioridad hasta encontrar al cliente: O(n) en el peor caso.
-        System.out.println("[3] Ana sigue pendiente en Cuentas Personales, posición " + sectorCuentas.estimarPosicionEnCola(ana));
+        System.out.println("Ana sigue pendiente, posición en cola: " + sectorCuentas.estimarPosicionEnCola(ana));
 
-        // [4] Conteo de interacciones por tipo en toda la sucursal.
-        // Justificación: da una visión agregada de qué tipo de trámite consume más
-        // recursos, útil para planificar personal por sector. Recorre el historial
-        // una única vez y acumula los conteos en una ListaEnlazada<ConteoInteraccion>:
-        // O(n * k), con k = cantidad de tipos distintos ya vistos (en la práctica,
-        // acotado y chico).
-        System.out.println("[4] Conteo de interacciones por tipo en la sucursal:");
+        System.out.println("Conteo de interacciones por tipo:");
         imprimirConteoInteracciones(sucursal.obtenerConteoInteraccionesPorTipo());
 
-        // [5] Cantidad de clientes esperando en un sector.
-        // Justificación: permite dimensionar la demanda de cada sector (por ejemplo,
-        // para decidir si conviene abrir un mostrador adicional) sin exponer la
-        // implementación interna de la cola de prioridad. O(1), porque ColaPrioridad
-        // mantiene su propio contador de tamaño.
-        System.out.println("[5] Clientes esperando en Cuentas Personales: " + sectorCuentas.cantidadEnEspera());
+        System.out.println("Documentos vencidos de María:");
+        imprimirDocumentos(sucursal.obtenerDocumentosVencidosCliente(maria.getCi()));
 
-        titulo("FIN DE LA DEMOSTRACIÓN");
-    }
-
-    // ---------------------- helpers de presentación ----------------------
-
-    private static void titulo(String texto) {
-        System.out.println();
-        System.out.println("--- " + texto + " ---");
+        System.out.println("Productos vencidos o cancelados de Lucía:");
+        imprimirProductos(lucia.obtenerProductosVencidosOCancelados());
     }
 
     private static Documento crearDocumento(TipoDocumento tipo, Cliente cliente, LocalDate presentacion, LocalDate vigencia) {
         return new Documento("DOC-" + (contadorDocumentos++), tipo, cliente, presentacion, vigencia);
-    }
-
-    private static void ingresarASala(Sucursal sucursal, Sector sector, Cliente cliente, NivelPrioridad prioridad, SolicitudAtencion solicitud, String etiqueta) {
-        sucursal.registrarClienteEnSector(cliente, sector, prioridad, solicitud);
-        System.out.println(etiqueta + " | turno " + cliente.getNumeroTurno() + " | posición en cola " + sector.estimarPosicionEnCola(cliente));
-    }
-
-    private static void atenderSiguiente(Sector sector, Mostrador mostrador, int numeroLlamada) {
-        boolean atendido = sector.llamarClienteAMostrador();
-        System.out.println(mostrador.getId() + (atendido
-            ? " atiende al siguiente cliente (llamada #" + numeroLlamada + ")."
-            : ": no hay clientes para atender."));
-        mostrador.liberar();
     }
 
     private static void imprimirInteracciones(Pila<Interaccion> pila) {
@@ -191,6 +107,13 @@ public class App {
         for (int i = 0; i < conteos.tamano(); i++) {
             ConteoInteraccion conteo = conteos.obtener(i);
             System.out.println("   - " + conteo.getTipo() + ": " + conteo.getCantidad());
+        }
+    }
+
+    private static void imprimirProductos(ListaEnlazada<IProducto> productos) {
+        for (int i = 0; i < productos.tamano(); i++) {
+            IProducto producto = productos.obtener(i);
+            System.out.println("   - " + producto.getId() + " | estado " + producto.getEstado());
         }
     }
 }
