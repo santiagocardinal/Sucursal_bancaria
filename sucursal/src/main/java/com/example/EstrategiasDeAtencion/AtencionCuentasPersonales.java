@@ -2,6 +2,7 @@ package com.example.EstrategiasDeAtencion;
 
 import com.Entidades.Cliente;
 import com.Entidades.Cuenta;
+import com.Entidades.Documento;
 import com.Entidades.IProducto;
 import com.Entidades.Sucursal;
 import com.Entidades.Interaccion;
@@ -67,7 +68,7 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
         Interaccion interaccion = new Interaccion(TipoInteraccion.PAGO, cliente.getCi());
         sucursal.registrarInteraccion(interaccion);
 
-        Documento comprobante = new Documento(generarId(), TipoDocumento.COMPROBANTE);
+        Documento comprobante = new Documento(generarId(), TipoDocumento.COMPROBANTE_PAGO, cliente, java.time.LocalDate.now(), null);
         sucursal.registrarDocumento(comprobante);
     }
 
