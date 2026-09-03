@@ -1,15 +1,19 @@
 package com.example.Caja_de_Herramientas.Arboles;
 import java.util.function.Consumer;
 
-import com.example.Caja_de_Herramientas.Lista.TDALista;
+import com.example.Caja_de_Herramientas.Lista.*;
 
-public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T> 
+// FIX: sacado "implements Comparable<T>" -- no hace falta, obligaba a un
+// compareTo(T) que solo tiraba excepción. Lo que se compara es el dato
+// que guarda cada nodo, vía los Comparable<T> que ya reciben
+// insertar/buscar/eliminar.
+public class ArbolBinario<T> implements TDAArbolBinario<T>
 {
     private TDAElemento<T> raiz;
     private int contador;
     private int contadorBusquedas;
 
-    public ArbolBinario() 
+    public ArbolBinario()
     {
         this.raiz = null;
         this.contador = 0;
@@ -28,8 +32,15 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
         return raiz;
     }
 
+    // FIX: tomaba "T dato" pero TDAArbolBinario.insertar declara
+    // Comparable<T> dato -- eso ni compilaba contra la interfaz. Y aunque
+    // hubiese compilado, adentro raiz.insertar(dato) con un T terminaba
+    // resolviendo al overload por T de Elemento (el que tira excepción) en
+    // vez del real por Comparable<T>. Con la firma corregida ese problema
+    // desaparece solo, porque ya no hay ambigüedad de overload.
     @Override
-    public boolean insertar(T dato)
+    @SuppressWarnings("unchecked")
+    public boolean insertar(Comparable<T> dato)
     {
         boolean insertado;
 
@@ -48,7 +59,6 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
             contador++;
         }
 
-        System.out.println("Contador: " + contador);
         return insertado;
     }
 
@@ -73,6 +83,7 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean eliminar(Comparable<T> criterioBusqueda)
     {
         if (esVacio())
@@ -163,19 +174,19 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
         return raiz.cantidadNodosInternos();
     }
 
-    public int getContador() 
+    public int getContador()
     {
         return contador;
     }
 
-    public int getContadorBusquedas() 
+    public int getContadorBusquedas()
     {
         return contadorBusquedas;
     }
 
     public String preOrderString()
     {
-        if(esVacio())
+        if (esVacio())
         {
             return "el arbol esta vacio";
         }
@@ -186,7 +197,7 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
 
     public String postOrderString()
     {
-        if(esVacio())
+        if (esVacio())
         {
             return "el arbol esta vacio";
         }
@@ -197,7 +208,7 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
 
     public String inOrderString()
     {
-        if(esVacio())
+        if (esVacio())
         {
             return "el arbol esta vacio";
         }
@@ -206,27 +217,34 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
         return string.toString();
     }
 
+    // FIX: estos tres tiraban UnsupportedOperationException. Ya tenías
+    // todo lo necesario (raiz.altura()/completos()/enNivel() ya existen en
+    // TDAElemento) -- solo faltaba llamarlos.
     @Override
-    public int altura() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'altura'");
+    public int altura()
+    {
+        return esVacio() ? 0 : raiz.altura();
     }
 
     @Override
-    public TDALista<TDAElemento<T>> completos() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'completos'");
+    public TDALista<TDAElemento<T>> completos()
+    {
+        TDALista<TDAElemento<T>> lista = new ListaEnlazada<>();
+        if (!esVacio())
+        {
+            raiz.completos(lista);
+        }
+        return lista;
     }
 
     @Override
-    public TDALista<TDAElemento<T>> enNivel(int nivel) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'enNivel'");
-    }
-
-    @Override
-    public int compareTo(T arg0) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
+    public TDALista<TDAElemento<T>> enNivel(int nivel)
+    {
+        TDALista<TDAElemento<T>> lista = new ListaEnlazada<>();
+        if (!esVacio())
+        {
+            raiz.enNivel(nivel, lista);
+        }
+        return lista;
     }
 }

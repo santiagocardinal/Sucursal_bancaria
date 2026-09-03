@@ -18,8 +18,6 @@ public interface TDAArbolBinario<T> {
     /**
      * Busca y retorna el primer elemento que cumple con el predicado dado.
      *
-     * <p>El recorrido del árbol para la búsqueda queda sujeto a la implementación.</p>
-     *
      * @param predicate el predicado que define el criterio de búsqueda
      * @return el primer elemento que cumple el criterio, o {@code null}
      * si no existe ninguno
@@ -51,69 +49,27 @@ public interface TDAArbolBinario<T> {
      * @return {@code true} si el elemento fue agregado correctamente;
      * {@code false} si el elemento ya existía y no fue agregado
      */
-    boolean insertar(T dato);
+    boolean insertar(Comparable<T> dato);
 
-    /**
-     * Recorre el árbol en in-order
-     * {@snippet :
-     * // ejemplo de uso
-     * elemento.inOrder(dato ->{
-     *     // procesar dato
-     *     // esta función se llama tantas veces como nodos halla en el árbol
-     * });
-     *}
-     */
     void inOrder(Consumer<T> consumidor);
 
-    /**
-     * Recorre el árbol en pre-order
-     * {@snippet :
-     * // ejemplo de uso
-     * elemento.preOrder(dato ->{
-     *     // procesar dato
-     *     // esta función se llama tantas veces como nodos halla en el árbol
-     * });
-     *}
-     */
     void preOrder(Consumer<T> consumidor);
 
-    /**
-     * Recorre el árbol en post-order
-     * {@snippet :
-     * // ejemplo de uso
-     * elemento.postOrder(dato ->{
-     *     // procesar dato
-     *     // esta función se llama tantas veces como nodos halla en el árbol
-     * });
-     *}
-     */
     void postOrder(Consumer<T> consumidor);
 
-    /**
-     * Devuelve true si el árbol es vacío
-     */
     boolean esVacio();
 
-    /**
-     * Devuelve la cantidad de nodos del árbol
-     **/
     int cantidadNodos();
 
-    /**
-     * Devuelve la cantidad de nodos que son hojas
-     */
     int cantidadHojas();
 
-    /**
-     * Devuelve la cantidad de nodos que NO son hojas
-     */
     int cantidadNodosInternos();
 
-    /**
-     * Devuelve la altura del arbol
-     */
     int altura();
-    //====================================NUEVO================================
+
+    // FIX: estaban comentados, pero ABBImpl ya los implementa con @Override
+    // (necesita que existan acá para compilar). Se descomentaron.
+
     /**
      * Devuelve una lista con todos los nodos del árbol que tienen
      * ambos hijos no nulos (hijo izquierdo y derecho presentes).
@@ -126,4 +82,3 @@ public interface TDAArbolBinario<T> {
      */
     TDALista<TDAElemento<T>> enNivel(int nivel);
 }
-
