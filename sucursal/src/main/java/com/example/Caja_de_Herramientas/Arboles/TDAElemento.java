@@ -1,29 +1,41 @@
 package com.example.Caja_de_Herramientas.Arboles;
 import java.util.function.Consumer;
 import com.example.Caja_de_Herramientas.Lista.*;
+
 /**
- * Modela un nodo del árbol binario.
+ * Modela un nodo del árbol binario (ABB / AVL).
  * La implementación de esta estructura debe ser recursiva.
+ *
+ * DECISIÓN GENERAL (ver el resumen que te dejo en el chat): esta interfaz
+ * había terminado mezclada con la del árbol general — tenía hijoIzq/hijoDer
+ * PERO TAMBIÉN insertar(T)/buscar(T)/obtenerNivel(T), lo que obligaba a
+ * ElementoABBImpl a implementar 4 métodos que solo tiraban
+ * UnsupportedOperationException. La separé de nuevo en dos interfaces:
+ * esta (binaria, ordenada por Comparable<T>, para ABB/AVL) y
+ * TElementoArbolGeneral (con lista de hijos, sin orden, para el árbol n-ario).
+ *
+ * FIX: getHijoIzquierdo/getHijoDerecho tenían los Javadoc cruzados
+ * (el comentario de uno describía al otro) — ya corregido acá abajo.
  */
-public interface TDAElemento <T>{
+public interface TDAElemento<T> {
 
     /**
-     * Asigna el nodo izquierdo del nodo actual. Puede ser nulo.
+     * Asigna el hijo izquierdo del nodo actual. Puede ser nulo.
      */
     void setHijoIzquierdo(TDAElemento<T> hijoIzquierdo);
 
     /**
-     * Asigna el nodo derecho del nodo actual. Puede ser nulo.
+     * Asigna el hijo derecho del nodo actual. Puede ser nulo.
      */
     void setHijoDerecho(TDAElemento<T> hijoDerecho);
 
     /**
-     * Devuelve el hijo derecho del nodo actual. El valor es nulo si no tiene hijo derecho.
+     * Devuelve el hijo izquierdo del nodo actual. El valor es nulo si no tiene hijo izquierdo.
      */
     TDAElemento<T> getHijoIzquierdo();
 
     /**
-     * Devuelve el hijo izquierdo del nodo actual. El valor es nulo si no tiene hijo izquierdo.
+     * Devuelve el hijo derecho del nodo actual. El valor es nulo si no tiene hijo derecho.
      */
     TDAElemento<T> getHijoDerecho();
 
@@ -50,67 +62,25 @@ public interface TDAElemento <T>{
     TDAElemento<T> eliminar(Comparable<T> criterioBusqueda);
 
     /**
-     * Agrega un nuevo elemento al árbol
-     * Si el nuevoDato existe, no se agrega
+     * Agrega un nuevo elemento al árbol.
+     * Si el nuevoDato existe, no se agrega.
      */
-    boolean insertar(T nuevoDato);
+    boolean insertar(Comparable<T> nuevoDato);
 
-    /**
-     * {@snippet :
-     * // ejemplo de uso
-     * elemento.inOrder(dato ->{
-     *     // procesar dato
-     *     // esta función se llama tantas veces como nodos halla en el árbol
-     * });
-     *}
-     */
     void inOrder(Consumer<TDAElemento<T>> consumidor);
 
-    /**
-     * {@snippet :
-     * // ejemplo de uso
-     * elemento.preOrder(dato ->{
-     *     // procesar dato
-     *     // esta función se llama tantas veces como nodos halla en el árbol
-     * });
-     *}
-     */
     void preOrder(Consumer<TDAElemento<T>> consumidor);
 
-    /**
-     * {@snippet :
-     * // ejemplo de uso
-     * elemento.postOrder(dato ->{
-     *     // procesar dato
-     *     // esta función se llama tantas veces como nodos halla en el árbol
-     * });
-     *}
-     */
     void postOrder(Consumer<TDAElemento<T>> consumidor);
 
-    /**
-     * retornar true si el nodo es hoja
-     */
     boolean esHoja();
 
-    /**
-     * retorna la cantidad de nodos que son hijas
-     */
     int cantidadHojas();
 
-    /**
-     * retorna la cantidad de nodos que no son hojas
-     */
     int cantidadNodosInternos();
 
-    /**
-     * retorna la cantidad de nodos que los compone
-     */
     int cantidadNodos();
 
-    /**
-     * retorna la altura de este nodo
-     */
     int altura();
 
     /**
@@ -119,7 +89,6 @@ public interface TDAElemento <T>{
      */
     int obtenerNivel(Comparable<T> criterioBusqueda);
 
-    //=================================NUEVO============================================
     /**
      * Devuelve una lista con todos los nodos del subárbol con raíz en este nodo
      * que tienen ambos hijos no nulos (hijo izquierdo y derecho presentes).

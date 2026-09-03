@@ -1,8 +1,14 @@
 package com.example.Caja_de_Herramientas.Arboles;
 
+import java.util.function.Consumer;
+
+import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
+import com.example.Caja_de_Herramientas.Lista.TDALista;
+
+// CAMBIO: usa TElementoArbolGeneral (renombrada) en vez de TDAElemento.
 public class ArbolGeneralImpl<T> {
 
-    private TDAElemento<T> raiz;
+    private TElementoArbolGeneral<T> raiz;
 
     public boolean esVacio() {
         return raiz == null;
@@ -18,13 +24,15 @@ public class ArbolGeneralImpl<T> {
         raiz = new ElementoArbolGeneralImpl<>(dato);
     }
 
+    // FIX: llamaba a padre.agregarHijo(...), que no existe -- el método de
+    // la interfaz se llama agregar(...).
     public boolean insertarHijo(T datoPadre, T datoHijo) {
         if (raiz == null) return false;
 
-        TDAElemento<T> padre = raiz.buscar(datoPadre);
+        TElementoArbolGeneral<T> padre = raiz.buscar(datoPadre);
         if (padre == null) return false;
 
-        padre.agregarHijo(new ElementoArbolGeneralImpl<>(datoHijo));
+        padre.agregar(new ElementoArbolGeneralImpl<>(datoHijo));
         return true;
     }
 
@@ -35,8 +43,14 @@ public class ArbolGeneralImpl<T> {
         return raiz.buscar(dato) != null;
     }
 
-    // ---------- ELIMINACIÓN (elimina el nodo y todo su subárbol) ----------
+    // ---------- ELIMINACIÓN ----------
 
+    // FIX: tenía un eliminarRecursivo(nodo, dato) propio que llamaba a
+    // nodo.eliminarHijo(hijo) (no existe) reimplementando a mano algo que
+    // TElementoArbolGeneral.eliminar(T) ya hace (busca entre los hijos,
+    // directos o más profundos, y saca el que matchea). Ahora el único
+    // caso especial acá es la raíz (porque un nodo no puede sacarse solo
+    // de ningún lado); todo lo demás se delega directo en raiz.eliminar(dato).
     public boolean eliminar(T dato) {
         if (raiz == null) return false;
 
@@ -45,48 +59,30 @@ public class ArbolGeneralImpl<T> {
             return true;
         }
 
-        return eliminarRecursivo(raiz, dato);
-    }
-
-    private boolean eliminarRecursivo(TDAElemento<T> nodo, T dato) {
-        TDALista<TDAElemento<T>> hijos = nodo.getHijos();
-
-        for (int i = 0; i < hijos.tamano(); i++) {
-            TDAElemento<T> hijo = hijos.obtener(i);
-
-            if (hijo.getDato().equals(dato)) {
-                return nodo.eliminarHijo(hijo);
-            }
-
-            if (eliminarRecursivo(hijo, dato)) {
-                return true;
-            }
-        }
-
-        return false;
+        return raiz.eliminar(dato) != null;
     }
 
     // ---------- RECORRIDOS ----------
 
-    public void preorden(Consumer<TDAElemento<T>> consumidor) {
+    public void preorden(Consumer<TElementoArbolGeneral<T>> consumidor) {
         if (raiz != null) raiz.preOrder(consumidor);
     }
 
-    public void postorden(Consumer<TDAElemento<T>> consumidor) {
+    public void postorden(Consumer<TElementoArbolGeneral<T>> consumidor) {
         if (raiz != null) raiz.postOrder(consumidor);
     }
 
-    public void porNiveles(Consumer<TDAElemento<T>> consumidor) {
+    public void porNiveles(Consumer<TElementoArbolGeneral<T>> consumidor) {
         if (raiz == null) return;
 
-        TDALista<TDAElemento<T>> cola = new ListaEnlazada<>();
+        TDALista<TElementoArbolGeneral<T>> cola = new ListaEnlazada<>();
         cola.agregar(raiz);
 
         while (!cola.esVacio()) {
-            TDAElemento<T> actual = cola.remover(0);
+            TElementoArbolGeneral<T> actual = cola.remover(0);
             consumidor.accept(actual);
 
-            TDALista<TDAElemento<T>> hijos = actual.getHijos();
+            TDALista<TElementoArbolGeneral<T>> hijos = actual.getHijos();
             for (int i = 0; i < hijos.tamano(); i++) {
                 cola.agregar(hijos.obtener(i));
             }
