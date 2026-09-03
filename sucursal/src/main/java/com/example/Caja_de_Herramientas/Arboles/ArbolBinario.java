@@ -1,6 +1,8 @@
 package com.example.Caja_de_Herramientas.Arboles;
 import java.util.function.Consumer;
 
+import com.example.Caja_de_Herramientas.Lista.TDALista;
+
 public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T> 
 {
     private TDAElemento<T> raiz;
@@ -202,5 +204,29 @@ public class ArbolBinario extends Comparable<T> implements TDAArbolBinario<T>
         StringBuilder string = new StringBuilder();
         raiz.inOrder(nodo -> { string.append(nodo.getDato()).append(" "); });
         return string.toString();
+    }
+
+    @Override
+    public int altura() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'altura'");
+    }
+
+    @Override
+    public TDALista<TDAElemento<T>> completos() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'completos'");
+    }
+
+    @Override
+    public TDALista<TDAElemento<T>> enNivel(int nivel) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'enNivel'");
+    }
+
+    @Override
+    public int compareTo(T arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
     }
 }

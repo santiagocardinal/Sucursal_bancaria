@@ -1,5 +1,9 @@
 package com.example.Caja_de_Herramientas.Arboles;
 
+import java.util.function.Consumer;
+
+import com.example.Caja_de_Herramientas.Lista.TDALista;
+
 public class Elemento implements TDAElemento<T> 
 {
     private T dato;
@@ -329,5 +333,41 @@ public class Elemento implements TDAElemento<T>
         nodo.eliminar((Comparable<T>) datoSucesor);
         nodo.setDato(datoSucesor);
         return nodo;
+    }
+
+    @Override
+    public boolean insertar(T nuevoDato) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'insertar'");
+    }
+
+    @Override
+    public void inOrder(Consumer<TDAElemento<T>> consumidor) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'inOrder'");
+    }
+
+    @Override
+    public void preOrder(Consumer<TDAElemento<T>> consumidor) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'preOrder'");
+    }
+
+    @Override
+    public void postOrder(Consumer<TDAElemento<T>> consumidor) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'postOrder'");
+    }
+
+    @Override
+    public void completos(TDALista<TDAElemento<T>> lista) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'completos'");
+    }
+
+    @Override
+    public void enNivel(int nivel, TDALista<TDAElemento<T>> lista) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'enNivel'");
     }
 }
