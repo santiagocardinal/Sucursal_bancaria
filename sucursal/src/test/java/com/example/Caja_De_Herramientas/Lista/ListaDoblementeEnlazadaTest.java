@@ -1,4 +1,4 @@
-package com.example.Caja_de_Herramientas.Lista;
+package com.example.Caja_De_Herramientas.Lista;
 
 import static org.junit.Assert.*;
 
