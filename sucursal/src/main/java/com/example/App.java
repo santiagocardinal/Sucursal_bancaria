@@ -26,31 +26,35 @@ public class App {
     public static void main(String[] args) {
 
         Sucursal sucursal = new Sucursal("SUC-CENTRO");
+
         Sector sectorCuentas = new Sector(sucursal);
+
         sucursal.agregarSector(sectorCuentas);
 
         Mostrador mostradorCuentas = new Mostrador("MOST-CTA-01", sectorCuentas, new AtencionCuentasPersonales(sucursal), true);
-        sectorCuentas.agregarMostrador(mostradorCuentas);
 
+        sectorCuentas.agregarMostrador(mostradorCuentas);
+        
         Cliente maria = new Cliente("20123456");
         Cliente lucia = new Cliente("40345678");
         Cliente ana = new Cliente("60567890");
 
-        // Cuenta de Lucía ya VENCIDA, para que la consulta de productos
-        // vencidos/cancelados no devuelva una lista vacía.
         Cuenta cuentaLucia = new Cuenta("CTA-" + lucia.getCi(), 50000);
+        
         cuentaLucia.modificarEstado(EstadoProducto.VENCIDO);
+
         lucia.agregarProducto(cuentaLucia);
 
         ListaEnlazada<Documento> docsMaria = new ListaEnlazada<>();
+
         docsMaria.agregar(crearDocumento(TipoDocumento.CEDULA_IDENTIDAD, maria, LocalDate.now(), null));
-        // Segundo documento de María, ya vencido (presentado hace 2 años,
-        // con vigencia hace 1 año), para que la consulta de documentos
-        // vencidos no devuelva una lista vacía.
+
         docsMaria.agregar(crearDocumento(TipoDocumento.COMPROBANTE_INGRESOS, maria, LocalDate.now().minusYears(2), LocalDate.now().minusYears(1)));
 
         SolicitudAtencion solMaria = new SolicitudAtencion(TipoInteraccion.ALTA_PRODUCTO, null, 15000, docsMaria);
+
         SolicitudAtencion solLucia = new SolicitudAtencion(TipoInteraccion.CONSULTA, cuentaLucia.getId(), 0, new ListaEnlazada<>());
+
         SolicitudAtencion solAna = new SolicitudAtencion(TipoInteraccion.CONSULTA, "N/A", 0, new ListaEnlazada<>());
 
         sucursal.registrarClienteEnSector(maria, sectorCuentas, NivelPrioridad.NORMAL, solMaria);
@@ -62,13 +66,12 @@ public class App {
         sectorCuentas.llamarClienteAMostrador();
         mostradorCuentas.liberar();
 
-
         System.out.println("--- CONSULTAS SOBRE LA INFORMACIÓN ALMACENADA ---");
 
-        System.out.println("Documentos registrados de María:");
+         System.out.println("Documentos registrados de María:");
         imprimirDocumentos(sucursal.obtenerDocumentosCliente(maria.getCi()));
 
-        System.out.println("Historial completo de María:");
+         System.out.println("Historial completo de María:");
         imprimirInteracciones(sucursal.obtenerHistorialCliente(maria.getCi()));
 
         System.out.println("Ana sigue pendiente, posición en cola: " + sectorCuentas.estimarPosicionEnCola(ana));
@@ -98,7 +101,7 @@ public class App {
         for (int i = 0; i < pila.tamano(); i++) {
             Documento doc = pila.obtener(i);
             String vigencia = doc.getVigencia() == null ? "sin vencimiento" : doc.getVigencia().toString();
-            System.out.println("   - " + doc.getId() + " | " + doc.getTipo() + " | vigencia " + vigencia + " | vigente=" + doc.estaVigente());
+            System.out.println("   - " + doc.getId() + " | " + doc.getTipo() + " | vigencia " + vigencia + " | vigente = " + doc.estaVigente());
         }
     }
 
