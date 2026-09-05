@@ -1,16 +1,15 @@
 package com.example.Caja_de_Herramientas.Arboles;
 
 import java.util.function.Consumer;
+import com.example.Caja_de_Herramientas.Lista.*;
 
-import com.example.Caja_de_Herramientas.Lista.TDALista;
-
-public class Elemento implements TDAElemento<T> 
+public class Elemento<T> implements TDAElemento<T>
 {
     private T dato;
     private TDAElemento<T> hijoIzquierdo;
     private TDAElemento<T> hijoDerecho;
 
-    public Elemento(T dato) 
+    public Elemento(T dato)
     {
         this.dato = dato;
         this.hijoIzquierdo = null;
@@ -18,37 +17,37 @@ public class Elemento implements TDAElemento<T>
     }
 
     @Override
-    public void setHijoIzquierdo(TDAElemento<T> hijoIzquierdo) 
+    public void setHijoIzquierdo(TDAElemento<T> hijoIzquierdo)
     {
         this.hijoIzquierdo = hijoIzquierdo;
     }
 
     @Override
-    public void setHijoDerecho(TDAElemento<T> hijoDerecho) 
+    public void setHijoDerecho(TDAElemento<T> hijoDerecho)
     {
         this.hijoDerecho = hijoDerecho;
     }
 
     @Override
-    public TDAElemento<T> getHijoIzquierdo() 
+    public TDAElemento<T> getHijoIzquierdo()
     {
         return hijoIzquierdo;
     }
 
     @Override
-    public TDAElemento<T> getHijoDerecho() 
+    public TDAElemento<T> getHijoDerecho()
     {
         return hijoDerecho;
     }
 
     @Override
-    public void setDato(T dato) 
+    public void setDato(T dato)
     {
         this.dato = dato;
     }
 
     @Override
-    public T getDato() 
+    public T getDato()
     {
         return dato;
     }
@@ -60,16 +59,17 @@ public class Elemento implements TDAElemento<T>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean insertar(Comparable<T> nuevoDato)
     {
         int compare = nuevoDato.compareTo(this.dato);
-        if(compare == 0)
+        if (compare == 0)
         {
             return false;
         }
-        else if(compare < 0 )
+        else if (compare < 0)
         {
-            if(hijoIzquierdo == null)
+            if (hijoIzquierdo == null)
             {
                 hijoIzquierdo = new Elemento<>((T) nuevoDato);
                 return true;
@@ -79,7 +79,7 @@ public class Elemento implements TDAElemento<T>
                 return hijoIzquierdo.insertar(nuevoDato);
             }
         }
-        else 
+        else
         {
             if (hijoDerecho == null)
             {
@@ -90,20 +90,20 @@ public class Elemento implements TDAElemento<T>
             {
                 return hijoDerecho.insertar(nuevoDato);
             }
-        }     
-    } 
+        }
+    }
 
     @Override
     public TDAElemento<T> buscar(Comparable<T> criterioBusqueda)
     {
         int compare = criterioBusqueda.compareTo(this.dato);
-        if(compare == 0)
+        if (compare == 0)
         {
             return this;
         }
-        else if(compare < 0 )
+        else if (compare < 0)
         {
-            if(hijoIzquierdo == null)
+            if (hijoIzquierdo == null)
             {
                 return null;
             }
@@ -112,7 +112,7 @@ public class Elemento implements TDAElemento<T>
                 return hijoIzquierdo.buscar(criterioBusqueda);
             }
         }
-        else 
+        else
         {
             if (hijoDerecho == null)
             {
@@ -122,14 +122,14 @@ public class Elemento implements TDAElemento<T>
             {
                 return hijoDerecho.buscar(criterioBusqueda);
             }
-        }    
+        }
     }
-    
+
     @Override
     public void preOrder(Consumer<TDAElemento<T>> consumidor)
     {
         consumidor.accept(this);
-        if(hijoIzquierdo != null)
+        if (hijoIzquierdo != null)
         {
             hijoIzquierdo.preOrder(consumidor);
         }
@@ -142,7 +142,7 @@ public class Elemento implements TDAElemento<T>
     @Override
     public void postOrder(Consumer<TDAElemento<T>> consumidor)
     {
-        if(hijoIzquierdo != null)
+        if (hijoIzquierdo != null)
         {
             hijoIzquierdo.postOrder(consumidor);
         }
@@ -156,7 +156,7 @@ public class Elemento implements TDAElemento<T>
     @Override
     public void inOrder(Consumer<TDAElemento<T>> consumidor)
     {
-        if(hijoIzquierdo != null)
+        if (hijoIzquierdo != null)
         {
             hijoIzquierdo.inOrder(consumidor);
         }
@@ -231,21 +231,16 @@ public class Elemento implements TDAElemento<T>
         return 1 + izq + der;
     }
 
+    // FIX: usaba -1 como "altura de hijo nulo" (una hoja quedaba con
+    // altura 0). El resto del proyecto (ElementoABBImpl, AVLImpl,
+    // ElementoArbolGeneralImpl) usa la convención "hijo nulo = 0, hoja = 1"
+    // -- las dejo iguales para que altura() dé el mismo resultado no
+    // importa qué implementación de nodo termines usando.
     @Override
     public int altura()
     {
-        int alturaIzq = -1;
-        if (hijoIzquierdo != null)
-        {
-            alturaIzq = hijoIzquierdo.altura();
-        }
-
-        int alturaDer = -1;
-        if (hijoDerecho != null)
-        {
-            alturaDer = hijoDerecho.altura();
-        }
-
+        int alturaIzq = (hijoIzquierdo != null) ? hijoIzquierdo.altura() : 0;
+        int alturaDer = (hijoDerecho != null) ? hijoDerecho.altura() : 0;
         return 1 + Math.max(alturaIzq, alturaDer);
     }
 
@@ -313,6 +308,7 @@ public class Elemento implements TDAElemento<T>
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private TDAElemento<T> reemplazar(TDAElemento<T> nodo)
     {
         if (nodo.getHijoIzquierdo() == null)
@@ -335,39 +331,45 @@ public class Elemento implements TDAElemento<T>
         return nodo;
     }
 
+    // FIX: se sacaron insertar(T)/buscar(T)/obtenerNivel(T): TDAElemento ya
+    // no las declara (son solo por Comparable<T>, no hay overload por T),
+    // así que estos @Override no correspondían a nada y no compilaban.
+
+    // FIX: estos dos sí están en la interfaz -- antes tiraban
+    // UnsupportedOperationException, ahora tienen implementación real
+    // (mismo patrón que ya usás en ElementoABBImpl).
     @Override
-    public boolean insertar(T nuevoDato) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertar'");
+    public void completos(TDALista<TDAElemento<T>> lista)
+    {
+        if (hijoIzquierdo != null && hijoDerecho != null)
+        {
+            lista.agregar(this);
+        }
+        if (hijoIzquierdo != null)
+        {
+            hijoIzquierdo.completos(lista);
+        }
+        if (hijoDerecho != null)
+        {
+            hijoDerecho.completos(lista);
+        }
     }
 
     @Override
-    public void inOrder(Consumer<TDAElemento<T>> consumidor) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'inOrder'");
-    }
-
-    @Override
-    public void preOrder(Consumer<TDAElemento<T>> consumidor) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'preOrder'");
-    }
-
-    @Override
-    public void postOrder(Consumer<TDAElemento<T>> consumidor) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'postOrder'");
-    }
-
-    @Override
-    public void completos(TDALista<TDAElemento<T>> lista) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'completos'");
-    }
-
-    @Override
-    public void enNivel(int nivel, TDALista<TDAElemento<T>> lista) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'enNivel'");
+    public void enNivel(int nivel, TDALista<TDAElemento<T>> lista)
+    {
+        if (nivel == 0)
+        {
+            lista.agregar(this);
+            return;
+        }
+        if (hijoIzquierdo != null)
+        {
+            hijoIzquierdo.enNivel(nivel - 1, lista);
+        }
+        if (hijoDerecho != null)
+        {
+            hijoDerecho.enNivel(nivel - 1, lista);
+        }
     }
 }

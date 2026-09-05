@@ -2,11 +2,17 @@ package com.example.Caja_de_Herramientas.Arboles;
 import java.util.function.Consumer;
 import com.example.Caja_de_Herramientas.Lista.*;
 
-public class ElementoABBImpl<T extends Comparable<T>> implements TDAElemento<T> {
+// FIX: sacado "implements Comparable<T>" de la clase. No hace falta que el
+// NODO sea comparable: lo que se compara es this.dato contra los
+// Comparable<T> que ya reciben insertar/buscar/eliminar/obtenerNivel. Ese
+// implements obligaba a un compareTo(T) que solo tiraba excepción si
+// alguna vez se llamaba, y encima chocaba con los stubs T que traía la
+// interfaz vieja (insertar(T)/buscar(T)/obtenerNivel(T)), que ya no existen
+// en TDAElemento porque esa interfaz volvió a ser solo para árbol binario.
+public class ElementoABBImpl<T> implements TDAElemento<T> {
     private T dato;
     private TDAElemento<T> hijoIzq;
     private TDAElemento<T> hijoDer;
-    
 
     public ElementoABBImpl(T dato) {
         this.dato = dato;
@@ -71,7 +77,8 @@ public class ElementoABBImpl<T extends Comparable<T>> implements TDAElemento<T> 
     // ─── Insertar ────────────────────────────────────────────────────
 
     @Override
-    public boolean insertar(T nuevoDato) {
+    @SuppressWarnings("unchecked")
+    public boolean insertar(Comparable<T> nuevoDato) {
         if (nuevoDato.compareTo(this.dato) > 0) {
             if (hijoDer == null) {
                 hijoDer = new ElementoABBImpl<>((T) nuevoDato);
@@ -207,97 +214,30 @@ public class ElementoABBImpl<T extends Comparable<T>> implements TDAElemento<T> 
             return (nivel == -1) ? -1 : nivel + 1;
         }
     }
-    //=================================NUEVO====================================
-    /**
- * Recorre recursivamente el subárbol con raíz en este nodo y devuelve
- * una lista con todos los nodos que tienen ambos hijos no nulos.
- * Primero verifica si el nodo actual es completo, luego delega en el
- * hijo izquierdo y por último en el hijo derecho, acumulando resultados.
- */
-/*@Override
-public TDALista<TDAElemento<T>> completos() {
-    TDALista<TDAElemento<T>> lista = new ListaEnlazada<>();
 
-    if (this.hijoIzq != null && this.hijoDer != null) {
-        lista.agregar(this);
-    }
-
-    if (this.hijoIzq != null) {
-        TDALista<TDAElemento<T>> sub = this.hijoIzq.completos();
-        for (int i = 0; i < sub.tamano(); i++) {
-            lista.agregar(sub.obtener(i));
-        }
-    }
-    if (this.hijoDer != null) {
-        TDALista<TDAElemento<T>> sub = this.hijoDer.completos();
-        for (int i = 0; i < sub.tamano(); i++) {
-            lista.agregar(sub.obtener(i));
-        }
-    }
-
-    return lista;
-}
-
-/**
- * Devuelve una lista con todos los nodos que se encuentran en el nivel
- * indicado relativo a este nodo. Caso base: si nivel es 0, se agrega
- * el nodo actual. Caso recursivo: se desciende a los hijos decrementando
- * el nivel en 1, acumulando los resultados de ambos subárboles.
- */
-/*@Override
-public TDALista<TDAElemento<T>> enNivel(int nivel) {
-    TDALista<TDAElemento<T>> lista = new ListaEnlazada<>();
-
-    if (nivel == 0) {
-        lista.agregar(this);
-        return lista;
-    }
-
-    if (this.hijoIzq != null) {
-        TDALista<TDAElemento<T>> sub = this.hijoIzq.enNivel(nivel - 1);
-        for (int i = 0; i < sub.tamano(); i++) {
-            lista.agregar(sub.obtener(i));
-        }
-    }
-    if (this.hijoDer != null) {
-        TDALista<TDAElemento<T>> sub = this.hijoDer.enNivel(nivel - 1);
-        for (int i = 0; i < sub.tamano(); i++) {
-            lista.agregar(sub.obtener(i));
-        }
-    }
-
-    return lista;
-}*/
     @Override
     public void completos(TDALista<TDAElemento<T>> lista) {
-
         // si tiene ambos hijos → es completo
         if (hijoIzq != null && hijoDer != null) {
             lista.agregar(this);
         }
 
-        // recorrer izquierdo
         if (hijoIzq != null) {
             hijoIzq.completos(lista);
         }
 
-        // recorrer derecho
         if (hijoDer != null) {
             hijoDer.completos(lista);
         }
     }
 
-
     @Override
     public void enNivel(int nivel, TDALista<TDAElemento<T>> lista) {
-
-        // caso base
         if (nivel == 0) {
-            lista.agregar(this); // o el método que tenga tu lista
+            lista.agregar(this);
             return;
         }
 
-        // bajar nivel
         if (hijoIzq != null) {
             hijoIzq.enNivel(nivel - 1, lista);
         }
@@ -307,4 +247,3 @@ public TDALista<TDAElemento<T>> enNivel(int nivel) {
         }
     }
 }
-
