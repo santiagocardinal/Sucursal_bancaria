@@ -1,6 +1,5 @@
-package com.example.Caja_de_Herramientas.Monticulo;
+package com.example.Caja_de_Herramientas.Arboles;
 
-import com.example.Caja_de_Herramientas.Cola.TDAColaPrioridad;
 import com.example.Enums.NivelPrioridad;
 
 import java.util.NoSuchElementException;
@@ -8,7 +7,7 @@ import java.util.NoSuchElementException;
 // Cola con prioridad implementada con un monticulo (heap) binario.
 // A diferencia de ColaPrioridad (que usa una lista enlazada ordenada
 // y cuesta O(n) insertar), este monticulo inserta y extrae en O(log n).
-public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
+public class MonticuloPrioridad<T> implements TDAMonticuloPrioridad<T> {
 
     // Clase interna chica para guardar, en cada posicion del array,
     // el dato junto con su nivel de prioridad numerico.
@@ -32,14 +31,14 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
         }
     }
 
-    private static final int capacidadInicial = 10;
+    private static final int CAPACIDAD_INICIAL = 10;
 
     private Object[] datos;   // array interno: representa el arbol del heap
     private int cantidad;     // cantidad de elementos realmente ocupados
 
     public MonticuloPrioridad() {
         // arrancamos con un array vacio de capacidad inicial, igual que ListaArray
-        this.datos = new Object[capacidadInicial];
+        this.datos = new Object[CAPACIDAD_INICIAL];
         this.cantidad = 0;
     }
 
@@ -75,6 +74,16 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
         }
     }
 
+    // ---------- Único lugar donde se hace el casteo ----------
+    // Java no permite crear arrays de tipos genéricos (no se puede hacer
+    // new Elemento<T>[10]), por eso el array interno es de Object.
+    // En vez de castear "a mano" en cada método, lo hacemos una sola vez
+    // acá, y el resto de la clase llama a este método en vez de castear.
+    @SuppressWarnings("unchecked")
+    private Elemento<T> obtener(int indice) {
+        return (Elemento<T>) datos[indice];
+    }
+
     // ---------- Intercambiar dos posiciones del array ----------
 
     private void intercambiar(int i, int j) {
@@ -89,8 +98,8 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
         // mientras el elemento no sea la raiz (indice 0)...
         while (indice > 0) {
             int indicePadre = padre(indice);
-            Elemento<T> actual = (Elemento<T>) datos[indice];
-            Elemento<T> padreActual = (Elemento<T>) datos[indicePadre];
+            Elemento<T> actual = obtener(indice);
+            Elemento<T> padreActual = obtener(indicePadre);
 
             // si el actual tiene MAS urgencia (menor valor numerico) que su padre,
             // hay que intercambiarlos para mantener la propiedad del heap
@@ -113,13 +122,13 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
 
             // si el hijo izquierdo existe y es más urgente que el actual, lo marcamos
             if (izq < cantidad &&
-                ((Elemento<T>) datos[izq]).getPrioridad() < ((Elemento<T>) datos[masUrgente]).getPrioridad()) {
+                obtener(izq).getPrioridad() < obtener(masUrgente).getPrioridad()) {
                 masUrgente = izq;
             }
 
             // lo mismo con el hijo derecho, comparando contra el más urgente hasta ahora
             if (der < cantidad &&
-                ((Elemento<T>) datos[der]).getPrioridad() < ((Elemento<T>) datos[masUrgente]).getPrioridad()) {
+                obtener(der).getPrioridad() < obtener(masUrgente).getPrioridad()) {
                 masUrgente = der;
             }
 
@@ -134,7 +143,56 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
         }
     }
 
-    // ---------- Metodos de TDAColaPrioridad / TDACola ----------
+    // ---------- Buscar la posición de un dato dentro del array ----------
+    // A diferencia de un ABB, en un heap NO hay ningún criterio de orden
+    // que permita "saltear" ramas al buscar: el único dato garantizado
+    // es que la raíz es el mínimo. Por eso, buscar un elemento cualquiera
+    // es siempre O(n): hay que recorrer todo el array en el peor caso.
+    private int buscarIndice(T dato) {
+        for (int i = 0; i < cantidad; i++) {
+            if (obtener(i).getDato().equals(dato)) {
+                return i;
+            }
+        }
+        return -1; // no está en el montículo
+    }
+
+    // ---------- Metodos de TDAMonticuloPrioridad ----------
+
+    @Override
+    public boolean modificarPrioridad(T dato, NivelPrioridad nuevaPrioridad) {
+        if (dato == null || nuevaPrioridad == null) {
+            return false;
+        }
+
+        int indice = buscarIndice(dato);
+        if (indice == -1) {
+            return false; // el cliente no está esperando en este montículo
+        }
+
+        Elemento<T> actual = obtener(indice);
+        int prioridadVieja = actual.getPrioridad();
+        int prioridadNueva = nuevaPrioridad.getValor();
+
+        // reemplazamos el elemento por uno nuevo, con la prioridad actualizada
+        // (los campos de Elemento son final, así que no se puede "editar in place")
+        datos[indice] = new Elemento<>(actual.getDato(), prioridadNueva);
+
+        if (prioridadNueva < prioridadVieja) {
+            // se volvió MÁS urgente (valor numérico más chico): puede que
+            // ahora le gane a su padre, así que intentamos subirlo
+            subir(indice);
+        } else if (prioridadNueva > prioridadVieja) {
+            // se volvió MENOS urgente (valor numérico más grande): puede que
+            // ahora sus hijos le ganen a él, así que intentamos bajarlo
+            bajar(indice);
+        }
+        // si la prioridad nueva es igual a la vieja, no hace falta reacomodar nada
+
+        return true;
+    }
+
+    // ---------- Resto de metodos de TDAMonticuloPrioridad ----------
 
     @Override
     public boolean poneEnCola(T dato, NivelPrioridad prioridad) {
@@ -167,7 +225,7 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
             throw new NoSuchElementException("El monticulo esta vacio");
         }
         // la raiz del heap (posicion 0) siempre es el elemento mas urgente
-        return ((Elemento<T>) datos[0]).getDato();
+        return obtener(0).getDato();
     }
 
     @Override
@@ -176,7 +234,7 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
             throw new NoSuchElementException("El monticulo esta vacio");
         }
 
-        Elemento<T> raiz = (Elemento<T>) datos[0]; // este es el que vamos a devolver
+        Elemento<T> raiz = obtener(0); // este es el que vamos a devolver
 
         cantidad--;
         datos[0] = datos[cantidad]; // el ultimo elemento pasa a ocupar la raiz
@@ -191,7 +249,7 @@ public class MonticuloPrioridad<T> implements TDAColaPrioridad<T> {
 
     @Override
     public void anula() {
-        datos = new Object[capacidadInicial];
+        datos = new Object[CAPACIDAD_INICIAL];
         cantidad = 0;
     }
 
