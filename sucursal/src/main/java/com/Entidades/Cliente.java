@@ -79,4 +79,22 @@ public class Cliente
 
     return resultado;
 }
+
+public boolean equals(Object obj) {
+    // si es el mismo objeto en memoria, son iguales directamente
+    if (this == obj) {
+        return true;
+    }
+
+    // si el otro objeto es null, o no es un Cliente, no pueden ser iguales
+    if (obj == null || getClass() != obj.getClass()) {
+        return false;
+    }
+
+    // los casteamos a Cliente para poder comparar su ci
+    Cliente otroCliente = (Cliente) obj;
+
+    // dos clientes son iguales si tienen la misma cédula
+    return this.ci.equals(otroCliente.ci);
+}
 }

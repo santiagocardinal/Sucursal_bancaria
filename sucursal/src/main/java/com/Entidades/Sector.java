@@ -1,6 +1,6 @@
 package com.Entidades;
 
-import com.example.Caja_de_Herramientas.Cola.ColaPrioridad;
+import com.example.Caja_de_Herramientas.Arboles.MonticuloPrioridad;
 import com.example.Caja_de_Herramientas.Lista.ListaArray;
 import com.example.Enums.NivelPrioridad;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
@@ -13,7 +13,7 @@ public class Sector
 {
     private ListaArray<Mostrador> mostradores;
 
-    private ColaPrioridad<Cliente> colaEspera;
+    private Monticulorioridad<Cliente> colaEspera;
 
     private Sucursal sucursal;
 
@@ -33,7 +33,7 @@ public class Sector
         this.sucursal = sucursal;
   
         this.mostradores = new ListaArray<>();
-        this.colaEspera = new ColaPrioridad<>();
+        this.colaEspera = new MonticuloPrioridad<>();
         // Arranca en 1 porque el primer número que tenga un cliente es más
         // coherente que sea el 1 y no el 0.
         this.contadorTurnos = 1;
@@ -139,6 +139,20 @@ public class Sector
             throw new IllegalArgumentException("el cliente no puede ser nulo");
         }
         return colaEspera.posicionDe(cliente);
+    }
+
+    public boolean cambiarPrioridadCliente(Cliente cliente, NivelPrioridad nuevaPrioridad)
+    {
+        if (cliente == null)
+        {
+            throw new IllegalArgumentException("el cliente no puede ser nulo");
+        }
+        if (nuevaPrioridad == null)
+        {
+            throw new IllegalArgumentException("la nueva prioridad no puede ser nula");
+        }
+
+        return colaEspera.modificarPrioridad(cliente, nuevaPrioridad);
     }
 
    
