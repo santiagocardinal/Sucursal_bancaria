@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Lista.TDALista;
 import com.example.Enums.EstadoProducto;
+import com.example.Enums.Moneda;
 
 // Clase base abstracta para todo IProducto.
 //
@@ -15,12 +16,13 @@ public abstract class ProductoBase implements IProducto
 {
     private final String id;
     private EstadoProducto estado;
-
+    private Moneda moneda;
     private final TDALista<IProducto> componentes;
 
     //Se valida y guarda el id, arranca en estado ACTIVO, y arranca sin componentes (como hoja) hasta que se le agregue alguno.
-    protected ProductoBase(String id)
+    protected ProductoBase(String id, Moneda moneda)
     {
+        this.moneda = Objects.requireNonNull(moneda);
         this.id = Objects.requireNonNull(id, "id"); // sin id no se podría localizar el producto
         this.estado = EstadoProducto.ACTIVO; // todo producto nuevo arranca ACTIVO
         this.componentes = new ListaEnlazada<>();
@@ -96,5 +98,9 @@ public abstract class ProductoBase implements IProducto
             hijo.recorrer(accion); // y después, recursivamente, cada componente
             indice++;
         }
+    }
+
+    public Moneda getMoneda() {
+        return this.moneda;
     }
 }

@@ -42,6 +42,24 @@ public class PrestamoTest {
     }
 
     @Test
+    public void calcularPrecioTotalDeCuotasRestantesCorrectamente() {
+
+        Prestamo prestamo = new Prestamo(
+            "PRE001",
+            100000,
+            0.10,
+            10
+        );
+
+        assertEquals(110000, prestamo.getPrecioTotal(), 0.001);
+
+        prestamo.pagarCuota(prestamo.proximaCuota());
+        prestamo.pagarCuota(prestamo.proximaCuota());
+
+        assertEquals(88000, prestamo.getPrecioTotal(), 0.001);
+    }
+
+    @Test
     public void pagarCuotaAumentaCuotasActuales() {
 
         Prestamo prestamo = new Prestamo(
