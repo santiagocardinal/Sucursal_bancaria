@@ -1,29 +1,24 @@
 package com.Entidades;
 
-import java.util.Objects;
-
 import com.example.Enums.EstadoProducto;
 
-public class Prestamo implements IProducto {
-
-    private final String id;
-    private EstadoProducto estado;
+ //Acá queda solo lo específico de un préstamo: monto, interés y cuotas.
+public class Prestamo extends ProductoBase {
 
     private final double montoOriginal;
     private final double interes;
     private final int cuotasTotales;
     private int cuotasActual;
 
-   
     public Prestamo(String id,double montoOriginal,double interes,int cuotasTotales) {
 
-        this.id = Objects.requireNonNull(id, "id");
+        super(id);
 
         if (montoOriginal <= 0) { //Si el monto que se pidió prestado es 0 o negativo, no tiene sentido seguir
             throw new IllegalArgumentException("El monto original debe ser mayor a 0");
         }
 
-        if (interes < 0) {//El interés no puede ser 0 eso significaría que el banco te devuelve más plata de la que prestó, lo cual no tiene sentido 
+        if (interes < 0) {//El interés no puede ser 0 eso significaría que el banco te devuelve más plata de la que prestó, lo cual no tiene sentido
             throw new IllegalArgumentException("El interes no puede ser negativo");
         }
 
@@ -36,49 +31,30 @@ public class Prestamo implements IProducto {
         this.cuotasTotales = cuotasTotales;
 
         this.cuotasActual = 0;
-        this.estado = EstadoProducto.ACTIVO;
     }
 
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    
-    @Override
-    public EstadoProducto getEstado() {
-        return estado;
-    }
-
-    @Override
-    public void modificarEstado(EstadoProducto nuevoEstado) {
-        this.estado = Objects.requireNonNull(nuevoEstado,"nuevoEstado"
-        );
-    }
-
-    @Override
-    public boolean estaVencido() {
-        return estado == EstadoProducto.VENCIDO;
-    }
-
+    // Devuelve el monto originalmente pedido, sin intereses.
     public double getMontoOriginal() {
         return montoOriginal;
     }
 
+    // Devuelve la tasa de interés aplicada al préstamo.
     public double getInteres() {
         return interes;
     }
 
+    // Devuelve la cantidad total de cuotas pactadas.
     public int getCuotasTotales() {
         return cuotasTotales;
     }
+
+    // Devuelve la cantidad de cuotas ya pagadas.
     public int getCuotasActual() {
         return cuotasActual;
     }
 
     // Calcula cuánto hay que pagar en la próxima cuota. Si ya se pagaron
-    // todas las cuotas, no queda nada por pagar y devuelve 0. 
+    // todas las cuotas, no queda nada por pagar y devuelve 0.
     // Si no,reparte el monto original mas el interés en partes iguales entre
     // el total de cuotas (montoConInteres / cuotasTotales) — es decir,
     // todas las cuotas valen lo mismo, no se recalcula sobre el saldo
@@ -95,11 +71,12 @@ public class Prestamo implements IProducto {
         return montoConInteres / cuotasTotales;
     }
 
-    // Registra el pago de una cuota. 
-    // Primero chequea que todavía quedencuotas por pagar (si no, IllegalStateException: no se puede pagar algo que ya está saldado). 
+    // Registra el pago de una cuota.
+    // Primero chequea que todavía quedencuotas por pagar (si no, IllegalStateException: no se puede pagar algo que ya está saldado).
     // Después compara el monto recibido contra lo que realmente corresponde pagar (proximaCuota()), permitiendo un
-    // margen  de error de redondeo (0.01); si no coincide, tira IllegalArgumentException y no registra nada. 
-    // Si todo está bien, incrementa cuotasActual, y si con ese pago se llegó a la última cuota, el préstamo pasa automáticamente a CANCELADO.
+    // margen  de error de redondeo (0.01); si no coincide, tira IllegalArgumentException y no registra nada.
+    // Si todo está bien, incrementa cuotasActual, y si con ese pago se llegó a la última cuota, el préstamo pasa automáticamente a CANCELADO
+    // (usando el modificarEstado heredado de ProductoBase, en vez de tocar un campo propio).
     public void pagarCuota(double montoPagado)
     {
 
@@ -117,7 +94,7 @@ public class Prestamo implements IProducto {
         cuotasActual++;
 
         if (cuotasActual == cuotasTotales) {
-            estado = EstadoProducto.CANCELADO;
+            modificarEstado(EstadoProducto.CANCELADO);
         }
     }
 }
