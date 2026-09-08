@@ -190,4 +190,25 @@ public class ListaArray<T> implements TDALista<T> {
         datos = new Object[CAPACIDAD_INICIAL];
         cantidad = 0;
     }
+
+    // Reemplaza el elemento en la posición 'index' por 'elem', sin desplazar
+    // ningún otro elemento. A diferencia de agregar(index, elem) y remover(index)
+    // (que corren el resto de los elementos), esta operación sobrescribe
+    // directamente esa posición, en O(1).
+    // Se agrega para que estructuras como MonticuloPrioridad puedan reutilizar
+    // ListaArray como almacenamiento interno, necesitando poder intercambiar
+    // dos posiciones cualquiera sin pagar el costo de un desplazamiento.
+    public void reemplazar(int index, T elem) 
+    {
+
+        if (index < 0 || index >= cantidad) {
+            throw new IndexOutOfBoundsException("Índice: " + index);
+        }
+
+        if (elem == null) {
+            throw new IllegalArgumentException("No se permiten null");
+        }
+
+        datos[index] = elem;
+    }
 }
