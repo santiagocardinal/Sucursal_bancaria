@@ -31,14 +31,14 @@ public class MonticuloPrioridad<T> implements TDAMonticuloPrioridad<T> {
         }
     }
 
-    private static final int CAPACIDAD_INICIAL = 10;
+    private static final int capacidadInicial = 10;
 
     private Object[] datos;   // array interno: representa el arbol del heap
     private int cantidad;     // cantidad de elementos realmente ocupados
 
     public MonticuloPrioridad() {
         // arrancamos con un array vacio de capacidad inicial, igual que ListaArray
-        this.datos = new Object[CAPACIDAD_INICIAL];
+        this.datos = new Object[capacidadInicial];
         this.cantidad = 0;
     }
 
@@ -249,7 +249,7 @@ public class MonticuloPrioridad<T> implements TDAMonticuloPrioridad<T> {
 
     @Override
     public void anula() {
-        datos = new Object[CAPACIDAD_INICIAL];
+        datos = new Object[capacidadInicial];
         cantidad = 0;
     }
 
@@ -266,5 +266,28 @@ public class MonticuloPrioridad<T> implements TDAMonticuloPrioridad<T> {
     @Override
     public void vaciar() {
         anula();
+    }
+
+    @Override
+    public int posicionDe(T elemento) {
+        if (elemento == null) {
+            return -1;
+        }
+
+        int indiceElemento = buscarIndice(elemento);
+        if (indiceElemento == -1) {
+            return -1; // no está en el montículo
+        }
+
+        int prioridadBuscada = obtener(indiceElemento).getPrioridad();
+        int contador = 0;
+
+        for (int i = 0; i < cantidad; i++) {
+            if (obtener(i).getPrioridad() < prioridadBuscada) 
+            {
+                contador++;
+            }
+        }
+        return contador;
     }
 }
