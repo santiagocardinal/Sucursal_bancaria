@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 import com.example.Caja_de_Herramientas.Lista.TDALista;
 //src\main\java\com\example\Enums\EstadoProducto.java
 import com.example.Enums.EstadoProducto;
+import com.example.Enums.Moneda;
 
 
 public interface IProducto //Dice el que se debe hacer no el como!
@@ -38,5 +39,9 @@ public interface IProducto //Dice el que se debe hacer no el como!
 
     // Recorre este producto y, recursivamente, todos sus componentes (sin límite de profundidad).
     void recorrer(Consumer<IProducto> accion);
+
+    Moneda getMoneda();
+
+    float getPrecioAPagar();
  
 }

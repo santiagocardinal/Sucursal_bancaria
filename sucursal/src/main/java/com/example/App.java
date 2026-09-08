@@ -6,6 +6,7 @@ import com.Entidades.ConteoInteraccion;
 import com.Entidades.Cuenta;
 import com.Entidades.Documento;
 import com.Entidades.IProducto;
+import com.example.Enums.Moneda;
 import com.Entidades.Interaccion;
 import com.Entidades.Mostrador;
 import com.Entidades.Sector;
@@ -39,7 +40,7 @@ public class App {
         Cliente lucia = new Cliente("40345678");
         Cliente ana = new Cliente("60567890");
 
-        Cuenta cuentaLucia = new Cuenta("CTA-" + lucia.getCi(), 50000);
+        Cuenta cuentaLucia = new Cuenta("CTA-" + lucia.getCi(), 50000, Moneda.PESO_URUGUAYO);
         
         cuentaLucia.modificarEstado(EstadoProducto.VENCIDO);
 

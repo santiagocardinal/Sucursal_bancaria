@@ -13,7 +13,7 @@ public class Sector
 {
     private ListaArray<Mostrador> mostradores;
 
-    private Monticulorioridad<Cliente> colaEspera;
+    private MonticuloPrioridad<Cliente> colaEspera;
 
     private Sucursal sucursal;
 

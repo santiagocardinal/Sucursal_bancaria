@@ -2,6 +2,7 @@ package com.example.EstrategiasDeAtencion;
 
 import com.Entidades.Cliente;
 import com.Entidades.IProducto;
+import com.example.Enums.Moneda;
 import com.Entidades.Sucursal;
 import com.Entidades.Interaccion;
 import com.Entidades.Documento;
@@ -102,7 +103,7 @@ public class AtencionPrestamos implements IEstrategiaAtencion {
 
         // Se crea el Prestamo con id generado, montoOriginal igual al
         // monto de la solicitud, interés del 0.10
-        Prestamo prestamo = new Prestamo(generarId(), solicitud.getMonto(), 10, 12);
+        Prestamo prestamo = new Prestamo(generarId(), solicitud.getMonto(), 0.10, 12, Moneda.PESO_URUGUAYO);
         // Se lo agrega a la lista de productos del cliente.
         cliente.agregarProducto(prestamo);
         // Se registran los documentos presentados para el trámite.

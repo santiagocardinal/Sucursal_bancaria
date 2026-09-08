@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.example.Enums.EstadoProducto;
+import com.example.Enums.Moneda;
 
 public class PrestamoTest {
 
@@ -15,7 +16,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         assertEquals("PRE001", prestamo.getId());
@@ -33,7 +35,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         double cuota = prestamo.proximaCuota();
@@ -48,7 +51,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         double cuota = prestamo.proximaCuota();
@@ -65,7 +69,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         double cuota = prestamo.proximaCuota();
@@ -84,7 +89,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            3
+            3,
+            Moneda.PESO_URUGUAYO
         );
 
         double cuota = prestamo.proximaCuota();
@@ -107,7 +113,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            2
+            2,
+            Moneda.PESO_URUGUAYO
         );
 
         double cuota = prestamo.proximaCuota();
@@ -125,7 +132,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            1
+            1,
+            Moneda.PESO_URUGUAYO
         );
 
         prestamo.pagarCuota(prestamo.proximaCuota());
@@ -140,7 +148,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         prestamo.modificarEstado(
@@ -162,7 +171,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         assertFalse(prestamo.estaVencido());
@@ -175,7 +185,8 @@ public class PrestamoTest {
             null,
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
     }
 
@@ -186,7 +197,8 @@ public class PrestamoTest {
             "PRE001",
             0,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
     }
 
@@ -197,7 +209,8 @@ public class PrestamoTest {
             "PRE001",
             -100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
     }
 
@@ -208,7 +221,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             -0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
     }
 
@@ -219,7 +233,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            0
+            0,
+            Moneda.PESO_URUGUAYO
         );
     }
 
@@ -230,7 +245,8 @@ public class PrestamoTest {
             "PRE001",
             100000,
             0.10,
-            10
+            10,
+            Moneda.PESO_URUGUAYO
         );
 
         prestamo.modificarEstado(null);
