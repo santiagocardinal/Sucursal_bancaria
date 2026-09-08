@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.Entidades.Cliente;
 import com.Entidades.Cuenta;
+import com.example.Enums.Moneda;
 import com.Entidades.Documento;
 import com.Entidades.Interaccion;
 import com.Entidades.Sector;
@@ -32,7 +33,7 @@ public class AtencionEjecutivosTest {
         AtencionEjecutivos estrategia = new AtencionEjecutivos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        cliente.agregarProducto(new Cuenta("CTA001", 1000));
+        cliente.agregarProducto(new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO));
 
         SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.CONSULTA, "CTA001", 0, new ListaEnlazada<>());
 
@@ -64,7 +65,7 @@ public class AtencionEjecutivosTest {
         AtencionEjecutivos estrategia = new AtencionEjecutivos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
         cliente.agregarProducto(cuenta);
 
         SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.BAJA_PRODUCTO, "CTA001", 0, new ListaEnlazada<>());
@@ -90,7 +91,7 @@ public class AtencionEjecutivosTest {
         AtencionEjecutivos estrategia = new AtencionEjecutivos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
         cuenta.modificarEstado(EstadoProducto.VENCIDO);
         cliente.agregarProducto(cuenta);
 

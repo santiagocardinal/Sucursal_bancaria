@@ -3,6 +3,7 @@ package com.Entidades;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import com.example.Enums.Moneda;
 
 import com.example.Enums.EstadoProducto;
 
@@ -10,7 +11,7 @@ public class CuentaTest {
 
     @Test
     public void testConstructorGuardaIdYSaldoInicial() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         assertEquals("CTA001", cuenta.getId());
         assertEquals(1000, cuenta.getSaldo(), 0.001);
@@ -19,12 +20,12 @@ public class CuentaTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstructorIdNuloLanzaExcepcion() {
-        new Cuenta(null, 1000);
+        new Cuenta(null, 1000, Moneda.PESO_URUGUAYO);
     }
 
     @Test
     public void testDepositarAumentaSaldo() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         cuenta.depositar(500);
 
@@ -33,21 +34,21 @@ public class CuentaTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testDepositarMontoCeroLanzaExcepcion() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         cuenta.depositar(0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDepositarMontoNegativoLanzaExcepcion() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         cuenta.depositar(-100);
     }
 
     @Test
     public void testRetirarEfectivoExitoso() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         boolean resultado = cuenta.retirarEfectivo(300);
 
@@ -57,7 +58,7 @@ public class CuentaTest {
 
     @Test
     public void testRetirarEfectivoMayorASaldoDevuelveFalse() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         boolean resultado = cuenta.retirarEfectivo(2000);
 
@@ -67,7 +68,7 @@ public class CuentaTest {
 
     @Test
     public void testRetirarEfectivoMontoCeroDevuelveFalse() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         boolean resultado = cuenta.retirarEfectivo(0);
 
@@ -77,7 +78,7 @@ public class CuentaTest {
 
     @Test
     public void testRetirarEfectivoMontoNegativoDevuelveFalse() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         boolean resultado = cuenta.retirarEfectivo(-100);
 
@@ -87,7 +88,7 @@ public class CuentaTest {
 
     @Test
     public void testModificarEstadoCorrectamente() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         cuenta.modificarEstado(EstadoProducto.VENCIDO);
 
@@ -97,14 +98,14 @@ public class CuentaTest {
 
     @Test(expected = NullPointerException.class)
     public void testModificarEstadoNuloLanzaExcepcion() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         cuenta.modificarEstado(null);
     }
 
     @Test
     public void testCuentaActivaNoEstaVencida() {
-        Cuenta cuenta = new Cuenta("CTA001", 1000);
+        Cuenta cuenta = new Cuenta("CTA001", 1000, Moneda.PESO_URUGUAYO);
 
         assertFalse(cuenta.estaVencido());
     }

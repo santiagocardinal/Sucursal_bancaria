@@ -11,6 +11,7 @@ import com.Entidades.Documento;
 import com.Entidades.IProducto;
 import com.Entidades.Interaccion;
 import com.Entidades.Prestamo;
+import com.example.Enums.Moneda;
 import com.Entidades.Sector;
 import com.Entidades.Sucursal;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
@@ -34,7 +35,7 @@ public class AtencionPrestamosTest {
         AtencionPrestamos estrategia = new AtencionPrestamos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        cliente.agregarProducto(new Prestamo("PRE001", 100000, 0.10, 10));
+        cliente.agregarProducto(new Prestamo("PRE001", 100000, 0.10, 10, Moneda.PESO_URUGUAYO));
 
         SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.CONSULTA, "PRE001", 0, new ListaEnlazada<>());
 
@@ -66,7 +67,7 @@ public class AtencionPrestamosTest {
         AtencionPrestamos estrategia = new AtencionPrestamos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        Prestamo prestamo = new Prestamo("PRE001", 100000, 0.10, 10);
+        Prestamo prestamo = new Prestamo("PRE001", 100000, 0.10, 10, Moneda.PESO_URUGUAYO);
         cliente.agregarProducto(prestamo);
         double cuota = prestamo.proximaCuota();
 
@@ -91,7 +92,7 @@ public class AtencionPrestamosTest {
         AtencionPrestamos estrategia = new AtencionPrestamos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        Prestamo prestamo = new Prestamo("PRE001", 100000, 0.10, 10);
+        Prestamo prestamo = new Prestamo("PRE001", 100000, 0.10, 10, Moneda.PESO_URUGUAYO);
         cliente.agregarProducto(prestamo);
 
         SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.PAGO, "PRE001", 1, new ListaEnlazada<>());
@@ -168,7 +169,7 @@ public class AtencionPrestamosTest {
         AtencionPrestamos estrategia = new AtencionPrestamos(sucursal);
         Cliente cliente = new Cliente("12345678");
         registrarClienteEnSucursal(sucursal, cliente);
-        cliente.agregarProducto(new Prestamo("PRE001", 100000, 0.10, 10));
+        cliente.agregarProducto(new Prestamo("PRE001", 100000, 0.10, 10, Moneda.PESO_URUGUAYO));
 
         SolicitudAtencion solicitud = new SolicitudAtencion(TipoInteraccion.BAJA_PRODUCTO, "PRE001", 0, new ListaEnlazada<>());
 

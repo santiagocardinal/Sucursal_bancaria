@@ -4,6 +4,7 @@ import com.Entidades.Cliente;
 import com.Entidades.Cuenta;
 import com.Entidades.Documento;
 import com.Entidades.IProducto;
+import com.example.Enums.Moneda;
 import com.Entidades.Sucursal;
 import com.Entidades.Interaccion;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
@@ -111,7 +112,7 @@ public class AtencionCuentasPersonales implements IEstrategiaAtencion {
     private void altaCuenta(Cliente cliente, SolicitudAtencion solicitud, String mostradorId) {
 
         // Se crea la Cuenta con un id generado automáticamente (no lo elige el cliente ni el empleado) y con saldo inicial igual al monto que venía en la solicitud 
-        Cuenta nuevaCuenta = new Cuenta(generarId(), solicitud.getMonto());
+        Cuenta nuevaCuenta = new Cuenta(generarId(), solicitud.getMonto(), Moneda.PESO_URUGUAYO);
         // Se la agrega a la lista de productos del cliente.
         cliente.agregarProducto(nuevaCuenta);
         // Se registran los documentos que haya presentado para este trámite (cédula, etc.).

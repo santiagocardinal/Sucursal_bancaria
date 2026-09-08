@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Enums.EstadoProducto;
+import com.example.Enums.Moneda;
 import com.example.Enums.TipoInteraccion;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 
@@ -68,7 +69,7 @@ public class ClienteTest {
     @Test
     public void testAgregarProducto() {
         Cliente cliente = new Cliente("12345678");
-        IProducto producto = new TarjetaDeCredito("T1");
+        IProducto producto = new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f);
 
         cliente.agregarProducto(producto);
 
@@ -79,9 +80,9 @@ public class ClienteTest {
     @Test
     public void testObtenerProductoEntreVarios() {
         Cliente cliente = new Cliente("12345678");
-        IProducto producto1 = new TarjetaDeCredito("T1");
-        IProducto producto2 = new TarjetaDeCredito("T2");
-        IProducto producto3 = new TarjetaDeCredito("T3");
+        IProducto producto1 = new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f);
+        IProducto producto2 = new TarjetaDeCredito("T2", Moneda.PESO_URUGUAYO, 1000f);
+        IProducto producto3 = new TarjetaDeCredito("T3", Moneda.PESO_URUGUAYO, 1000f);
 
         cliente.agregarProducto(producto1);
         cliente.agregarProducto(producto2);
@@ -93,7 +94,7 @@ public class ClienteTest {
     @Test
     public void testObtenerProductoInexistenteDevuelveNull() {
         Cliente cliente = new Cliente("12345678");
-        cliente.agregarProducto(new TarjetaDeCredito("T1"));
+        cliente.agregarProducto(new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f));
 
         assertNull(cliente.obtenerProducto("T99"));
     }
@@ -101,7 +102,7 @@ public class ClienteTest {
     @Test
     public void testQuitarProducto() {
         Cliente cliente = new Cliente("12345678");
-        IProducto producto = new TarjetaDeCredito("T1");
+        IProducto producto = new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f);
 
         cliente.agregarProducto(producto);
 
@@ -115,9 +116,9 @@ public class ClienteTest {
     @Test
     public void testQuitarProductoMantieneLosDemas() {
         Cliente cliente = new Cliente("12345678");
-        IProducto producto1 = new TarjetaDeCredito("T1");
-        IProducto producto2 = new TarjetaDeCredito("T2");
-        IProducto producto3 = new TarjetaDeCredito("T3");
+        IProducto producto1 = new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f);
+        IProducto producto2 = new TarjetaDeCredito("T2", Moneda.PESO_URUGUAYO, 1000f);
+        IProducto producto3 = new TarjetaDeCredito("T3", Moneda.PESO_URUGUAYO, 1000f);
 
         cliente.agregarProducto(producto1);
         cliente.agregarProducto(producto2);
@@ -135,7 +136,7 @@ public class ClienteTest {
     @Test
     public void testQuitarProductoInexistenteDevuelveFalse() {
         Cliente cliente = new Cliente("12345678");
-        cliente.agregarProducto(new TarjetaDeCredito("T1"));
+        cliente.agregarProducto(new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f));
 
         assertFalse(cliente.quitarProducto("T99"));
         assertEquals(1, cliente.obtenerProductos().tamano());
@@ -144,9 +145,9 @@ public class ClienteTest {
     @Test
     public void testQuitarTodosLosProductos() {
         Cliente cliente = new Cliente("12345678");
-        cliente.agregarProducto(new TarjetaDeCredito("T1"));
-        cliente.agregarProducto(new TarjetaDeCredito("T2"));
-        cliente.agregarProducto(new TarjetaDeCredito("T3"));
+        cliente.agregarProducto(new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f));
+        cliente.agregarProducto(new TarjetaDeCredito("T2", Moneda.PESO_URUGUAYO, 1000f));
+        cliente.agregarProducto(new TarjetaDeCredito("T3", Moneda.PESO_URUGUAYO, 1000f));
 
         cliente.quitarProducto("T1");
         cliente.quitarProducto("T2");
@@ -158,7 +159,7 @@ public class ClienteTest {
 
     @Test
     public void testTarjetaDeCreditoSePuedeCambiarDeEstado() {
-        TarjetaDeCredito tarjeta = new TarjetaDeCredito("T1");
+        TarjetaDeCredito tarjeta = new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f);
 
         tarjeta.modificarEstado(EstadoProducto.VENCIDO);
 

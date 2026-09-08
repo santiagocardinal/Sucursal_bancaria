@@ -1,6 +1,7 @@
 package com.Entidades;
 
 import com.example.Enums.EstadoProducto;
+import com.example.Enums.Moneda;
 
  //Acá queda solo lo específico de un préstamo: monto, interés y cuotas.
 public class Prestamo extends ProductoBase {
@@ -10,9 +11,9 @@ public class Prestamo extends ProductoBase {
     private final int cuotasTotales;
     private int cuotasActual;
 
-    public Prestamo(String id,double montoOriginal,double interes,int cuotasTotales) {
+    public Prestamo(String id,double montoOriginal,double interes,int cuotasTotales, Moneda moneda) {
 
-        super(id);
+        super(id, moneda);
 
         if (montoOriginal <= 0) { //Si el monto que se pidió prestado es 0 o negativo, no tiene sentido seguir
             throw new IllegalArgumentException("El monto original debe ser mayor a 0");
@@ -96,5 +97,11 @@ public class Prestamo extends ProductoBase {
         if (cuotasActual == cuotasTotales) {
             modificarEstado(EstadoProducto.CANCELADO);
         }
+    }
+
+    @Override
+    public float getPrecioAPagar() {
+        int cuotasRestantes = cuotasTotales - cuotasActual;
+        return (float) (cuotasRestantes * proximaCuota());
     }
 }
