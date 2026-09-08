@@ -372,4 +372,43 @@ public class Elemento<T> implements TDAElemento<T>
             hijoDerecho.enNivel(nivel - 1, lista);
         }
     }
+        // ─── Rango ───────────────────────────────────────────────────────
+    // Mismo criterio de poda que en ElementoABBImpl.enRango: si la clave
+    // de este nodo queda fuera de [minimo, maximo] por un lado, se
+    // descarta sin recorrer el subárbol de ESE lado (por invariante de
+    // ABB no puede tener valores dentro del rango); si está dentro, se
+    // recorre inorden para devolver el resultado ordenado por clave.
+    @Override
+    public void enRango(Comparable<T> minimo, Comparable<T> maximo, TDALista<T> resultado)
+    {
+        if (minimo.compareTo(this.dato) > 0)
+        {
+            if (hijoDerecho != null)
+            {
+                hijoDerecho.enRango(minimo, maximo, resultado);
+            }
+            return;
+        }
+
+        if (maximo.compareTo(this.dato) < 0)
+        {
+            if (hijoIzquierdo != null)
+            {
+                hijoIzquierdo.enRango(minimo, maximo, resultado);
+            }
+            return;
+        }
+
+        if (hijoIzquierdo != null)
+        {
+            hijoIzquierdo.enRango(minimo, maximo, resultado);
+        }
+
+        resultado.agregar(this.dato);
+
+        if (hijoDerecho != null)
+        {
+            hijoDerecho.enRango(minimo, maximo, resultado);
+        }
+    }
 }

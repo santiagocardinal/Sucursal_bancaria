@@ -43,5 +43,26 @@ public interface IProducto //Dice el que se debe hacer no el como!
     Moneda getMoneda();
 
     float getPrecioAPagar();
- 
+    
+        // ===================== CONSULTA: componente de mayor saldo =====================
+    // Busca, entre este producto y todos sus componentes la Cuenta con mayor saldo. 
+  
+    default Cuenta obtenerComponenteDeMayorSaldo()
+    {
+        // Arrays de tamaño 1 usados como "variables mutables" capturables
+        // desde el lambda que le pasamos a recorrer() (una lambda solo puede
+        // capturar variables efectivamente finales, pero sí puede mutar el
+        // contenido de un array).
+        Cuenta[] mejorCuenta = new Cuenta[1];
+
+        recorrer(producto -> {
+            if (producto instanceof Cuenta cuenta
+                    && (mejorCuenta[0] == null || cuenta.getSaldo() > mejorCuenta[0].getSaldo()))
+            {
+                mejorCuenta[0] = cuenta;
+            }
+        });
+
+        return mejorCuenta[0];
+    }
 }

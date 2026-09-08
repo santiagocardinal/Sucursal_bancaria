@@ -1,12 +1,11 @@
 package com.Entidades;
 
 import com.example.Caja_de_Herramientas.Arboles.AVLImpl;
-import com.example.Caja_de_Herramientas.Lista.ListaArray;
-import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Pila.Pila;
 import com.example.Enums.NivelPrioridad;
 import com.example.Enums.TipoInteraccion;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
+import com.example.Caja_de_Herramientas.Lista.*;
 
 public class Sucursal {
     private String id;
@@ -195,8 +194,9 @@ public IProducto buscarProductoPorCuenta(String ciCliente, String numeroCuenta) 
     }
     
     // Búsqueda del producto dentro del cliente utilizando su ID
-    return cliente.obtenerProducto(numeroCuenta);
+    return cliente.buscarProductoEnCartera(numeroCuenta);
 }
+
 
 /**
  * Retorna la cartera de clientes ordenada por CI.
@@ -213,4 +213,60 @@ public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
     
     return carteraOrdenada;
 }
+// ===================== CONSULTA: clientes por rango de documento =====================
+    // Dado un rango de documentos [desde, hasta], devuelve todos los
+    // clientes registrados cuyo ci cae dentro de ese rango, ordenados por
+    // ci. Se apoya en el mismo AVL que ya usamos para la búsqueda puntual
+    // (clientesPorDocumento): un recorrido inorden acotado que, en cada
+    // nodo, compara su clave contra los límites del rango y descarta sin
+    // recorrerla la rama que no puede contener valores dentro de él.
+    // Complejidad: O(log n + k), con k = cantidad de clientes que caen
+    // dentro del rango (los nodos fuera de rango que hay que descartar en
+    // el camino cuestan como mucho la altura del árbol).
+    public TDALista<Cliente> obtenerClientesEnRangoDeDocumento(String desde, String hasta) {
+
+        if (desde == null || hasta == null) {
+            throw new IllegalArgumentException("Los limites del rango no pueden ser nulos");
+        }
+
+        // Igual que en buscarClientePorCi, "desde"/"hasta" se envuelven en
+        // un Cliente de consulta solo para poder compararlos por ci contra
+        // los datos reales guardados en el árbol.
+        return indiceClientes.enRango(new Cliente(desde), new Cliente(hasta));
+    }
+        // ===================== CONSULTA: clientes vecinos por documento =====================
+    // Caso real: llega un trámite referido a un documento que puede no
+    // estar registrado (por ejemplo, para derivar por lotes de documento
+    // entre sucursales, o para detectar un posible error de tipeo en el
+    // ci y ofrecerle al operador los dos clientes reales más parecidos).
+    // Se necesita encontrar, sin recorrer toda la cartera de clientes, el
+    // cliente registrado con el documento inmediatamente ANTERIOR al ci
+    // dado. Se apoya en indiceClientes.predecesor(), que baja un solo
+    // camino del AVL (izquierda o derecha en cada nodo) en vez de visitar
+    // cliente por cliente: por eso hace falta la estructura jerárquica
+    // (AVL) y no alcanza con una lista, donde encontrar el "más cercano"
+    // exige revisarlos a todos, uno por uno, en O(n).
+    // Complejidad: O(log n). Devuelve null si no hay ningún cliente con
+    // documento menor a "ci".
+    public Cliente obtenerClienteConDocumentoAnterior(String ci) {
+
+        if (ci == null) {
+            throw new IllegalArgumentException("El ci no puede ser nulo");
+        }
+
+        return indiceClientes.predecesor(new Cliente(ci));
+    }
+
+    // Simétrico al anterior: encuentra el cliente registrado con el
+    // documento inmediatamente SIGUIENTE al ci dado, también en O(log n)
+    // gracias a que indiceClientes.sucesor() baja un solo camino del AVL.
+    // Devuelve null si no hay ningún cliente con documento mayor a "ci".
+    public Cliente obtenerClienteConDocumentoSiguiente(String ci) {
+
+        if (ci == null) {
+            throw new IllegalArgumentException("El ci no puede ser nulo");
+        }
+
+        return indiceClientes.sucesor(new Cliente(ci));
+    }
 }

@@ -100,4 +100,13 @@ public interface TDAElemento<T> {
      * que se encuentran en el nivel indicado, donde el nivel 0 es este nodo.
      */
     void enNivel(int nivel, TDALista<TDAElemento<T>> lista);
+
+        /**
+     * Recorre inorden el subárbol con raíz en este nodo, agregando a
+     * "resultado" el dato de cada nodo cuya clave esté dentro de
+     * [minimo, maximo] (ambos límites incluidos). Descarta sin recorrerlas
+     * las ramas que, por la invariante de ABB, no puedan contener ningún
+     * valor del rango.
+     */
+    void enRango(Comparable<T> minimo, Comparable<T> maximo, TDALista<T> resultado);
 }

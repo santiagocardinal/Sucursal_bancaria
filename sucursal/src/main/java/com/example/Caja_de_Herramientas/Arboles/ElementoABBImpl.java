@@ -245,5 +245,47 @@ public class ElementoABBImpl<T> implements TDAElemento<T> {
         if (hijoDer != null) {
             hijoDer.enNivel(nivel - 1, lista);
         }
+    
+    }
+        // ─── Rango ───────────────────────────────────────────────────────
+
+    @Override
+    public void enRango(Comparable<T> minimo, Comparable<T> maximo, TDALista<T> resultado) {
+
+        // Si la clave de este nodo es menor que el límite inferior, por
+        // invariante de ABB todo su subárbol izquierdo tiene claves
+        // todavía más chicas: ninguna puede estar en el rango, así que se
+        // descarta sin recorrerlo. Este nodo tampoco entra, pero el
+        // subárbol derecho sí puede tener claves dentro del rango.
+        if (minimo.compareTo(this.dato) > 0) {
+            if (this.hijoDer != null) {
+                this.hijoDer.enRango(minimo, maximo, resultado);
+            }
+            return;
+        }
+
+        // Simétricamente: si la clave de este nodo es mayor que el límite
+        // superior, se descarta el subárbol derecho entero, y solo el
+        // izquierdo puede tener claves dentro del rango.
+        if (maximo.compareTo(this.dato) < 0) {
+            if (this.hijoIzq != null) {
+                this.hijoIzq.enRango(minimo, maximo, resultado);
+            }
+            return;
+        }
+
+        // Si llegamos hasta acá, la clave de este nodo está dentro del
+        // rango: ambos subárboles pueden contener más valores dentro de
+        // él, así que se recorre inorden (izquierda, nodo, derecha) para
+        // que el resultado quede ordenado por clave.
+        if (this.hijoIzq != null) {
+            this.hijoIzq.enRango(minimo, maximo, resultado);
+        }
+
+        resultado.agregar(this.dato);
+
+        if (this.hijoDer != null) {
+            this.hijoDer.enRango(minimo, maximo, resultado);
+        }
     }
 }

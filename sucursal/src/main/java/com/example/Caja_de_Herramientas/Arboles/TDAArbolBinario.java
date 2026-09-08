@@ -81,4 +81,24 @@ public interface TDAArbolBinario<T> {
      * en el nivel indicado, donde el nivel 0 es la raíz.
      */
     TDALista<TDAElemento<T>> enNivel(int nivel);
+        /**
+     * Devuelve, ordenados por clave, todos los elementos del árbol cuya
+     * clave está dentro de [minimo, maximo] (ambos límites incluidos).
+     * Poda las ramas que, por la invariante del árbol, no pueden contener
+     * ningún valor del rango, en vez de recorrer el árbol completo.
+     */
+    TDALista<T> enRango(Comparable<T> minimo, Comparable<T> maximo);
+        /**
+     * Devuelve el elemento del árbol con la mayor clave que sea
+     * ESTRICTAMENTE menor que "criterio" (exista o no "criterio" en el
+     * árbol). Devuelve null si no hay ningún elemento menor.
+     */
+    T predecesor(Comparable<T> criterio);
+
+    /**
+     * Devuelve el elemento del árbol con la menor clave que sea
+     * ESTRICTAMENTE mayor que "criterio" (exista o no "criterio" en el
+     * árbol). Devuelve null si no hay ningún elemento mayor.
+     */
+    T sucesor(Comparable<T> criterio);
 }

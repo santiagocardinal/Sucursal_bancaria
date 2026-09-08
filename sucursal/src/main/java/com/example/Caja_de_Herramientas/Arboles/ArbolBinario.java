@@ -247,4 +247,65 @@ public class ArbolBinario<T> implements TDAArbolBinario<T>
         }
         return lista;
     }
+        // ─── Rango ───────────────────────────────────────────────────────
+    @Override
+    public TDALista<T> enRango(Comparable<T> minimo, Comparable<T> maximo)
+    {
+        TDALista<T> resultado = new ListaEnlazada<>();
+        if (!esVacio())
+        {
+            raiz.enRango(minimo, maximo, resultado);
+        }
+        return resultado;
+    }
+        // ─── Predecesor / Sucesor ──────────────────────────────────────────
+    // Mismo algoritmo que ABBImpl.predecesor: baja por el árbol un solo
+    // camino (izquierda o derecha en cada nodo), sin recorrerlo completo,
+    // guardando como candidato el último nodo estrictamente menor que
+    // "criterio" que encontró en el camino.
+    @Override
+    public T predecesor(Comparable<T> criterio)
+    {
+        TDAElemento<T> actual = raiz;
+        T mejor = null;
+
+        while (actual != null)
+        {
+            if (criterio.compareTo(actual.getDato()) > 0)
+            {
+                mejor = actual.getDato();
+                actual = actual.getHijoDerecho();
+            }
+            else
+            {
+                actual = actual.getHijoIzquierdo();
+            }
+        }
+
+        return mejor;
+    }
+
+    // Simétrico a predecesor(): guarda el último nodo estrictamente mayor
+    // que "criterio" que encuentra en el camino hacia abajo.
+    @Override
+    public T sucesor(Comparable<T> criterio)
+    {
+        TDAElemento<T> actual = raiz;
+        T mejor = null;
+
+        while (actual != null)
+        {
+            if (criterio.compareTo(actual.getDato()) < 0)
+            {
+                mejor = actual.getDato();
+                actual = actual.getHijoIzquierdo();
+            }
+            else
+            {
+                actual = actual.getHijoDerecho();
+            }
+        }
+
+        return mejor;
+    }
 }
