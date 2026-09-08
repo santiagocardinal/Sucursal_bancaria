@@ -5,10 +5,7 @@ import com.example.Caja_de_Herramientas.Lista.ListaArray;
 import com.example.Enums.NivelPrioridad;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 
-// Representa un sector de atención dentro de una sucursal (por ejemplo,
-// "Cuentas Personales" o "Préstamos"). Un sector tiene mostradores que
-// atienden clientes, y una cola de espera donde los clientes aguardan
-// su turno según su nivel de prioridad.
+
 public class Sector
 {
     private ListaArray<Mostrador> mostradores;

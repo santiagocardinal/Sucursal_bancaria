@@ -79,9 +79,7 @@ public class Cliente implements Comparable<Cliente> {
         Cliente otroCliente = (Cliente) obj;
         return this.ci.equals(otroCliente.ci);
     }
-    // Busca un producto por id en TODA la cartera del cliente, sin importar si
-    // es un producto de primer nivel o un componente anidado dentro de un
-    // paquete a cualquier profundidad. A diferencia de obtenerProducto(id) (que
+    // A diferencia de obtenerProducto(id) (que
     // solo mira los productos de primer nivel), acá se usa recorrer() sobre
     // cada producto raíz para bajar por su árbol de composición completo.
     public IProducto buscarProductoEnCartera(String id) {
