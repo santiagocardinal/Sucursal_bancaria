@@ -1,26 +1,22 @@
 package com.Entidades;
 
 import java.util.Objects;
-
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.EstrategiasDeAtencion.SolicitudAtencion;
 import com.example.Enums.EstadoProducto;
 
-public class Cliente 
-{
+public class Cliente implements Comparable<Cliente> {
     private final String ci;
     private ListaEnlazada<IProducto> productos;
     private int numeroTurno;
-    private SolicitudAtencion solicitudActual; //<-
+    private SolicitudAtencion solicitudActual;
 
-    public Cliente(String ci)
-    {
-        this.ci = Objects.requireNonNull(ci, "El ci no puede ser nulo"); //pide que siempre exista una cedula/identificador
+    public Cliente(String ci) {
+        this.ci = Objects.requireNonNull(ci, "El ci no puede ser nulo");
         this.productos = new ListaEnlazada<>();
     }
 
-    public String getCi()
-    {
+    public String getCi() {
         return ci;
     }
 
@@ -28,7 +24,7 @@ public class Cliente
         return numeroTurno;
     }
 
-    public void setNumeroTurno(int numeroTurno){
+    public void setNumeroTurno(int numeroTurno) {
         this.numeroTurno = numeroTurno;
     }
 
@@ -40,61 +36,47 @@ public class Cliente
         this.solicitudActual = solicitudActual;
     }
 
-    public void agregarProducto(IProducto producto){
+    public void agregarProducto(IProducto producto) {
         productos.agregar(producto);
     }
 
-    public IProducto obtenerProducto(String id){
+    public IProducto obtenerProducto(String id) {
         return productos.buscar(producto -> producto.getId().equals(id));
     }
-    
-    public ListaEnlazada<IProducto> obtenerProductos(){
+
+    public ListaEnlazada<IProducto> obtenerProductos() {
         return productos;
     }
 
-    public boolean quitarProducto(String id){
+    public boolean quitarProducto(String id) {
         IProducto producto = obtenerProducto(id);
-        
-        if (producto == null) {
-            return false;
-        }
-        
+        if (producto == null) return false;
         return productos.remover(producto);
     }
 
-    //consulta pedida en letra
-
     public ListaEnlazada<IProducto> obtenerProductosVencidosOCancelados() {
-
-    ListaEnlazada<IProducto> resultado = new ListaEnlazada<>();
-
-    int indice = 0;
-    while (indice < productos.tamano()) {
-        IProducto producto = productos.obtener(indice);
-        if (producto.estaVencido() || producto.getEstado() == EstadoProducto.CANCELADO) {
-            resultado.agregar(producto);
+        ListaEnlazada<IProducto> resultado = new ListaEnlazada<>();
+        int indice = 0;
+        while (indice < productos.tamano()) {
+            IProducto producto = productos.obtener(indice);
+            if (producto.estaVencido() || producto.getEstado() == EstadoProducto.CANCELADO) {
+                resultado.agregar(producto);
+            }
+            indice++;
         }
-        indice++;
+        return resultado;
     }
 
-    return resultado;
-}
-
-public boolean equals(Object obj) {
-    // si es el mismo objeto en memoria, son iguales directamente
-    if (this == obj) {
-        return true;
+    @Override
+    public int compareTo(Cliente otro) {
+        return this.ci.compareTo(otro.ci);
     }
 
-    // si el otro objeto es null, o no es un Cliente, no pueden ser iguales
-    if (obj == null || getClass() != obj.getClass()) {
-        return false;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Cliente otroCliente = (Cliente) obj;
+        return this.ci.equals(otroCliente.ci);
     }
-
-    // los casteamos a Cliente para poder comparar su ci
-    Cliente otroCliente = (Cliente) obj;
-
-    // dos clientes son iguales si tienen la misma cédula
-    return this.ci.equals(otroCliente.ci);
-}
 }

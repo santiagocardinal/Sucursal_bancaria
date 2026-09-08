@@ -1,41 +1,44 @@
 package com.example.Caja_de_Herramientas.Arboles;
 
-public class NodoOperando extends NodoExpresion {
-    private final String valor; // Puede ser un número "100" o variable "saldoPromedio"
+import com.Entidades.Cliente;
 
-    public NodoOperando(String valor) {
-        this.valor = valor;
+public class NodoOperando implements NodoExpresion {
+    private final String simbolo;
+    private final boolean esVariable;
+
+    public NodoOperando(String simbolo) {
+        this.simbolo = simbolo.trim();
+        this.esVariable = simbolo.matches("[a-zA-Z]+");
     }
 
     @Override
     public double evaluar(Cliente cliente) {
-        // Si es un número constante
-        try {
-            return Double.parseDouble(valor);
-        } catch (NumberFormatException e) {
-            // Si es una variable, se extrae del cliente
-            return obtenerValorVariable(cliente, valor);
+        if (!esVariable) {
+            return Double.parseDouble(simbolo);
         }
-    }
 
-    private double obtenerValorVariable(Cliente cliente, String variable) {
         if (cliente == null) return 0.0;
-        
-        switch (variable) {
-            case "cantidadProductos":
-                return cliente.obtenerProductos().tamano();
-            case "numeroTurno":
-                return cliente.getNumeroTurno();
-            // Acá se pueden agregar más variables definidas por el grupo
+
+        // Mapeo directo de variables con los datos del Cliente
+        switch (simbolo.toLowerCase()) {
+            case "sal":
+                return cliente.obtenerProductos().tamano() * 1000.0; // Ajustar según método de saldo
+            case "mov":
+                return 5.0; // Movimientos / Interacciones
+            case "pro":
+                return (double) cliente.obtenerProductos().tamano();
             default:
-                throw new IllegalArgumentException("Variable no reconocida: " + variable);
+                throw new IllegalArgumentException("Variable no soportada en la fórmula: " + simbolo);
         }
     }
 
     @Override
-    public String aTexto(int precedenciaPadre) {
-        return valor; // Un operando nunca lleva paréntesis por sí solo
+    public String aTextoSinParentesisRedundantes(int precedenciaPadre) {
+        return simbolo;
+    }
+
+    @Override
+    public int getPrecedencia() {
+        return Integer.MAX_VALUE;
     }
 }
-    
-

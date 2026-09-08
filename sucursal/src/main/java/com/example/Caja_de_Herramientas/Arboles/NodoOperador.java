@@ -1,55 +1,51 @@
 package com.example.Caja_de_Herramientas.Arboles;
 
-public class NodoOperador extends NodoExpresion {
-    private final char operador;
-    private final NodoExpresion izquierdo;
-    private final NodoExpresion derecho;
+import com.Entidades.Cliente;
 
-    public NodoOperador(char operador, NodoExpresion izquierdo, NodoExpresion derecho) {
+public class NodoOperador implements NodoExpresion {
+    private final char operador;
+    private final NodoExpresion izq;
+    private final NodoExpresion der;
+
+    public NodoOperador(char operador, NodoExpresion izq, NodoExpresion der) {
         this.operador = operador;
-        this.izquierdo = izquierdo;
-        this.derecho = derecho;
+        this.izq = izq;
+        this.der = der;
     }
 
     @Override
     public double evaluar(Cliente cliente) {
-        double valIzq = izquierdo.evaluar(cliente);
-        double valDer = derecho.evaluar(cliente);
+        double valIzq = izq.evaluar(cliente);
+        double valDer = der.evaluar(cliente);
 
         switch (operador) {
             case '+': return valIzq + valDer;
             case '-': return valIzq - valDer;
             case '*': return valIzq * valDer;
             case '/': 
-                if (valDer == 0) throw new ArithmeticException("División por cero en fórmula");
+                if (valDer == 0) throw new ArithmeticException("División por cero en la fórmula");
                 return valIzq / valDer;
-            default:
-                throw new UnsupportedOperationException("Operador no soportado: " + operador);
+            default: throw new UnsupportedOperationException("Operador no soportado: " + operador);
         }
     }
 
     @Override
-    public String aTexto(int precedenciaPadre) {
-        int miPrecedencia = obtenerPrecedencia(this.operador);
-        
-        // Recorrido Inorden de los subárboles
-        String textoIzq = izquierdo.aTexto(miPrecedencia);
-        String textoDer = derecho.aTexto(miPrecedencia);
-        String resultado = textoIzq + " " + operador + " " + textoDer;
-
-        // Si la precedencia de este nodo es menor que la de su padre,
-        // se requiere envolver en paréntesis para mantener la prioridad matemática.
-        if (miPrecedencia < precedenciaPadre) {
-            return "(" + resultado + ")";
-        }
-        return resultado;
+    public int getPrecedencia() {
+        if (operador == '+' || operador == '-') return 1;
+        if (operador == '*' || operador == '/') return 2;
+        return 0;
     }
 
-    public static int obtenerPrecedencia(char op) {
-        switch (op) {
-            case '+': case '-': return 1;
-            case '*': case '/': return 2;
-            default: return 0;
+    @Override
+    public String aTextoSinParentesisRedundantes(int precedenciaPadre) {
+        int miPrecedencia = getPrecedencia();
+        String representacion = izq.aTextoSinParentesisRedundantes(miPrecedencia) 
+                                + " " + operador + " " 
+                                + der.aTextoSinParentesisRedundantes(miPrecedencia + (operador == '-' || operador == '/' ? 1 : 0));
+
+        if (precedenciaPadre > miPrecedencia) {
+            return "(" + representacion + ")";
         }
+        return representacion;
     }
 }
