@@ -37,6 +37,6 @@ public class Cuenta extends ProductoBase {
 
     @Override
     public float getPrecioAPagar() {
-        return 0.0f;
+        return 0.0f;// le pongo 0 flotante porque este metodo se usa para calcular la el total a pagar de un producto y en cuento no hay nada a pagar
     }
 }

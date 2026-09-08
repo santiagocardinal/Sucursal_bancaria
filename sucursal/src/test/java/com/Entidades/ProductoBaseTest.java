@@ -3,6 +3,7 @@ package com.Entidades;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import com.example.Enums.Moneda;
 
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 
@@ -13,7 +14,7 @@ public class ProductoBaseTest {
     // componente, tiene que comportarse como una hoja.
     @Test
     public void testProductoNuevoEsHojaSinComponentes() {
-        Cuenta cuenta = new Cuenta("CTA-1", 1000);
+        Cuenta cuenta = new Cuenta("CTA-1", 1000, Moneda.PESO_URUGUAYO);
 
         assertTrue(cuenta.esHoja());
         assertTrue(cuenta.obtenerComponentes().esVacio());
@@ -23,8 +24,8 @@ public class ProductoBaseTest {
     // y el producto deja de ser hoja.
     @Test
     public void testAgregarComponenteQuedaEnObtenerComponentesYDejaDeSerHoja() {
-        Cuenta cuentaMadre = new Cuenta("CTA-1", 1000);
-        Cuenta subcuentaUSD = new Cuenta("CTA-1-USD", 200);
+        Cuenta cuentaMadre = new Cuenta("CTA-1", 1000, Moneda.PESO_URUGUAYO);
+        Cuenta subcuentaUSD = new Cuenta("CTA-1-USD", 200, Moneda.USD);
 
         cuentaMadre.agregarComponente(subcuentaUSD);
 
@@ -37,9 +38,9 @@ public class ProductoBaseTest {
     // pueden ser de distinto tipo concreto 
     @Test
     public void testSePuedenAgregarVariosComponentesDeDistintoTipo() {
-        Cuenta cuentaMadre = new Cuenta("CTA-1", 1000);
-        Cuenta subcuentaEUR = new Cuenta("CTA-1-EUR", 50);
-        TarjetaDeCredito adicional = new TarjetaDeCredito("TC-ADIC-1");
+        Cuenta cuentaMadre = new Cuenta("CTA-1", 1000, Moneda.PESO_URUGUAYO);
+        Cuenta subcuentaEUR = new Cuenta("CTA-1-EUR", 50, Moneda.PESO_URUGUAYO);
+        TarjetaDeCredito adicional = new TarjetaDeCredito("TC-ADIC-1", Moneda.PESO_URUGUAYO, 1000f);
 
         cuentaMadre.agregarComponente(subcuentaEUR);
         cuentaMadre.agregarComponente(adicional);
@@ -53,7 +54,7 @@ public class ProductoBaseTest {
     // como hijo), así que tiene que fallar en vez de agregar un hueco.
     @Test(expected = IllegalArgumentException.class)
     public void testAgregarComponenteNuloLanzaExcepcion() {
-        Cuenta cuenta = new Cuenta("CTA-1", 1000);
+        Cuenta cuenta = new Cuenta("CTA-1", 1000, Moneda.PESO_URUGUAYO);
 
         cuenta.agregarComponente(null);
     }
@@ -62,7 +63,7 @@ public class ProductoBaseTest {
     // únicamente a sí mismo.
     @Test
     public void testRecorrerSinComponentesVisitaSoloAEsteProducto() {
-        Cuenta cuenta = new Cuenta("CTA-1", 1000);
+        Cuenta cuenta = new Cuenta("CTA-1", 1000, Moneda.PESO_URUGUAYO);
 
         ListaEnlazada<IProducto> visitados = new ListaEnlazada<>();
         cuenta.recorrer(visitados::agregar);
@@ -76,9 +77,9 @@ public class ProductoBaseTest {
     // (tres niveles) y se verifica que los tres se visiten.
     @Test
     public void testRecorrerVisitaComponentesAnidadosSinLimiteDeProfundidad() {
-        Cuenta cuentaMadre = new Cuenta("CTA-1", 1000);
-        Cuenta subUSD = new Cuenta("CTA-1-USD", 200);
-        TarjetaDeCredito adicional = new TarjetaDeCredito("TC-ADIC-1");
+        Cuenta cuentaMadre = new Cuenta("CTA-1", 1000, Moneda.PESO_URUGUAYO);
+        Cuenta subUSD = new Cuenta("CTA-1-USD", 200, Moneda.USD);
+        TarjetaDeCredito adicional = new TarjetaDeCredito("TC-ADIC-1", Moneda.PESO_URUGUAYO, 1000f);
 
         cuentaMadre.agregarComponente(subUSD);
         subUSD.agregarComponente(adicional); // segundo nivel de profundidad
