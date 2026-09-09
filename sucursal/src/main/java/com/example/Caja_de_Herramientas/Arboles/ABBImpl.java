@@ -143,17 +143,8 @@ public class ABBImpl<T> implements TDAArbolBinario<T> {
         }
         return resultado;
     }
-        // ─── Predecesor / Sucesor ──────────────────────────────────────────
-    // No hace falta ningún método nuevo en TDAElemento/Elemento/ElementoABBImpl:
-    // alcanza con "caminar" desde la raíz usando los getters que ya existen
-    // (getHijoIzquierdo/getHijoDerecho/getDato), sin recorrer el árbol
-    // completo. En cada nodo se decide un único camino a seguir (izquierda o
-    // derecha) según la comparación contra "criterio", igual que insertar()
-    // o buscar(): por eso el costo es O(altura) = O(log n) en un árbol
-    // balanceado, en vez de O(n) como sería revisar cliente por cliente en
-    // una lista para encontrar el más cercano.
-
-    // Recorre el árbol comparando "criterio" contra cada nodo. Cada vez que
+    // ─── Predecesor / Sucesor ──────────────────────────────────────────
+     // Recorre el árbol comparando "criterio" contra cada nodo. Cada vez que
     // encuentra un nodo estrictamente menor que "criterio" lo guarda como
     // mejor candidato hasta el momento y sigue bajando a la derecha (busca
     // algo todavía más grande, pero que siga siendo menor que criterio); si

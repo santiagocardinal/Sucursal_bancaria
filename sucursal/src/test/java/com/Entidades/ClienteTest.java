@@ -166,4 +166,27 @@ public class ClienteTest {
         assertEquals(EstadoProducto.VENCIDO, tarjeta.getEstado());
         assertTrue(tarjeta.estaVencido());
     }
+
+    @Test
+    public void testBuscarProductosEnCarteraExistente() {
+        Cliente cliente = new Cliente("12345678");
+        IProducto producto = new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f);
+
+        cliente.agregarProducto(producto);
+        IProducto encontrado = cliente.buscarProductoEnCartera("T1");
+
+        assertNotNull(encontrado);
+        assertEquals("T1", encontrado.getId());
+        assertSame(producto, encontrado);
+    }
+
+    @Test
+    public void testBuscarProductoEnCarteraInexistenteDevuelveNull() {
+        Cliente cliente = new Cliente("12345678");
+        cliente.agregarProducto(new TarjetaDeCredito("T1", Moneda.PESO_URUGUAYO, 1000f));
+
+        IProducto noExiste = cliente.buscarProductoEnCartera("T2");
+
+        assertNull(noExiste);
+    }
 }

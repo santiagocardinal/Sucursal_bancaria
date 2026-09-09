@@ -12,7 +12,7 @@ public class Sucursal {
     private ListaArray<Sector> sectores;
     private HistorialInteracciones historialInteracciones;
     private CopiaDocumentos copiaDocumentos;
-    private AVLImpl<Cliente> indiceClientes; // <- Índice AVL para Búsquedas O(log n)
+    private AVLImpl<Cliente> indiceClientes; 
     private FormulaComision formulaComisionActual;
     private final ServicioLiquidacionComisiones servicioLiquidacion = new ServicioLiquidacionComisiones();
 
@@ -217,12 +217,8 @@ public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
     // Dado un rango de documentos [desde, hasta], devuelve todos los
     // clientes registrados cuyo ci cae dentro de ese rango, ordenados por
     // ci. Se apoya en el mismo AVL que ya usamos para la búsqueda puntual
-    // (clientesPorDocumento): un recorrido inorden acotado que, en cada
-    // nodo, compara su clave contra los límites del rango y descarta sin
-    // recorrerla la rama que no puede contener valores dentro de él.
-    // Complejidad: O(log n + k), con k = cantidad de clientes que caen
-    // dentro del rango (los nodos fuera de rango que hay que descartar en
-    // el camino cuestan como mucho la altura del árbol).
+    // (clientesPorDocumento)
+
     public TDALista<Cliente> obtenerClientesEnRangoDeDocumento(String desde, String hasta) {
 
         if (desde == null || hasta == null) {
@@ -235,19 +231,7 @@ public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
         return indiceClientes.enRango(new Cliente(desde), new Cliente(hasta));
     }
         // ===================== CONSULTA: clientes vecinos por documento =====================
-    // Caso real: llega un trámite referido a un documento que puede no
-    // estar registrado (por ejemplo, para derivar por lotes de documento
-    // entre sucursales, o para detectar un posible error de tipeo en el
-    // ci y ofrecerle al operador los dos clientes reales más parecidos).
-    // Se necesita encontrar, sin recorrer toda la cartera de clientes, el
-    // cliente registrado con el documento inmediatamente ANTERIOR al ci
-    // dado. Se apoya en indiceClientes.predecesor(), que baja un solo
-    // camino del AVL (izquierda o derecha en cada nodo) en vez de visitar
-    // cliente por cliente: por eso hace falta la estructura jerárquica
-    // (AVL) y no alcanza con una lista, donde encontrar el "más cercano"
-    // exige revisarlos a todos, uno por uno, en O(n).
-    // Complejidad: O(log n). Devuelve null si no hay ningún cliente con
-    // documento menor a "ci".
+    
     public Cliente obtenerClienteConDocumentoAnterior(String ci) {
 
         if (ci == null) {

@@ -103,4 +103,33 @@ public abstract class ProductoBase implements IProducto
     public Moneda getMoneda() {
         return this.moneda;
     }
+
+    @Override
+    public boolean quitarComponente(String id) {
+
+    if (id == null) {
+        return false;
+    }
+
+    int indice = 0;
+
+    while (indice < componentes.tamano()) {
+
+        IProducto componente = componentes.obtener(indice);
+
+        if (componente.getId().equals(id)) {
+            componentes.remover(indice);
+            return true;
+        }
+
+        if (componente.quitarComponente(id)) {
+            return true;
+        }
+
+        indice++;
+    }
+
+    return false;
+}
+
 }

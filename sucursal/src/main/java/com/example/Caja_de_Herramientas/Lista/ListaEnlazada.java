@@ -7,8 +7,11 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
     private Nodo<T> cabeza;
 
+    private Nodo<T> cola;
+
     public ListaEnlazada() {
         this.cabeza = null;
+        this.cola = null;
     }
 
     @Override
@@ -21,16 +24,12 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
         if (cabeza == null) {
             cabeza = nuevo;
+            cola = nuevo;
             return;
         }
 
-        Nodo<T> actual = cabeza;
-
-        while (actual.getSiguiente() != null) {
-            actual = actual.getSiguiente();
-        }
-
-        actual.setSiguiente(nuevo);
+        cola.setSiguiente(nuevo);
+        cola = nuevo;
     }
 
     @Override
@@ -45,9 +44,13 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
         Nodo<T> nuevo = new Nodo<>(elem);
 
-        // Insertar al comienzo
         if (index == 0) {
             nuevo.setSiguiente(cabeza);
+
+            if (cabeza == null) {
+                cola = nuevo;
+            }
+
             cabeza = nuevo;
             return;
         }
@@ -55,19 +58,21 @@ public class ListaEnlazada<T> implements TDALista<T> {
         Nodo<T> actual = cabeza;
         int i = 0;
 
-        // Buscamos el nodo anterior a la posición de inserción
         while (actual != null && i < index - 1) {
             actual = actual.getSiguiente();
             i++;
         }
 
-        // Si no existe el nodo anterior, el índice está fuera de rango
         if (actual == null) {
             throw new IndexOutOfBoundsException("Índice: " + index);
         }
 
         nuevo.setSiguiente(actual.getSiguiente());
         actual.setSiguiente(nuevo);
+
+        if (nuevo.getSiguiente() == null) {
+            cola = nuevo;
+        }
     }
 
     @Override
@@ -110,13 +115,16 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
             eliminado.setSiguiente(null);
 
+            if (cabeza == null) {
+                cola = null;
+            }
+
             return dato;
         }
 
         Nodo<T> anterior = cabeza;
         int i = 0;
 
-        // Llegamos al nodo anterior al que queremos eliminar
         while (anterior != null && i < index - 1) {
             anterior = anterior.getSiguiente();
             i++;
@@ -130,6 +138,11 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
         anterior.setSiguiente(eliminado.getSiguiente());
         eliminado.setSiguiente(null);
+
+      
+        if (eliminado == cola) {
+            cola = anterior;
+        }
 
         return eliminado.getDato();
     }
@@ -155,6 +168,10 @@ public class ListaEnlazada<T> implements TDALista<T> {
                 }
 
                 actual.setSiguiente(null);
+
+                if (actual == cola) {
+                    cola = anterior;
+                }
 
                 return true;
             }
@@ -281,6 +298,8 @@ public class ListaEnlazada<T> implements TDALista<T> {
     @Override
     public void vaciar() {
         cabeza = null;
+        // NUEVO: al vaciar la lista, cola también tiene que quedar en null.
+        cola = null;
     }
 
     public void insertarOrdenado(T elem, Comparator<T> comparator) {
@@ -299,6 +318,11 @@ public class ListaEnlazada<T> implements TDALista<T> {
         if (cabeza == null || comparator.compare(elem, cabeza.getDato()) < 0) {
 
             nuevo.setSiguiente(cabeza);
+
+            if (cabeza == null) {
+                cola = nuevo;
+            }
+
             cabeza = nuevo;
 
             return;
@@ -306,12 +330,15 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
         Nodo<T> actual = cabeza;
 
-        // Avanzamos hasta encontrar dónde insertar
         while (actual.getSiguiente() != null && comparator.compare(actual.getSiguiente().getDato(), elem) <= 0) {
             actual = actual.getSiguiente();
         }
 
         nuevo.setSiguiente(actual.getSiguiente());
         actual.setSiguiente(nuevo);
+
+        if (nuevo.getSiguiente() == null) {
+            cola = nuevo;
+        }
     }
 }

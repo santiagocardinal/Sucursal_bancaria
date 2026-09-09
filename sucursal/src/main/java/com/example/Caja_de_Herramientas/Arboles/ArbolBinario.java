@@ -247,7 +247,7 @@ public class ArbolBinario<T> implements TDAArbolBinario<T>
         }
         return lista;
     }
-        // ─── Rango ───────────────────────────────────────────────────────
+    // ─── Rango ───────────────────────────────────────────────────────
     @Override
     public TDALista<T> enRango(Comparable<T> minimo, Comparable<T> maximo)
     {
@@ -258,7 +258,7 @@ public class ArbolBinario<T> implements TDAArbolBinario<T>
         }
         return resultado;
     }
-        // ─── Predecesor / Sucesor ──────────────────────────────────────────
+    // ─── Predecesor / Sucesor ──────────────────────────────────────────
     // Mismo algoritmo que ABBImpl.predecesor: baja por el árbol un solo
     // camino (izquierda o derecha en cada nodo), sin recorrerlo completo,
     // guardando como candidato el último nodo estrictamente menor que

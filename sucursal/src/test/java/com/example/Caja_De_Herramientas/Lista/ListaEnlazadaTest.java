@@ -467,4 +467,137 @@ public class ListaEnlazadaTest {
         assertEquals(Integer.valueOf(10), lista.obtener(0));
         assertEquals(Integer.valueOf(30), lista.obtener(1));
     }
+
+    @Test
+    public void testAgregarAlFinalVariasVecesMantieneOrden() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.agregar(20);
+        lista.agregar(30);
+        lista.agregar(40);
+
+        assertEquals(4, lista.tamano());
+        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals(Integer.valueOf(20), lista.obtener(1));
+        assertEquals(Integer.valueOf(30), lista.obtener(2));
+        assertEquals(Integer.valueOf(40), lista.obtener(3));
+    }
+
+    @Test
+    public void testRemoverUnicoElementoPorIndiceYAgregarDeNuevo() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.remover(0); // se elimina el único elemento, la lista queda vacía
+
+        lista.agregar(20); // si cola no se hubiera limpiado, esto se rompería
+
+        assertEquals(1, lista.tamano());
+        assertEquals(Integer.valueOf(20), lista.obtener(0));
+    }
+
+    @Test
+    public void testRemoverPorValorUltimoElementoYAgregarDeNuevo() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.agregar(20);
+        lista.agregar(30);
+
+        lista.remover(Integer.valueOf(30)); // elimina el último por valor
+        lista.agregar(40); // debería agregarse correctamente al nuevo final
+
+        assertEquals(3, lista.tamano());
+        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals(Integer.valueOf(20), lista.obtener(1));
+        assertEquals(Integer.valueOf(40), lista.obtener(2));
+    }
+
+    @Test
+    public void testRemoverPorValorUnicoElementoYAgregarDeNuevo() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.remover(Integer.valueOf(10)); // se elimina el único elemento
+
+        lista.agregar(20);
+
+        assertEquals(1, lista.tamano());
+        assertEquals(Integer.valueOf(20), lista.obtener(0));
+    }
+
+    @Test
+    public void testVaciarYAgregarDeNuevo() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.agregar(20);
+        lista.agregar(30);
+
+        lista.vaciar();
+        lista.agregar(40); // si cola hubiera quedado apuntando al "30", esto fallaría
+
+        assertEquals(1, lista.tamano());
+        assertEquals(Integer.valueOf(40), lista.obtener(0));
+    }
+
+    @Test
+    public void testAgregarPorIndiceAlFinalLuegoAgregarNormal() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.agregar(20);
+
+        lista.agregar(2, 30); // inserta al final usando el índice, no agregar(T)
+
+        lista.agregar(40); // debería engancharse después del 30, no del 20
+
+        assertEquals(4, lista.tamano());
+        assertEquals(Integer.valueOf(30), lista.obtener(2));
+        assertEquals(Integer.valueOf(40), lista.obtener(3));
+    }
+
+    @Test
+    public void testAgregarPorIndiceCeroEnListaVaciaLuegoAgregarNormal() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(0, 10); // lista vacía: este nodo es cabeza y cola a la vez
+
+        lista.agregar(20); // debería engancharse después del 10
+
+        assertEquals(2, lista.tamano());
+        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals(Integer.valueOf(20), lista.obtener(1));
+    }
+
+    @Test
+    public void testInsertarOrdenadoAlFinalLuegoAgregarNormal() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.agregar(10);
+        lista.agregar(20);
+
+        lista.insertarOrdenado(30, Comparator.naturalOrder()); // queda al final
+
+        lista.agregar(40); // debería engancharse después del 30
+
+        assertEquals(4, lista.tamano());
+        assertEquals(Integer.valueOf(30), lista.obtener(2));
+        assertEquals(Integer.valueOf(40), lista.obtener(3));
+    }
+
+    @Test
+    public void testInsertarOrdenadoEnListaVaciaLuegoAgregarNormal() {
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+
+        lista.insertarOrdenado(10, Comparator.naturalOrder()); // cabeza y cola a la vez
+
+        lista.agregar(20);
+
+        assertEquals(2, lista.tamano());
+        assertEquals(Integer.valueOf(10), lista.obtener(0));
+        assertEquals(Integer.valueOf(20), lista.obtener(1));
+    }
+
 }
