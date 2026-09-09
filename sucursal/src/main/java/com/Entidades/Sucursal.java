@@ -12,7 +12,7 @@ public class Sucursal {
     private ListaArray<Sector> sectores;
     private HistorialInteracciones historialInteracciones;
     private CopiaDocumentos copiaDocumentos;
-    private AVLImpl<Cliente> indiceClientes; // <- Índice AVL para Búsquedas O(log n)
+    private AVLImpl<Cliente> indiceClientes; 
     private FormulaComision formulaComisionActual;
     private final ServicioLiquidacionComisiones servicioLiquidacion = new ServicioLiquidacionComisiones();
 
@@ -218,7 +218,7 @@ public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
     // clientes registrados cuyo ci cae dentro de ese rango, ordenados por
     // ci. Se apoya en el mismo AVL que ya usamos para la búsqueda puntual
     // (clientesPorDocumento)
-    
+
     public TDALista<Cliente> obtenerClientesEnRangoDeDocumento(String desde, String hasta) {
 
         if (desde == null || hasta == null) {
