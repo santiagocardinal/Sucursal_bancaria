@@ -18,6 +18,12 @@ public interface IEstrategiaAtencion {
 
         Totales totales = new Totales();
         producto.recorrer(subProd -> {
+            // recorrer() visita todo el árbol (raíz, paquetes intermedios y
+            // hojas) de una sola pasada.
+            if (!subProd.esHoja()) {
+                return;
+            }
+
             if (subProd.getMoneda() == Moneda.USD) {
                 totales.usd += subProd.getPrecioAPagar();
             } else if (subProd.getMoneda() == Moneda.PESO_URUGUAYO) {

@@ -82,6 +82,9 @@ public class App {
         sectorCuentas.llamarClienteAMostrador();
         mostradorCuentas.liberar();
 
+        Cuenta cuentaValentina = new Cuenta("CTA-" + valentina.getCi(), 8000, Moneda.PESO_URUGUAYO);
+        valentina.agregarProducto(cuentaValentina);
+
         System.out.println("Clientes dados de alta: \n" + maria.getCi() + "\n" + lucia.getCi() + "\n" + ana.getCi() + "\n" + diego.getCi() + "\n" + valentina.getCi());
 
         System.out.println();
@@ -98,7 +101,7 @@ public class App {
         System.out.println("Siguiente: " + (siguiente != null ? siguiente.getCi() : "ninguno"));
 
         System.out.println();
-        System.out.println("Productos compuestos (Composite) ");
+        System.out.println("Productos compuestos ");
 
         PaqueteProducto paqueteDiego = new PaqueteProducto("PAQ-DIEGO", Moneda.PESO_URUGUAYO);
         Cuenta ctaDiego1 = new Cuenta("CTA-DIEGO-1", 15000, Moneda.PESO_URUGUAYO);
@@ -145,17 +148,16 @@ public class App {
 
         System.out.println();
         System.out.println("Baja de productos");
+        System.out.println();
 
         boolean bajaNestedViaSucursal = sucursal.bajaProductoACliente(diego.getCi(), "CTA-DIEGO-3", mostradorEjecutivos.getId());
-        System.out.println("Intento de baja de \"CTA-DIEGO-3\" (anidada) vía Sucursal.bajaProductoACliente(): "+ bajaNestedViaSucursal + "  <- BUG: debería ser true, Cliente.quitarProducto no busca anidado");
-
-        boolean bajaNestedDirecta = diego.quitarProductoEnCartera("CTA-DIEGO-3");
-        System.out.println("Misma baja, pero llamando directo a Cliente.quitarProductoEnCartera(): " + bajaNestedDirecta);
+        System.out.println("Baja de \"CTA-DIEGO-3\" (anidada, 2 niveles adentro de PAQ-DIEGO) vía Sucursal.bajaProductoACliente(): "
+                + bajaNestedViaSucursal);
 
         boolean bajaCascada = sucursal.bajaProductoACliente(diego.getCi(), "PAQ-DIEGO", mostradorEjecutivos.getId());
         System.out.println("Baja en cascada de \"PAQ-DIEGO\" (nodo padre, primer nivel): " + bajaCascada
                 + " -> productos restantes de Diego: " + diego.obtenerProductos().tamano());
-
+       
         System.out.println();
         System.out.println("Fórmulas de comisión, liquidación y simulación");
 
@@ -168,7 +170,7 @@ public class App {
         mostradorPrestamos.liberar();
 
         sucursal.cargarFormulaComision("COM-2026", "sal * 0.10 + pro", mostradorEjecutivos.getId());
-        System.out.println("Fórmula vigente (sin paréntesis redundantes): " + sucursal.obtenerFormulaVigenteLimpia());
+        System.out.println("Fórmula vigente: " + sucursal.obtenerFormulaVigenteLimpia());
 
         ListaEnlazada<ServicioLiquidacionComisiones.ResultadoLiquidacion> liquidacion = sucursal.liquidarComisionesVigentes();
         System.out.println("Liquidación real (queda auditada en el historial):");

@@ -116,7 +116,7 @@ public class Sucursal {
             return false;
         }
 
-        boolean removido = cliente.quitarProducto(idProducto);
+        boolean removido = cliente.quitarProductoEnCartera(idProducto);
 
         if (removido && this.historialInteracciones != null) {
             this.historialInteracciones.registrarInteraccion(new Interaccion(
@@ -164,7 +164,7 @@ public class Sucursal {
             ));
         }
     }
-    
+
     public Cliente buscarClientePorCi(String ci) {
         if (ci == null || this.indiceClientes == null) {
             return null;

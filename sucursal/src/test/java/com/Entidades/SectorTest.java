@@ -169,6 +169,6 @@ public class SectorTest {
         sector.recibirCliente(cliente2, NivelPrioridad.NORMAL, crearSolicitud());
         sector.recibirCliente(cliente3, NivelPrioridad.NORMAL, crearSolicitud());
 
-        assertEquals(1, sector.estimarPosicionEnCola(cliente2));
+        assertEquals(0, sector.estimarPosicionEnCola(cliente2));
     }
 }

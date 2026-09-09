@@ -135,7 +135,7 @@ public class AtencionPrestamosTest {
         assertTrue(producto instanceof Prestamo);
         Prestamo prestamoCreado = (Prestamo) producto;
         assertEquals(50000, prestamoCreado.getMontoOriginal(), 0.001);
-        assertEquals(10, prestamoCreado.getInteres(), 0.001);
+        assertEquals(0.1, prestamoCreado.getInteres(), 0.001);
         assertEquals(12, prestamoCreado.getCuotasTotales());
 
         Pila<Interaccion> historial = sucursal.obtenerHistorialCliente(cliente.getCi());

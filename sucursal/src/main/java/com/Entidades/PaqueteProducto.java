@@ -1,5 +1,6 @@
 package com.Entidades;
 
+import com.example.Caja_de_Herramientas.Lista.TDALista;
 import com.example.Enums.Moneda;
 
 // PaqueteProducto es un contenedor que agrupa otros IProducto.
@@ -17,20 +18,13 @@ public class PaqueteProducto extends ProductoBase {
     @Override
     public float getPrecioAPagar() {
 
-        // Array de tamaño 1 usado como acumulador mutable
-        final float[] total = {0.0f};
+        float total = 0.0f;
+        TDALista<IProducto> hijos = obtenerComponentes();
 
-        // recorrer() visita este paquete y TODOS sus componentes descendientes sin importar la profundidad), aplicando la acción a cadauno de estos
-       
-        recorrer(producto -> {
+        for (int i = 0; i < hijos.tamano(); i++) {
+            total += hijos.obtener(i).getPrecioAPagar();
+        }
 
-            if (producto != this) {
-                // Para cada componente (sea hoja o paquete), le pedimos su propio precio y lo sumamos.
-                total[0] += producto.getPrecioAPagar();
-            }
-        });
-
-        // Devolvemos el acumulado la suma de precios de todos los paquetes
-        return total[0];
+        return total;
     }
 }
