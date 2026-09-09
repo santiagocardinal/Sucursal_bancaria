@@ -26,8 +26,7 @@ public class CopiaDocumentos {
             throw new IllegalArgumentException("El cliente no puede ser nulo");
         }
 
-        return filtrar(documentoActual ->documentoActual.getCliente().getCi().equals(cliente.getCi())
-        );
+        return filtrar(documentoActual ->documentoActual.getCliente().getCi().equals(cliente.getCi()));
     }
 
     public Pila<Documento> obtenerPorTipo(TipoDocumento tipo) {
@@ -36,8 +35,7 @@ public class CopiaDocumentos {
             throw new IllegalArgumentException("El tipo no puede ser nulo");
         }
 
-        return filtrar(documentoActual -> documentoActual.getTipo() == tipo
-        );
+        return filtrar(documentoActual -> documentoActual.getTipo() == tipo);
     }
 
   
@@ -89,7 +87,6 @@ public class CopiaDocumentos {
         return documentos.tope();
     }
 
-    //consulta pedida en la letra
     
     public Pila<Documento> obtenerVencidosPorCliente(Cliente cliente) 
     {

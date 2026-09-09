@@ -79,9 +79,7 @@ public class Cliente implements Comparable<Cliente> {
         Cliente otroCliente = (Cliente) obj;
         return this.ci.equals(otroCliente.ci);
     }
-    // A diferencia de obtenerProducto(id) (que
-    // solo mira los productos de primer nivel), acá se usa recorrer() sobre
-    // cada producto raíz para bajar por su árbol de composición completo.
+    // No se usa obtenerProducto(id) poruqe solo mira los productos de primer nivel, recorrer() va sobre cada producto raíz para bajar por su árbol de composición.
     public IProducto buscarProductoEnCartera(String id) {
         IProducto[] encontrado = new IProducto[1];
 

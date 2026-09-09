@@ -8,10 +8,8 @@ import com.example.Caja_de_Herramientas.Lista.TDALista;
 import com.example.Enums.EstadoProducto;
 import com.example.Enums.Moneda;
 
-// Clase base abstracta para todo IProducto.
-//
-// Antes, Cuenta/Prestamo/TarjetaDeCredito repetían cada una el mismo código
-// para id/estado (getId, getEstado, modificarEstado, estaVencido)
+
+// Antes, Cuenta/Prestamo/TarjetaDeCredito repetían cada una el mismo código para id/estado (getId, getEstado, modificarEstado, estaVencido)
 public abstract class ProductoBase implements IProducto
 {
     private final String id;
@@ -56,7 +54,7 @@ public abstract class ProductoBase implements IProducto
         return estado == EstadoProducto.VENCIDO;
     }
 
-    // Agrega un componente (hijo) a este producto.Complejidad O(1) amortizado: solo se agrega al final de la lista de hijos de ESTE nodo puntual, no se recorre ni se toca el resto del árbol.
+    // Agrega un componente (hijo) a este producto.Complejidad O(1) solo se agrega al final de la lista de hijos de este nodo puntual, no se recorre ni se toca el resto del árbol.
     @Override
     public void agregarComponente(IProducto componente)
     {
@@ -103,33 +101,43 @@ public abstract class ProductoBase implements IProducto
     public Moneda getMoneda() {
         return this.moneda;
     }
-
+    
+    // Método que busca y elimina un componente por id, en cualquier nivel del árbol de productos 
     @Override
     public boolean quitarComponente(String id) {
 
-    if (id == null) {
+        // Si no se pasó un id válido, no hay nada que buscar
+        if (id == null) {
+            return false;
+        }
+
+        int indice = 0;
+
+        // Recorremos los componentes DIRECTOS de este nodo (los hijos de primer nivel, no los de segundo nivel todavía)
+        while (indice < componentes.tamano()) {
+
+            IProducto componente = componentes.obtener(indice);
+
+            // Caso 1: el componente que estamos mirando ES el que hay que  eliminar. Se remueve directamente de la lista de este nodo y se corta la búsqueda devolviendo true.
+            if (componente.getId().equals(id)) {
+                componentes.remover(indice);
+                return true;
+            }
+
+            // Caso 2: no es este componente, pero podría estar anidado dentro de él (si este componente es a su vez un paquete).
+            // Se le delega la misma búsqueda a él mismo, de forma
+            // recursiva y baja un nivel más repite el mismo proceso.
+            
+            if (componente.quitarComponente(id)) {
+                return true;
+            }
+
+            // No estaba ni en este nivel ni anidado en este componente por lo que seguimos con el siguiente hermano
+            indice++;
+        }
+
+        // Se recorrieron todos los componentes de este nivel (y sus anidados) y no apareció ningún producto con ese id
         return false;
     }
-
-    int indice = 0;
-
-    while (indice < componentes.tamano()) {
-
-        IProducto componente = componentes.obtener(indice);
-
-        if (componente.getId().equals(id)) {
-            componentes.remover(indice);
-            return true;
-        }
-
-        if (componente.quitarComponente(id)) {
-            return true;
-        }
-
-        indice++;
-    }
-
-    return false;
-}
 
 }

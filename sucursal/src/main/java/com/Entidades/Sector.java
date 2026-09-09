@@ -59,9 +59,7 @@ public class Sector
             throw new IllegalArgumentException("el mostrador no puede ser nulo");
         }
         // Un mostrador se crea ya "apuntando" a un sector específico
-        // (ver Mostrador). Acá se chequea que ese sector sea justamente
-        // ESTE sector ("this"): evita que, por error, se agregue a un
-        // sector un mostrador que en realidad pertenece a otro.
+        // Acá se chequea que ese sector sea justamente este sector y evita que se agregue a un sector un mostrador que en realidad pertenece a otro.
         if (mostrador.getSector() != this)
         {
             throw new IllegalArgumentException("el mostrador pertenece a otro sector");
@@ -152,5 +150,4 @@ public class Sector
         return colaEspera.modificarPrioridad(cliente, nuevaPrioridad);
     }
 
-   
 }

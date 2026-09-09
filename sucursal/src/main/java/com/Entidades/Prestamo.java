@@ -56,10 +56,7 @@ public class Prestamo extends ProductoBase {
 
     // Calcula cuánto hay que pagar en la próxima cuota. Si ya se pagaron
     // todas las cuotas, no queda nada por pagar y devuelve 0.
-    // Si no,reparte el monto original mas el interés en partes iguales entre
-    // el total de cuotas (montoConInteres / cuotasTotales) — es decir,
-    // todas las cuotas valen lo mismo, no se recalcula sobre el saldo
-    // restante a medida que se van pagando.
+    
     public double proximaCuota() {
 
         if (cuotasActual >= cuotasTotales) {

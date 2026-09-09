@@ -40,7 +40,7 @@ public class Sucursal {
         copiaDocumentos.registrarDocumento(documento);
     }
 
-    // Búsqueda O(log n)
+    // Búsqueda O(log n) gracias al arbol AVL
     public Cliente buscarCliente(String ci) {
         if (ci == null) return null;
         Cliente client = new Cliente(ci);
@@ -90,7 +90,7 @@ public class Sucursal {
         return false;
     }
 
-    Cliente cliente = this.indiceClientes.buscar(new Cliente(ciCliente));
+    Cliente cliente = this.indiceClientes.buscar(new Cliente(ciCliente)); //O(log n) se busca en el arbol AVL
     if (cliente == null) {
         return false;
     }
@@ -98,139 +98,128 @@ public class Sucursal {
     cliente.agregarProducto(producto);
 
     if (this.historialInteracciones != null) {
-        this.historialInteracciones.registrarInteraccion(new Interaccion(
-            TipoInteraccion.ALTA_PRODUCTO,
-            cliente.getCi(),
-            mostradorId
-        ));
+        this.historialInteracciones.registrarInteraccion(new Interaccion(TipoInteraccion.ALTA_PRODUCTO,cliente.getCi(),mostradorId));
     }
 
     return true;
-}
-
-/**
- * Remueve un producto o paquete de un cliente utilizando el ID del producto.
- * Registra la operación como una interacción de tipo BAJA_PRODUCTO.
- */
-public boolean bajaProductoACliente(String ciCliente, String idProducto, String mostradorId) {
-    if (ciCliente == null || idProducto == null || this.indiceClientes == null) {
-        return false;
     }
 
-    Cliente cliente = this.indiceClientes.buscar(new Cliente(ciCliente));
-    if (cliente == null) {
-        return false;
+    //Remueve un producto o paquete de un cliente utilizando el ID del producto.
+    //Registra la operación como una interacción de tipo BAJA_PRODUCTO.
+    public boolean bajaProductoACliente(String ciCliente, String idProducto, String mostradorId) {
+        if (ciCliente == null || idProducto == null || this.indiceClientes == null) {
+            return false;
+        }
+
+        Cliente cliente = this.indiceClientes.buscar(new Cliente(ciCliente));
+        if (cliente == null) {
+            return false;
+        }
+
+        boolean removido = cliente.quitarProducto(idProducto);
+
+        if (removido && this.historialInteracciones != null) {
+            this.historialInteracciones.registrarInteraccion(new Interaccion(
+                TipoInteraccion.BAJA_PRODUCTO,
+                cliente.getCi(),
+                mostradorId
+            ));
+        }
+
+        return removido;
+    }
+    public void cargarFormulaComision(String id, String textoFormula) {
+        this.formulaComisionActual = new FormulaComision(id, textoFormula);
     }
 
-    boolean removido = cliente.quitarProducto(idProducto);
-
-    if (removido && this.historialInteracciones != null) {
-        this.historialInteracciones.registrarInteraccion(new Interaccion(
-            TipoInteraccion.BAJA_PRODUCTO,
-            cliente.getCi(),
-            mostradorId
-        ));
+    // Retorna la fórmula actual limpia (sin paréntesis redundantes mediante inOrder)
+    public String obtenerFormulaVigenteLimpia() {
+        if (this.formulaComisionActual == null) return "";
+        return this.formulaComisionActual.obtenerFormulaLimpia();
     }
 
-    return removido;
-}
-public void cargarFormulaComision(String id, String textoFormula) {
-    this.formulaComisionActual = new FormulaComision(id, textoFormula);
-}
-
-// Retorna la fórmula actual limpia (sin paréntesis redundantes mediante inOrder)
-public String obtenerFormulaVigenteLimpia() {
-    if (this.formulaComisionActual == null) return "";
-    return this.formulaComisionActual.obtenerFormulaLimpia();
-}
-
-// Ejecuta la liquidación real impactando en el historial
-public ListaEnlazada<ServicioLiquidacionComisiones.ResultadoLiquidacion> liquidarComisionesVigentes() {
-    return this.servicioLiquidacion.liquidar(this.indiceClientes, this.formulaComisionActual, this.historialInteracciones);
-}
-
-// Realiza la simulación sin alterar historial ni estado
-public ListaEnlazada<ServicioLiquidacionComisiones.ResultadoLiquidacion> simularNuevaFormula(String id, String textoFormulaSimulada) {
-    FormulaComision formulaSimulada = new FormulaComision(id, textoFormulaSimulada);
-    return this.servicioLiquidacion.simular(this.indiceClientes, formulaSimulada);
-}
-
-/**
- * Carga o actualiza la fórmula de comisión vigente en la sucursal y
- * registra el evento en el historial de auditoría.
- */
-public void cargarFormulaComision(String id, String textoFormula, String mostradorId) {
-    this.formulaComisionActual = new FormulaComision(id, textoFormula);
-
-    // Auditoría del cambio de fórmula
-    if (this.historialInteracciones != null) {
-        this.historialInteracciones.registrarInteraccion(new Interaccion(
-            TipoInteraccion.MODIFICACION,
-            id,          // El ID de la fórmula que estás cargando
-            mostradorId  // El ID del mostrador/operador que realiza el cambio
-        ));
+    // Ejecuta la liquidación real impactando en el historial
+    public ListaEnlazada<ServicioLiquidacionComisiones.ResultadoLiquidacion> liquidarComisionesVigentes() {
+        return this.servicioLiquidacion.liquidar(this.indiceClientes, this.formulaComisionActual, this.historialInteracciones);
     }
-}
-public Cliente buscarClientePorCi(String ci) {
-    if (ci == null || this.indiceClientes == null) {
-        return null;
-    }
-    return this.indiceClientes.buscar(new Cliente(ci));
-}
 
-/**
- * Busca un producto por su número de cuenta/ID dentro de la cartera del cliente.
- * Primero localiza al cliente en O(log n) y luego busca el producto en su lista.
- */
-public IProducto buscarProductoPorCuenta(String ciCliente, String numeroCuenta) {
-    if (ciCliente == null || numeroCuenta == null) {
-        return null;
+    // Realiza la simulación sin alterar historial ni estado
+    public ListaEnlazada<ServicioLiquidacionComisiones.ResultadoLiquidacion> simularNuevaFormula(String id, String textoFormulaSimulada) {
+        FormulaComision formulaSimulada = new FormulaComision(id, textoFormulaSimulada);
+        return this.servicioLiquidacion.simular(this.indiceClientes, formulaSimulada);
+    }
+
+
+    //Carga o actualiza la fórmula de comisión vigente en la sucursal y registra el evento en el historial de auditoría.
+    
+    public void cargarFormulaComision(String id, String textoFormula, String mostradorId) {
+        this.formulaComisionActual = new FormulaComision(id, textoFormula);
+
+        // Auditoría del cambio de fórmula
+        if (this.historialInteracciones != null) {
+            this.historialInteracciones.registrarInteraccion(new Interaccion(
+                TipoInteraccion.MODIFICACION,
+                id,          // El ID de la fórmula que estás cargando
+                mostradorId  // El ID del mostrador/operador que realiza el cambio
+            ));
+        }
     }
     
-    // Búsqueda eficiente del cliente por CI
-    Cliente cliente = buscarClientePorCi(ciCliente);
-    if (cliente == null) {
-        return null;
+    public Cliente buscarClientePorCi(String ci) {
+        if (ci == null || this.indiceClientes == null) {
+            return null;
+        }
+        return this.indiceClientes.buscar(new Cliente(ci));
     }
-    
-    // Búsqueda del producto dentro del cliente utilizando su ID
-    return cliente.buscarProductoEnCartera(numeroCuenta);
-}
 
 
-/**
- * Retorna la cartera de clientes ordenada por CI.
- * Aprovecha la propiedad In-Order del árbol AVL, obteniendo la lista ordenada de forma natural.
- */
-public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
-    ListaEnlazada<Cliente> carteraOrdenada = new ListaEnlazada<>();
-    
-    if (this.indiceClientes != null) {
-        this.indiceClientes.inOrder(cliente -> {
-            carteraOrdenada.agregar(cliente);
-        });
+    //Busca un producto por su número de cuenta/ID dentro de la cartera del cliente.
+    //Primero localiza al cliente en O(log n) y luego busca el producto en su lista.
+
+    public IProducto buscarProductoPorCuenta(String ciCliente, String numeroCuenta) {
+        if (ciCliente == null || numeroCuenta == null) {
+            return null;
+        }
+        
+        // Búsqueda eficiente del cliente por CI
+        Cliente cliente = buscarClientePorCi(ciCliente);
+        if (cliente == null) {
+            return null;
+        }
+        
+        // Búsqueda del producto dentro del cliente utilizando su ID
+        return cliente.buscarProductoEnCartera(numeroCuenta);
     }
-    
-    return carteraOrdenada;
-}
-// ===================== CONSULTA: clientes por rango de documento =====================
-    // Dado un rango de documentos [desde, hasta], devuelve todos los
-    // clientes registrados cuyo ci cae dentro de ese rango, ordenados por
-    // ci. Se apoya en el mismo AVL que ya usamos para la búsqueda puntual
-    // (clientesPorDocumento)
+
+
+
+    //Retorna la cartera de clientes ordenada por CI.
+    //Aprovecha la propiedad In-Order del árbol AVL, obteniendo la lista ordenada de forma natural.
+
+    public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
+        ListaEnlazada<Cliente> carteraOrdenada = new ListaEnlazada<>();
+        
+        if (this.indiceClientes != null) {
+            this.indiceClientes.inOrder(cliente -> {
+                carteraOrdenada.agregar(cliente);
+            });
+        }
+        
+        return carteraOrdenada;
+    }
+    // clientes por rango de documento que dado un rango de documentos [desde, hasta], devuelve todos los clientes registrados cuyo ci cae dentro de ese rango, ordenados por ci
 
     public TDALista<Cliente> obtenerClientesEnRangoDeDocumento(String desde, String hasta) {
 
         if (desde == null || hasta == null) {
             throw new IllegalArgumentException("Los limites del rango no pueden ser nulos");
         }
-
-        // Igual que en buscarClientePorCi, "desde"/"hasta" se envuelven en
-        // un Cliente de consulta solo para poder compararlos por ci contra
-        // los datos reales guardados en el árbol.
+        // "desde" y "hasta" se convierten en Clientes de consulta para poder
+        // compararlos por CI con los clientes almacenados en el árbol.
         return indiceClientes.enRango(new Cliente(desde), new Cliente(hasta));
     }
-        // ===================== CONSULTA: clientes vecinos por documento =====================
+    
+    // clientes vecinos por documento
     
     public Cliente obtenerClienteConDocumentoAnterior(String ci) {
 
@@ -242,9 +231,7 @@ public ListaEnlazada<Cliente> listarCarteraOrdenadaPorCi() {
     }
 
     // Simétrico al anterior: encuentra el cliente registrado con el
-    // documento inmediatamente SIGUIENTE al ci dado, también en O(log n)
-    // gracias a que indiceClientes.sucesor() baja un solo camino del AVL.
-    // Devuelve null si no hay ningún cliente con documento mayor a "ci".
+    // documento inmediatamente SIGUIENTE al ci dado, baja un solo camino del AVL.
     public Cliente obtenerClienteConDocumentoSiguiente(String ci) {
 
         if (ci == null) {
