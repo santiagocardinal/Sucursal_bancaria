@@ -64,4 +64,6 @@ public class ServicioLiquidacionComisionesTest {
         servicio.simular(indiceClientes, null);
     }
 
+    //che ahí ves algo?
+
 }
