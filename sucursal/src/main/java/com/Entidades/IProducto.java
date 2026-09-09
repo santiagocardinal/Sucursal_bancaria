@@ -43,6 +43,8 @@ public interface IProducto //Dice el que se debe hacer no el como!
     Moneda getMoneda();
 
     float getPrecioAPagar();
+
+    boolean quitarComponente(String id);
     
         // ===================== CONSULTA: componente de mayor saldo =====================
     // Busca, entre este producto y todos sus componentes la Cuenta con mayor saldo. 

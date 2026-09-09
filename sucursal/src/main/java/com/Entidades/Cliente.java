@@ -100,4 +100,31 @@ public class Cliente implements Comparable<Cliente> {
 
         return encontrado[0];
     }
+
+    public boolean quitarProductoEnCartera(String id) {
+
+    if (id == null) {
+        return false;
+    }
+
+    int indice = 0;
+
+    while (indice < productos.tamano()) {
+
+        IProducto producto = productos.obtener(indice);
+
+        if (producto.getId().equals(id)) {
+            productos.remover(indice);
+            return true;
+        }
+
+        if (producto.quitarComponente(id)) {
+            return true;
+        }
+
+        indice++;
+    }
+
+    return false;
+    }
 }
