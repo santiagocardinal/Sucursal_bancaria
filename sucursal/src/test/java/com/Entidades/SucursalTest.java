@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.example.Caja_de_Herramientas.Lista.ListaEnlazada;
 import com.example.Caja_de_Herramientas.Lista.TDALista;
 import com.example.Caja_de_Herramientas.Pila.Pila;
+import com.example.Enums.Moneda;
 import com.example.Enums.NivelPrioridad;
 import com.example.Enums.TipoDocumento;
 import com.example.Enums.TipoInteraccion;
@@ -216,4 +217,124 @@ public class SucursalTest {
         assertNull(sucursal.obtenerClienteConDocumentoAnterior("31204561"));
         assertNull(sucursal.obtenerClienteConDocumentoSiguiente("51123409"));
     }
+
+    @Test
+public void testBuscarClientePorCiExistente() {
+
+    Sucursal sucursal = new Sucursal("SUC1");
+
+    Sector sector = new Sector(sucursal);
+
+    sucursal.agregarSector(sector);
+
+    Cliente cliente = new Cliente("12345678");
+
+    sucursal.registrarClienteEnSector(cliente, sector, NivelPrioridad.NORMAL, crearSolicitud() );
+
+    Cliente encontrado = sucursal.buscarClientePorCi("12345678");
+
+    assertNotNull(encontrado);
+
+    assertEquals("12345678", encontrado.getCi());
+    }
+
+    @Test
+public void testBuscarClientePorCiInexistente() {
+
+    Sucursal sucursal = new Sucursal("SUC1");
+
+    Cliente encontrado = sucursal.buscarClientePorCi("99999999");
+
+    assertNull(encontrado);
+    }
+
+    @Test
+public void testBuscarProductoPorCuentaDirecto() {
+
+    Sucursal sucursal = new Sucursal("SUC1");
+    Sector sector = new Sector(sucursal);
+    sucursal.agregarSector(sector);
+
+    Cliente cliente = new Cliente("12345678");
+    sucursal.registrarClienteEnSector(cliente, sector, NivelPrioridad.NORMAL, crearSolicitud());
+
+    Cuenta cuenta = new Cuenta("CTA1", 1000.0, Moneda.PESO_URUGUAYO);
+    cliente.agregarProducto(cuenta);
+
+    IProducto encontrado = sucursal.buscarProductoPorCuenta("12345678", "CTA1");
+
+    assertNotNull(encontrado);
+    assertEquals("CTA1", encontrado.getId());
+    }
+
+    @Test
+public void testBuscarProductoPorCuentaDentroDePaquete() {
+
+    Sucursal sucursal = new Sucursal("SUC1");
+    Sector sector = new Sector(sucursal);
+    sucursal.agregarSector(sector);
+
+    Cliente cliente = new Cliente("12345678");
+    sucursal.registrarClienteEnSector(cliente, sector, NivelPrioridad.NORMAL, crearSolicitud());
+
+    PaqueteProducto paquete = new PaqueteProducto("PAQ1", Moneda.PESO_URUGUAYO);
+    Cuenta cuenta = new Cuenta("CTA2", 2000.0, Moneda.PESO_URUGUAYO);
+
+    paquete.agregarComponente(cuenta);
+    cliente.agregarProducto(paquete);
+
+    IProducto encontrado = sucursal.buscarProductoPorCuenta("12345678", "CTA2");
+
+    assertNotNull(encontrado);
+    assertEquals("CTA2", encontrado.getId());
+    }
+
+    @Test
+public void testBuscarProductoPorCuentaEnPaqueteAnidado() {
+
+    Sucursal sucursal = new Sucursal("SUC1");
+    Sector sector = new Sector(sucursal);
+    sucursal.agregarSector(sector);
+
+    Cliente cliente = new Cliente("12345678");
+    sucursal.registrarClienteEnSector(cliente, sector, NivelPrioridad.NORMAL, crearSolicitud());
+
+    PaqueteProducto paquete1 = new PaqueteProducto("PAQ1", Moneda.PESO_URUGUAYO);
+    PaqueteProducto paquete2 = new PaqueteProducto("PAQ2", Moneda.PESO_URUGUAYO);
+    Cuenta cuenta = new Cuenta("CTA3", 3000.0, Moneda.PESO_URUGUAYO);
+
+    paquete2.agregarComponente(cuenta);
+    paquete1.agregarComponente(paquete2);
+    cliente.agregarProducto(paquete1);
+
+    IProducto encontrado = sucursal.buscarProductoPorCuenta("12345678", "CTA3");
+
+    assertNotNull(encontrado);
+    assertEquals("CTA3", encontrado.getId());
+    }
+
+    @Test
+public void testListarCarteraOrdenadaPorCi() {
+
+    Sucursal sucursal = new Sucursal("SUC1");
+    Sector sector = new Sector(sucursal);
+    sucursal.agregarSector(sector);
+
+    Cliente cliente1 = new Cliente("50000000");
+    Cliente cliente2 = new Cliente("30000000");
+    Cliente cliente3 = new Cliente("40000000");
+
+    sucursal.registrarClienteEnSector(cliente1, sector, NivelPrioridad.NORMAL, crearSolicitud());
+    sucursal.registrarClienteEnSector(cliente2, sector, NivelPrioridad.NORMAL, crearSolicitud());
+    sucursal.registrarClienteEnSector(cliente3, sector, NivelPrioridad.NORMAL, crearSolicitud());
+
+    ListaEnlazada<Cliente> cartera = sucursal.listarCarteraOrdenadaPorCi();
+
+    assertEquals(3, cartera.tamano());
+    assertEquals("30000000", cartera.obtener(0).getCi());
+    assertEquals("40000000", cartera.obtener(1).getCi());
+    assertEquals("50000000", cartera.obtener(2).getCi());
+    }
+
+    
 }
